@@ -16,6 +16,7 @@ import java.util.List;
 @Table(name = "admins")
 public class Admin extends User {
     @Convert(converter = List2StringConverter.class)
+    @Column(nullable = false)
     private List<AdminRole> roles;
 
     public Admin(String email, String password, String firstName, String lastName, List<AdminRole> roles) {

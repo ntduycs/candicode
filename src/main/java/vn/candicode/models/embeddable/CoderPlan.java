@@ -33,7 +33,10 @@ public class CoderPlan implements Serializable {
 
     public CoderPlan(vn.candicode.models.enums.CoderPlan plan) {
         this.name = plan;
-        this.planIssuedAt = LocalDate.now();
-        this.planExpiredAt = LocalDate.from(planExpiredAt).plusMonths(1);
+
+        LocalDate now = LocalDate.now();
+
+        this.planIssuedAt = now;
+        this.planExpiredAt = plan.equals(vn.candicode.models.enums.CoderPlan.BASIC) ? null : LocalDate.from(now).plusMonths(1);
     }
 }

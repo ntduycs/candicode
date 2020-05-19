@@ -2,6 +2,7 @@ package vn.candicode.models;
 
 import lombok.*;
 import vn.candicode.models.embeddable.CoderPlan;
+import vn.candicode.models.enums.UserType;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,8 +23,9 @@ public class Coder extends User {
     @Column(columnDefinition = "bigint default 0")
     private Long accruedPoint = 0L;
 
-    public Coder(String email, String password, String firstName, String lastName, vn.candicode.models.enums.CoderPlan plan) {
+    public Coder(String email, String password, String firstName, String lastName, UserType type, vn.candicode.models.enums.CoderPlan plan) {
         super(email, password, firstName, lastName);
+        this.setType(type);
         this.plan = new CoderPlan(plan);
     }
 }

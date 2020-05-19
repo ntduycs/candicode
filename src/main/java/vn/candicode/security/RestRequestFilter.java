@@ -37,7 +37,7 @@ public class RestRequestFilter extends OncePerRequestFilter {
         final String requestUri = request.getRequestURI();
 
         if (requestMethod.equalsIgnoreCase("post")) {
-            return requestUri.contains("/auth/login");
+            return requestUri.contains("/auth/login") || requestUri.contains("/coders");
         }
 
         return false; // indicate that the request should be filtered

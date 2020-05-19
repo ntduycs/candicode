@@ -19,7 +19,7 @@ public @interface File {
 
     Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payloads() default {};
+    Class<? extends Payload>[] payload() default {};
 
     @Documented
     @Retention(RetentionPolicy.RUNTIME)

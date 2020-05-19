@@ -31,7 +31,7 @@ public class Challenge extends BaseModel {
     @Column(nullable = false)
     @Lob
     @NonNull
-    private String description;
+    private String descriptionPath;
 
     @Column(nullable = false)
     @NonNull
@@ -40,9 +40,11 @@ public class Challenge extends BaseModel {
     private String bannerPath;
 
     @Column(nullable = false, name = "tc_input_format")
+    @NonNull
     private String testcaseInputFormat;
 
     @Column(nullable = false, name = "tc_output_format")
+    @NonNull
     private String testcaseOutputFormat;
 
     @OneToMany(

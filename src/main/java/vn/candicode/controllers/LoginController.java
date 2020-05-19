@@ -50,7 +50,8 @@ public class LoginController extends BaseController {
             Map.of(
                 "token", token,
                 "type", "Bearer",
-                "expiration", tokenExpiration.format(DatetimeUtils.getDatetimeFormatter())
+                "expiration", tokenExpiration.format(DatetimeUtils.getDatetimeFormatter()),
+                "utype", auth.getAuthorities()
             ),
             HttpStatus.OK
         ));

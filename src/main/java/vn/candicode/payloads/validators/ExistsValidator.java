@@ -16,7 +16,7 @@ public class ExistsValidator implements ConstraintValidator<Exists, Object> {
 
         Class<? extends ExistenceValidatorService> service = constraintAnnotation.service();
 
-        if (StringUtils.isEmpty(constraintAnnotation.qualifier())) {
+        if (!StringUtils.isEmpty(constraintAnnotation.qualifier())) {
             this.service = BeanUtils.getBean(constraintAnnotation.qualifier(), service);
         } else {
             this.service = BeanUtils.getBean(service);

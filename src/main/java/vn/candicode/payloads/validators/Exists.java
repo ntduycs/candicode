@@ -19,5 +19,5 @@ public @interface Exists {
 
     Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payloads() default {};
+    Class<? extends Payload>[] payload() default {};
 }

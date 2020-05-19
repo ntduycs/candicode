@@ -16,7 +16,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
 
         Class<? extends UniqueValidatorService> service = constraintAnnotation.service();
 
-        if (StringUtils.isEmpty(constraintAnnotation.qualifier())) {
+        if (!StringUtils.isEmpty(constraintAnnotation.qualifier())) {
             this.service = BeanUtils.getBean(constraintAnnotation.qualifier(), service);
         } else {
             this.service = BeanUtils.getBean(service);

@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import vn.candicode.repositories.UserRepository;
 
 @Service
-public class UserValidatorServiceService implements UniqueValidatorService, ExistenceValidatorService {
+public class UserValidatorService implements UniqueValidatorService, ExistenceValidatorService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserValidatorServiceService(UserRepository userRepository) {
+    public UserValidatorService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
