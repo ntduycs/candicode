@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PACKAGE, ElementType.FIELD})
+@Target({ElementType.PACKAGE, ElementType.FIELD, ElementType.PARAMETER})
 @Constraint(validatedBy = EnumValidator.class)
 public @interface Enum {
     String message() default "Given value does not belong to corresponding enum";

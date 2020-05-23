@@ -318,7 +318,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler impl
         final RestError response = new RestError(
             status.value(),
             status.getReasonPhrase(),
-            ex.getCause().toString(),
+            ex.getCause() != null ? ex.getCause().toString(): "No reason available",
             getExceptionClassname(ex),
             getRequestURI(request)
         );

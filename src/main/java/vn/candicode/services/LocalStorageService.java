@@ -45,7 +45,7 @@ public class LocalStorageService implements StorageService {
         File challengeStorageLocation = storageLocation.getChallengeStorageLocationByUser(userId).toFile();
         File submissionStorageLocation = storageLocation.getSubmissionStorageLocationByUser(userId).toFile();
 
-        boolean created = false;
+        boolean created = true;
 
         if (!challengeStorageLocation.exists() && !submissionStorageLocation.exists()) {
             created = challengeStorageLocation.mkdirs() && submissionStorageLocation.mkdirs();

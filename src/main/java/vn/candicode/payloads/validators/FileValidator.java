@@ -25,21 +25,20 @@ public class FileValidator implements ConstraintValidator<File, MultipartFile> {
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
-        constraintValidatorContext.disableDefaultConstraintViolation();
 
         if (required && (file == null || file.isEmpty())) {
             constraintValidatorContext.buildConstraintViolationWithTemplate(requiredMessage);
             return false;
         }
 
-        if (maxSize > -1 && file.getSize() > maxSize) {
-            constraintValidatorContext.buildConstraintViolationWithTemplate(maxSizeMessage);
-            return false;
-        }
-
-        if (!mimes.isEmpty() && !mimes.contains(file.getContentType())) {
-            constraintValidatorContext.buildConstraintViolationWithTemplate(mimesMessage);
-            return false;
+        if (file != null) {
+            if (maxSize > -1 && file.getSize() > maxSize) {
+                constraintValidatorContext.buildConstraintViolationWithTemplate(maxSizeMessage);
+                return false;
+            } else if (!mimes.isEmpty() && !mimes.contains(file.getContentType())) {
+                constraintValidatorContext.buildConstraintViolationWithTemplate(mimesMessage);
+                return false;
+            }
         }
 
         return true;
