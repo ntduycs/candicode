@@ -50,7 +50,7 @@ public class ChallengeController extends BaseController {
 
         Long challengeId = service.createChallenge(request, user);
 
-        return ResponseEntity.created(location(challengeId)).build();
+        return ResponseEntity.created(location(challengeId)).body(RestResponse.build(challengeId, HttpStatus.CREATED));
     }
 
     @PostMapping(path = "source-upload")

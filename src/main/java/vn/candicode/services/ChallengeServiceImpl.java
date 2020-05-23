@@ -127,19 +127,23 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<ChallengeContent> contents = new ArrayList<>();
 
-//        challenge.getConfigurations().forEach(config -> {
-//            ChallengeContent content = new ChallengeContent(config.getLanguage(), )
-//        });
+        challenge.getConfigurations().forEach(config -> {
+            try {
+                contents.add(new ChallengeContent(config.getLanguage().getName().name(), fileUtils.readFile(config.getTargetPath())));
+            } catch (IOException e) {
+                throw new StorageException("Cannot read file");
+            }
+        });
 
 //        ChallengeDetail ret = new ChallengeDetail(
 //            challenge.getTitle(),
-//            ,
+//            challenge.getDescriptionPath(),
 //            ,
 //            challenge.getLevel().name(),
 //            challenge.getPoints(),
 //            challenge.getTestcaseInputFormat(),
 //            challenge.getTestcaseOutputFormat(),
-//            challenge.get
+//            contents
 //        )
 
         return null;

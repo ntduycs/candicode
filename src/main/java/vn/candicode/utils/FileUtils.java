@@ -143,4 +143,7 @@ public class FileUtils {
         parseSubDirsTree(subFiles, ++index, root);
     }
 
+    public String readFile(String path) throws IOException {
+        return org.apache.commons.io.FileUtils.readFileToString(new File(path));
+    }
 }
