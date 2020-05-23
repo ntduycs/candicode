@@ -21,8 +21,8 @@ public class ChallengeRequest extends MultipartRequest {
     @Enum(target = ChallengeLevel.class)
     private String level;
 
-    @File(mimes = {"text/markdown"})
-    private MultipartFile description;
+    @NotBlank(message = "Field 'description is required but not be given")
+    private String description;
 
     @File(mimes = {"image/jpeg", "image/png"}, required = false)
     private MultipartFile banner;

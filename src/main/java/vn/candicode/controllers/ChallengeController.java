@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
@@ -12,6 +11,7 @@ import vn.candicode.commons.rest.RestResponse;
 import vn.candicode.commons.storage.StorageLocation;
 import vn.candicode.models.User;
 import vn.candicode.payloads.requests.ChallengeRequest;
+import vn.candicode.payloads.responses.ChallengeDetail;
 import vn.candicode.payloads.validators.MultipartRequestValidator;
 import vn.candicode.repositories.ChallengeRepository;
 import vn.candicode.security.CurrentUser;
@@ -62,6 +62,7 @@ public class ChallengeController extends BaseController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getChallengeById(@PathVariable("id") Long id) {
+//        ChallengeDetail challengeDetail = service.
         return null;
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.commons.storage.StorageLocation;
+import vn.candicode.exceptions.ResourceNotFoundException;
 import vn.candicode.exceptions.StorageException;
 import vn.candicode.models.Challenge;
 import vn.candicode.models.ChallengeConfig;
@@ -12,6 +13,8 @@ import vn.candicode.models.User;
 import vn.candicode.models.enums.ChallengeLanguage;
 import vn.candicode.models.enums.ChallengeLevel;
 import vn.candicode.payloads.requests.ChallengeRequest;
+import vn.candicode.payloads.responses.ChallengeContent;
+import vn.candicode.payloads.responses.ChallengeDetail;
 import vn.candicode.repositories.ChallengeRepository;
 import vn.candicode.utils.FileUtils;
 
@@ -20,7 +23,9 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -51,18 +56,20 @@ public class ChallengeServiceImpl implements ChallengeService {
         int point = getPointByLevel(level);
 
         try {
-            Map<String, String> bannerAndDescPaths = storeFiles(request, user);
+            String bannerPath = null;
+
+            if (request.getBanner() != null && !request.getBanner().isEmpty()) {
+                bannerPath = storeFiles(request.getBanner(), user);
+            }
 
             Challenge challenge = new Challenge(
                 request.getTitle(),
                 level,
-                bannerAndDescPaths.get("description"),
+                bannerPath,
                 point,
                 request.getTcInputFormat(),
                 request.getTcOutputFormat()
             );
-
-            challenge.setBannerPath(bannerAndDescPaths.get("banner"));
 
             em.persist(challenge);
 
@@ -83,24 +90,15 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
     }
 
-    private Map<String, String> storeFiles(ChallengeRequest request, User user) throws IOException {
-        Map<String, String> paths = new HashMap<>();
-
+    private String storeFiles(MultipartFile banner, User user) throws IOException {
         Path userStorage = storageLocation.getChallengeStorageLocationByUser(user.getId());
 
-        if (request.getBanner() != null) {
-            MultipartFile banner = request.getBanner();
+        if (banner != null) {
             banner.transferTo(new File(userStorage + File.separator + banner.getOriginalFilename()));
-            paths.put("banner", userStorage + File.separator + banner.getOriginalFilename());
+            return userStorage + File.separator + banner.getOriginalFilename();
         }
 
-        if (request.getDescription() != null) {
-            MultipartFile description = request.getDescription();
-            description.transferTo(new File(userStorage + File.separator + description.getOriginalFilename()));
-            paths.put("description", userStorage + File.separator + description.getOriginalFilename());
-        }
-
-        return paths;
+        return null;
     }
 
     private int getPointByLevel(ChallengeLevel level) {
@@ -119,5 +117,32 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public Component parseDirTree(MultipartFile sourceCode, User user) {
         return fileUtils.parseDirTree(sourceCode, user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ChallengeDetail getChallengeById(Long id) {
+        Challenge challenge = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", id));
+
+        List<ChallengeContent> contents = new ArrayList<>();
+
+//        challenge.getConfigurations().forEach(config -> {
+//            ChallengeContent content = new ChallengeContent(config.getLanguage(), )
+//        });
+
+//        ChallengeDetail ret = new ChallengeDetail(
+//            challenge.getTitle(),
+//            ,
+//            ,
+//            challenge.getLevel().name(),
+//            challenge.getPoints(),
+//            challenge.getTestcaseInputFormat(),
+//            challenge.getTestcaseOutputFormat(),
+//            challenge.get
+//        )
+
+        return null;
+
     }
 }

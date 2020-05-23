@@ -3,6 +3,7 @@ package vn.candicode.payloads.responses;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +17,9 @@ public class ChallengeDetail implements Serializable {
     private String description;
 
     @NonNull
+    private String banner;
+
+    @NonNull
     private String level;
 
     @NonNull
@@ -26,4 +30,7 @@ public class ChallengeDetail implements Serializable {
 
     @NonNull
     private String tcOutputFormat;
+
+    @NonNull
+    private List<ChallengeContent> contents;
 }

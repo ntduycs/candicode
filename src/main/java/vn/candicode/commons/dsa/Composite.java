@@ -7,20 +7,20 @@ import java.util.List;
 
 @Getter
 public class Composite implements Component {
-    private final String key;
+    private final String label;
     private final Object value;
     private final String type;
     private final List<Component> children;
 
-    public Composite(String key, Object value, String type, List<Component> children) {
-        this.key = key;
+    public Composite(String label, Object value, String type, List<Component> children) {
+        this.label = label;
         this.value = value;
         this.type = type;
         this.children = children;
     }
 
-    public Composite(String key, String value, String type) {
-        this.key = key;
+    public Composite(String label, String value, String type) {
+        this.label = label;
         this.value = value;
         this.type = type;
         this.children = new ArrayList<>();
@@ -36,6 +36,6 @@ public class Composite implements Component {
 
     @Override
     public String toString() {
-        return String.format("{key: %s, value: %s, children: %s, type: %s}", key, value, children, type);
+        return String.format("{key: %s, value: %s, children: %s, type: %s}", label, value, children, type);
     }
 }

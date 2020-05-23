@@ -44,10 +44,8 @@ public class MultipartRequestValidator implements Validator {
             }
         }
 
-        if (request.getDescription() == null || request.getDescription().isEmpty()) {
-            errors.rejectValue("description", "challenge.file.missing");
-        } else if (!List.of("text/markdown").contains(request.getDescription().getContentType())) {
-            errors.rejectValue("description", "description", new String[] {request.getDescription().getContentType()}, "challenge.mime-type.not-supported");
+        if (!StringUtils.hasText(request.getTitle())) {
+            errors.rejectValue("description", "challenge.field.missing");
         }
 
         if (!StringUtils.hasText(request.getLanguage())) {
