@@ -14,6 +14,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -145,5 +146,14 @@ public class FileUtils {
 
     public String readFile(String path) throws IOException {
         return org.apache.commons.io.FileUtils.readFileToString(new File(path));
+    }
+
+    public String encodeFileToString(String filePath) {
+        try {
+            byte[] fileContent = org.apache.commons.io.FileUtils.readFileToByteArray(new File(filePath));
+            return Base64.getEncoder().encodeToString(fileContent);
+        } catch (IOException e) {
+            throw new StorageException("Encode file to String failed");
+        }
     }
 }

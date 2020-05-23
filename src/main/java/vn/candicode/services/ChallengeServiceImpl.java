@@ -62,11 +62,13 @@ public class ChallengeServiceImpl implements ChallengeService {
             Challenge challenge = new Challenge(
                 request.getTitle(),
                 level,
-                bannerPath,
+                request.getDescription(),
                 point,
                 request.getTcInputFormat(),
                 request.getTcOutputFormat()
             );
+
+            challenge.setBannerPath(bannerPath);
 
             em.persist(challenge);
 
@@ -74,10 +76,11 @@ public class ChallengeServiceImpl implements ChallengeService {
                 challenge,
                 inMemoryService.challengeLanguages().get(ChallengeLanguage.valueOf(request.getLanguage().toUpperCase())),
                 request.getTargetPath(),
-                request.getBuildPath()
+                request.getBuildPath(),
+                request.getEditPath()
             );
 
-            repository.findById(challenge.getId()).ifPresentOrElse(c->c.addConfig(config),() -> {
+            repository.findById(challenge.getId()).ifPresentOrElse(c -> c.addConfig(config), () -> {
                 throw new StorageException("Failed to store challenge");
             });
 
@@ -135,7 +138,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeDetail ret = new ChallengeDetail(
             challenge.getTitle(),
             challenge.getDescription(),
-            Base64.getEncoder().encodeToString(null),
+            challenge.getBannerPath(),
             challenge.getLevel().name(),
             challenge.getPoints(),
             challenge.getTestcaseInputFormat(),
@@ -143,7 +146,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             contents
         );
 
-        return null;
+        return ret;
 
     }
 }

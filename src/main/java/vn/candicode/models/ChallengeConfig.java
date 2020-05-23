@@ -40,6 +40,9 @@ public class ChallengeConfig implements Serializable {
     @Column(nullable = false)
     private String buildPath;
 
+    @Column(nullable = false)
+    private String editPath;
+
     @CreatedDate
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss.SS")
     private LocalDateTime createdAt;
@@ -51,11 +54,12 @@ public class ChallengeConfig implements Serializable {
     @JsonIgnore
     private LocalDateTime deletedAt;
 
-    public ChallengeConfig(Challenge challenge, ChallengeLanguage language, String targetPath, String buildPath) {
+    public ChallengeConfig(Challenge challenge, ChallengeLanguage language, String targetPath, String buildPath, String editPath) {
         this.challenge = challenge;
         this.language = language;
         this.id = new ChallengeConfigId(challenge.getId(), language.getId());
         this.targetPath = targetPath;
         this.buildPath = buildPath;
+        this.editPath = editPath;
     }
 }

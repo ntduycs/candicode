@@ -37,6 +37,9 @@ public class ChallengeRequest extends MultipartRequest {
     @NotBlank(message = "Field 'buildPath' is required but not be given")
     private String buildPath;
 
+    @NotBlank(message = "Field 'editPath' is required but not be given")
+    private String editPath;
+
     @NotBlank(message = "Field 'tcInputFormat' is required but not be given")
     @Regex
     private String tcInputFormat;

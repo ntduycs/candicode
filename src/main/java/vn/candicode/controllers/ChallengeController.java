@@ -62,7 +62,7 @@ public class ChallengeController extends BaseController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getChallengeById(@PathVariable("id") Long id) {
-//        ChallengeDetail challengeDetail = service.
-        return null;
+        ChallengeDetail challengeDetail = service.getChallengeById(id);
+        return ResponseEntity.ok(RestResponse.build(challengeDetail, HttpStatus.OK));
     }
 }
