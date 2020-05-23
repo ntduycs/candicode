@@ -1,5 +1,7 @@
 package vn.candicode.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,7 @@ import vn.candicode.models.enums.ChallengeLevel;
 import vn.candicode.payloads.requests.ChallengeRequest;
 import vn.candicode.payloads.responses.ChallengeContent;
 import vn.candicode.payloads.responses.ChallengeDetail;
+import vn.candicode.payloads.responses.ChallengeSummary;
 import vn.candicode.repositories.ChallengeRepository;
 import vn.candicode.utils.FileUtils;
 
@@ -24,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
@@ -135,7 +139,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             }
         });
 
-        ChallengeDetail ret = new ChallengeDetail(
+        return new ChallengeDetail(
             challenge.getTitle(),
             challenge.getDescription(),
             challenge.getBannerPath(),
@@ -146,7 +150,34 @@ public class ChallengeServiceImpl implements ChallengeService {
             contents
         );
 
-        return ret;
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getChallenges(Pageable pageable) {
+        Map<String, Object> ret = new LinkedHashMap<>();
+
+        Page<Challenge> challenges = repository.findAll(pageable);
+
+        List<ChallengeSummary> items = challenges.getContent().stream().map(challenge -> new ChallengeSummary(
+            challenge.getId(),
+            challenge.getTitle(),
+            challenge.getBannerPath(),
+            challenge.getDescription(),
+            challenge.getLevel().name(),
+            challenge.getPoints(),
+            challenge.getConfigurations().stream().map(config -> config.getLanguage().getName().name()).collect(Collectors.toList()),
+            0L
+        )).collect(Collectors.toList());
+
+        ret.put("page", challenges.getNumber());
+        ret.put("size", challenges.getSize());
+        ret.put("totalElements", challenges.getTotalElements());
+        ret.put("totalPages", challenges.getTotalPages());
+        ret.put("first", challenges.isFirst());
+        ret.put("last", challenges.isLast());
+        ret.put("items", items);
+
+        return ret;
     }
 }

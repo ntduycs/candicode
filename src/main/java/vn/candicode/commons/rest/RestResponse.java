@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -36,15 +37,15 @@ public class RestResponse implements Serializable {
         return new RestResponse(status.value(), status.getReasonPhrase(), data);
     }
 
-    public static RestResponse build(Page<?> data, @Nullable HttpStatus status) {
+    public static RestResponse build(List<String> items, Page<?> dbRecords, @Nullable HttpStatus status) {
         Map<String, Object> dataMap = Map.of(
-            "page", data.getNumber(),
-            "size", data.getSize(),
-            "totalElements", data.getTotalElements(),
-            "totalPages", data.getTotalPages(),
-            "first", data.isFirst(),
-            "last", data.isLast(),
-            "items", data.getContent()
+            "page", dbRecords.getNumber(),
+            "size", dbRecords.getSize(),
+            "totalElements", dbRecords.getTotalElements(),
+            "totalPages", dbRecords.getTotalPages(),
+            "first", dbRecords.isFirst(),
+            "last", dbRecords.isLast(),
+            "items", items
         );
 
         if (status == null) {

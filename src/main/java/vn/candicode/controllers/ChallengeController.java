@@ -1,5 +1,9 @@
 package vn.candicode.controllers;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -12,10 +16,14 @@ import vn.candicode.commons.storage.StorageLocation;
 import vn.candicode.models.User;
 import vn.candicode.payloads.requests.ChallengeRequest;
 import vn.candicode.payloads.responses.ChallengeDetail;
+import vn.candicode.payloads.responses.ChallengeSummary;
 import vn.candicode.payloads.validators.MultipartRequestValidator;
 import vn.candicode.repositories.ChallengeRepository;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.services.ChallengeService;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/challenges")
@@ -64,5 +72,21 @@ public class ChallengeController extends BaseController {
     public ResponseEntity<?> getChallengeById(@PathVariable("id") Long id) {
         ChallengeDetail challengeDetail = service.getChallengeById(id);
         return ResponseEntity.ok(RestResponse.build(challengeDetail, HttpStatus.OK));
+    }
+
+    @GetMapping(path = "")
+    public ResponseEntity<?> getChallenges(@RequestParam(name = "page", defaultValue = "0") int page,
+                                           @RequestParam(name = "size", defaultValue = "10") int perPage,
+                                           @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+                                           @RequestParam(name = "direction", defaultValue = "desc") Sort.Direction direction) {
+        Sort sortingConfig = sortBy != null && direction != null
+            ? Sort.by(direction, sortBy)
+            : Sort.unsorted();
+
+        Pageable pageable = PageRequest.of(page, perPage, sortingConfig);
+
+        Map<String, Object> container = service.getChallenges(pageable);
+
+        return ResponseEntity.ok(RestResponse.build(container, HttpStatus.OK));
     }
 }
