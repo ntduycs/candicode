@@ -23,10 +23,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
@@ -135,16 +132,16 @@ public class ChallengeServiceImpl implements ChallengeService {
             }
         });
 
-//        ChallengeDetail ret = new ChallengeDetail(
-//            challenge.getTitle(),
-//            challenge.getDescriptionPath(),
-//            ,
-//            challenge.getLevel().name(),
-//            challenge.getPoints(),
-//            challenge.getTestcaseInputFormat(),
-//            challenge.getTestcaseOutputFormat(),
-//            contents
-//        )
+        ChallengeDetail ret = new ChallengeDetail(
+            challenge.getTitle(),
+            challenge.getDescription(),
+            Base64.getEncoder().encodeToString(null),
+            challenge.getLevel().name(),
+            challenge.getPoints(),
+            challenge.getTestcaseInputFormat(),
+            challenge.getTestcaseOutputFormat(),
+            contents
+        );
 
         return null;
 

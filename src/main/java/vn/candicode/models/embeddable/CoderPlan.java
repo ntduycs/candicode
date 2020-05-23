@@ -23,11 +23,11 @@ public class CoderPlan implements Serializable {
     @Column(name = "plan_name", nullable = false)
     private vn.candicode.models.enums.CoderPlan name;
 
-    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss.SS")
+    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd")
     @Column(name = "plan_issued_at")
     private LocalDate planIssuedAt;
 
-    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss.SS")
+    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd")
     @Column(name = "plan_expired_at")
     private LocalDate planExpiredAt;
 

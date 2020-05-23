@@ -31,7 +31,7 @@ public class Challenge extends BaseModel {
     @Column(nullable = false)
     @Lob
     @NonNull
-    private String descriptionPath;
+    private String description;
 
     @Column(nullable = false)
     @NonNull
