@@ -26,4 +26,6 @@ public interface ChallengeService {
     Map<String, Object> adjustTestcases(Long challengeId, TestcaseRequest request, User user);
 
     void updateLanguageConfig(Long challengeId, ChallengeConfigRequest request, User user);
+
+    void deleteChallengeSoftly(Long challengeId, User user);
 }

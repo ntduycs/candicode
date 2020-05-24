@@ -3,6 +3,7 @@ package vn.candicode.exceptions.handlers;
 import com.google.common.base.Joiner;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 @Log4j2
@@ -59,6 +60,26 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler impl
         return subErrors;
     }
 
+    private List<SubError> getSubErrors(vn.candicode.exceptions.MethodArgumentNotValidException ex) {
+        List<SubError> subErrors = new ArrayList<>();
+
+        for (Map.Entry<String /*field*/, Object> entry: ex.getBindingResult().entrySet()) {
+            if (entry.getValue() instanceof Pair) {
+                subErrors.add(new SubError(
+                    ((Pair<Object /*value*/, String /*message*/>) entry.getValue()).getSecond(),
+                    entry.getKey() + " was given with value " + ((Pair<Object, String>) entry.getValue()).getFirst()
+                ));
+            }
+
+            subErrors.add(new SubError(
+                String.format("Field '%s' is required but not be given", entry.getKey()),
+                entry.getKey() + " was given with value " + entry.getValue()
+            ));
+        }
+
+        return subErrors;
+    }
+
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -70,6 +91,19 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler impl
         return ResponseEntity.badRequest().body(new RestError(
             status.value(),
             status.getReasonPhrase(),
+            "Method argument not valid",
+            getExceptionClassname(ex),
+            getRequestURI(request),
+            errors
+        ));
+    }
+
+    protected ResponseEntity<Object> handleCustomMethodArgumentNotValid(vn.candicode.exceptions.MethodArgumentNotValidException ex,
+                                                                        @NonNull WebRequest request) {
+        List<SubError> errors = getSubErrors(ex);
+        return ResponseEntity.badRequest().body(new RestError(
+            BAD_REQUEST.value(),
+            BAD_REQUEST.getReasonPhrase(),
             "Method argument not valid",
             getExceptionClassname(ex),
             getRequestURI(request),

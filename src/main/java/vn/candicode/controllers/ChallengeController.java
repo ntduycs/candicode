@@ -123,4 +123,11 @@ public class ChallengeController extends BaseController {
 
         return ResponseEntity.ok(RestResponse.build(null, HttpStatus.OK));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteChallengeSoftly(@PathVariable("id") Long id, @CurrentUser User user) {
+        service.deleteChallengeSoftly(id, user);
+
+        return ResponseEntity.ok(RestResponse.build(null, HttpStatus.OK));
+    }
 }

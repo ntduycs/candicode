@@ -3,21 +3,21 @@ package vn.candicode.services;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.commons.storage.StorageLocation;
-import vn.candicode.exceptions.BadRequestException;
-import vn.candicode.exceptions.ForbiddenException;
-import vn.candicode.exceptions.ResourceNotFoundException;
-import vn.candicode.exceptions.StorageException;
+import vn.candicode.exceptions.*;
 import vn.candicode.models.Challenge;
 import vn.candicode.models.ChallengeConfig;
 import vn.candicode.models.ChallengeTestcase;
 import vn.candicode.models.User;
 import vn.candicode.models.enums.ChallengeLanguage;
 import vn.candicode.models.enums.ChallengeLevel;
+import vn.candicode.models.enums.UserType;
 import vn.candicode.payloads.requests.*;
 import vn.candicode.payloads.responses.ChallengeContent;
 import vn.candicode.payloads.responses.ChallengeDetail;
@@ -30,10 +30,8 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -135,7 +133,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional(readOnly = true)
     public ChallengeDetail getChallengeById(Long id) {
-        Challenge challenge = repository.findById(id)
+        Challenge challenge = repository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", id));
 
         List<ChallengeContent> contents = new ArrayList<>();
@@ -175,7 +173,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     public Map<String, Object> getChallenges(Pageable pageable) {
         Map<String, Object> ret = new LinkedHashMap<>();
 
-        Page<Challenge> challenges = repository.findAll(pageable);
+        Page<Challenge> challenges = repository.findAllByDeletedAtIsNull(pageable);
 
         List<ChallengeSummary> items = challenges.getContent().stream().map(challenge -> new ChallengeSummary(
             challenge.getId(),
@@ -201,7 +199,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Long updateChallengeMetadata(Long id, ChallengeMetadataRequest request, User user) {
-        Challenge challenge = repository.findById(id)
+        Challenge challenge = repository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", id));
 
         if (!challenge.getCreatedBy().equals(user.getId())) {
@@ -229,7 +227,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public Map<String, Object> adjustTestcases(Long challengeId, TestcaseRequest request, User user) {
-        Challenge challenge = repository.findById(challengeId)
+        Challenge challenge = repository.findByIdAndDeletedAtIsNull(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
 
         if (!challenge.getCreatedBy().equals(user.getId())) {
@@ -261,6 +259,12 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public void updateLanguageConfig(Long challengeId, ChallengeConfigRequest request, User user) {
+        Map<String, Object> errors = validate(request);
+
+        if (!errors.isEmpty()) {
+            throw new MethodArgumentNotValidException(errors);
+        }
+
         List<String> removedLanguages = request.getRemovedLanguages().stream()
             .map(String::toUpperCase)
             .collect(Collectors.toList());
@@ -269,8 +273,12 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new BadRequestException("Cannot modify and delete the same config simultaneously");
         }
 
-        Challenge challenge = repository.findById(challengeId)
+        Challenge challenge = repository.findByIdAndDeletedAtIsNull(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
+
+        if (!challenge.getCreatedBy().equals(user.getId()) && !user.getAuthorities().contains(UserType.ADMIN)) {
+            throw new ForbiddenException("Only admin and challenge's owner can do this task");
+        }
 
         /*
         * For each request, user can only add/update a single challenge config, so if this flag is set to true,
@@ -313,6 +321,77 @@ public class ChallengeServiceImpl implements ChallengeService {
         * */
         challenge.removeConfigs(removedConfigs);
         challenge.addConfigs(addedConfigs);
+
+        repository.save(challenge);
+    }
+
+    private Map<String, Object> validate(ChallengeConfigRequest request) {
+        if (!StringUtils.hasText(request.getCrudaction())) {
+            return Map.of("crudaction", request.getCrudaction());
+        }
+
+        Map<String, Object> ret = new HashMap<>();
+
+        if (List.of("remove", "update", "update/remove").contains(request.getCrudaction())) {
+            return Map.of("crudaction", Pair.of(request.getCrudaction(), "Should be one of those [\"remove\", \"update\", \"update/remove\"]"));
+        }
+
+        switch (request.getCrudaction().toLowerCase()) {
+            case "update":
+                validateUpdateConfigRequest(request, ret);
+                break;
+            case "remove":
+                validateRemoveConfigRequest(request, ret);
+                break;
+            case "update/remove":
+                validateUpdateConfigRequest(request, ret);
+                validateRemoveConfigRequest(request, ret);
+            default:
+        }
+
+        return ret;
+    }
+
+    private void validateUpdateConfigRequest(ChallengeConfigRequest request, Map<String, Object> bindingResult) {
+        if (!StringUtils.hasText(request.getLanguage())) {
+            bindingResult.put("language", request.getLanguage());
+        } else {
+            try {
+                ChallengeLanguage.valueOf(request.getLanguage().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                bindingResult.put("language", Pair.of(request.getLanguage(), "Given value does not belong to corresponding enum"));
+            }
+        }
+
+        if (!StringUtils.hasText(request.getBuildPath())) {
+            bindingResult.put("buildPath", request.getBuildPath());
+        }
+
+        if (!StringUtils.hasText(request.getEditPath())) {
+            bindingResult.put("editPath", request.getEditPath());
+        }
+
+        if (!StringUtils.hasText(request.getTargetPath())) {
+            bindingResult.put("targetPath", request.getTargetPath());
+        }
+    }
+
+    private void validateRemoveConfigRequest(ChallengeConfigRequest request, Map<String, Object> bindingResult) {
+        if (request.getRemovedLanguages() == null || request.getRemovedLanguages().isEmpty()) {
+            bindingResult.put("removedLanguages", request.getRemovedLanguages());
+        }
+    }
+
+    @Override
+    public void deleteChallengeSoftly(Long challengeId, User user) {
+        Challenge challenge = repository.findByIdAndDeletedAtIsNull(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
+
+        if (!challenge.getCreatedBy().equals(user.getId())) {
+            throw new ForbiddenException("You are not the owner of this challenge");
+        }
+
+        challenge.setDeletedAt(LocalDateTime.now());
 
         repository.save(challenge);
     }
