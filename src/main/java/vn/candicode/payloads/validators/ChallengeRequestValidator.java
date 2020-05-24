@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-@Component
-public class MultipartRequestValidator implements Validator {
+@Component("challenge")
+public class ChallengeRequestValidator implements Validator {
     @Override
     public boolean supports(@NonNull Class<?> cls) {
         return ChallengeRequest.class.isAssignableFrom(cls);
@@ -25,49 +25,49 @@ public class MultipartRequestValidator implements Validator {
         ChallengeRequest request = (ChallengeRequest) o;
 
         if (!StringUtils.hasText(request.getTitle())) {
-            errors.rejectValue("title", "title", new String[]{"title"}, "challenge.field.missing");
+            errors.rejectValue("title", "challenge.field.missing", new String[]{"title"}, "Required field is missing");
         }
 
         if (!StringUtils.hasText(request.getLevel())) {
-            errors.rejectValue("level", "level", new String[]{"level"}, "challenge.field.missing");
+            errors.rejectValue("level", "challenge.field.missing", new String[]{"level"}, "Required field is missing");
         } else {
             try {
                 ChallengeLevel.valueOf(request.getLevel().toUpperCase());
             } catch (IllegalArgumentException e) {
-                errors.rejectValue("level", "level", new String[]{ChallengeLevel.class.getSimpleName()}, "challenge.enum.not-found");
+                errors.rejectValue("level", "challenge.enum.not-found", new String[]{ChallengeLevel.class.getSimpleName()}, "Given value not belong the enum");
             }
+        }
+
+        if (!StringUtils.hasText(request.getDescription())) {
+            errors.rejectValue("description", "challenge.field.missing", new String[]{"description"}, "Required field is missing");
         }
 
         if (request.getBanner() != null && !request.getBanner().isEmpty()) {
             if (!List.of("image/jpeg", "image/png").contains(request.getBanner().getContentType())) {
-                errors.rejectValue("banner", "banner", new String[] {request.getBanner().getContentType()}, "challenge.mime-type.not-supported");
+                errors.rejectValue("banner", "challenge.mime-type.not-supported", new String[]{request.getBanner().getContentType()}, "Mime-type is not supported");
             }
         }
 
-        if (!StringUtils.hasText(request.getTitle())) {
-            errors.rejectValue("description", "challenge.field.missing");
-        }
-
         if (!StringUtils.hasText(request.getLanguage())) {
-            errors.rejectValue("language", "language", new String[]{"language"}, "challenge.field.missing");
+            errors.rejectValue("language", "challenge.field.missing", new String[]{"language"}, "Required field is missing");
         } else {
             try {
                 ChallengeLanguage.valueOf(request.getLanguage().toUpperCase());
             } catch (IllegalArgumentException e) {
-                errors.rejectValue("language", "language", new String[]{ChallengeLanguage.class.getSimpleName()}, "challenge.enum.not-found");
+                errors.rejectValue("language", "challenge.enum.not-found", new String[]{ChallengeLanguage.class.getSimpleName()}, "Given value not belong the enum");
             }
         }
 
         if (!StringUtils.hasText(request.getTargetPath())) {
-            errors.rejectValue("targetPath", "targetPath", new String[]{"targetPath"}, "challenge.field.missing");
+            errors.rejectValue("targetPath", "challenge.field.missing", new String[]{"targetPath"}, "Required field is missing");
         }
 
         if (!StringUtils.hasText(request.getBuildPath())) {
-            errors.rejectValue("buildPath", "buildPath", new String[]{"buildPath"}, "challenge.field.missing");
+            errors.rejectValue("buildPath", "challenge.field.missing", new String[]{"buildPath"}, "Required field is missing");
         }
 
         if (!StringUtils.hasText(request.getTcInputFormat())) {
-            errors.rejectValue("tcInputFormat", "tcInputFormat", new String[]{"tcInputFormat"}, "challenge.field.missing");
+            errors.rejectValue("tcInputFormat", "challenge.field.missing", new String[]{"tcInputFormat"}, "Required field is missing");
         } else {
             try {
                 Pattern.compile(request.getTcInputFormat());
@@ -77,7 +77,7 @@ public class MultipartRequestValidator implements Validator {
         }
 
         if (!StringUtils.hasText(request.getTcOutputFormat())) {
-            errors.rejectValue("tcOutputFormat", "tcOutputFormat", new String[]{"tcOutputFormat"}, "challenge.field.missing");
+            errors.rejectValue("tcOutputFormat", "challenge.field.missing", new String[]{"tcOutputFormat"}, "Required field is missing");
         } else {
             try {
                 Pattern.compile(request.getTcOutputFormat());

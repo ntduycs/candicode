@@ -33,4 +33,7 @@ public class ChallengeDetail implements Serializable {
 
     @NonNull
     private List<ChallengeContent> contents;
+
+    @NonNull
+    private List<Testcase> testcases;
 }

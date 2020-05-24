@@ -1,6 +1,6 @@
 package vn.candicode.controllers;
 
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -8,21 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.commons.rest.RestResponse;
-import vn.candicode.commons.storage.StorageLocation;
 import vn.candicode.models.User;
+import vn.candicode.payloads.requests.ChallengeMetadataRequest;
 import vn.candicode.payloads.requests.ChallengeRequest;
+import vn.candicode.payloads.requests.TestcaseRequest;
 import vn.candicode.payloads.responses.ChallengeDetail;
-import vn.candicode.payloads.responses.ChallengeSummary;
-import vn.candicode.payloads.validators.MultipartRequestValidator;
-import vn.candicode.repositories.ChallengeRepository;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.services.ChallengeService;
 
-import java.util.List;
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -30,17 +29,15 @@ import java.util.Map;
 public class ChallengeController extends BaseController {
     private final ChallengeService service;
 
-    private final MultipartRequestValidator validator;
+    private final Validator challengeRequestValidator;
 
-    private final StorageLocation storageLocation;
+    private final Validator challengeMetadataRequestValidator;
 
-    private final ChallengeRepository challengeRepository;
-
-    public ChallengeController(ChallengeService service, MultipartRequestValidator validator, StorageLocation storageLocation, ChallengeRepository challengeRepository) {
+    public ChallengeController(ChallengeService service, @Qualifier("challenge") Validator challengeRequestValidator,
+                               @Qualifier("challengeMetadata") Validator challengeMetadataRequestValidator) {
         this.service = service;
-        this.validator = validator;
-        this.storageLocation = storageLocation;
-        this.challengeRepository = challengeRepository;
+        this.challengeRequestValidator = challengeRequestValidator;
+        this.challengeMetadataRequestValidator = challengeMetadataRequestValidator;
     }
 
     @Override
@@ -50,7 +47,7 @@ public class ChallengeController extends BaseController {
 
     @PostMapping(path = "")
     public ResponseEntity<?> createChallenge(@ModelAttribute ChallengeRequest request, BindingResult bindingResult, @CurrentUser User user) throws BindException {
-        validator.validate(request, bindingResult);
+        challengeRequestValidator.validate(request, bindingResult);
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
@@ -88,5 +85,37 @@ public class ChallengeController extends BaseController {
         Map<String, Object> container = service.getChallenges(pageable);
 
         return ResponseEntity.ok(RestResponse.build(container, HttpStatus.OK));
+    }
+
+    @PostMapping(path = "/{id}")
+    public ResponseEntity<?> editChallengeMetadata(
+        @ModelAttribute ChallengeMetadataRequest request,
+        BindingResult bindingResult,
+        @PathVariable("id") Long id,
+        @CurrentUser User user
+    ) throws BindException {
+        challengeMetadataRequestValidator.validate(request, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
+
+        Long challengeId = service.updateChallengeMetadata(id, request, user);
+
+        return ResponseEntity.ok(RestResponse.build(challengeId, HttpStatus.OK));
+    }
+
+    @PostMapping("/{id}/testcases")
+    public ResponseEntity<?> updateTestcases(@PathVariable("id") Long id,
+                                             @RequestBody @Valid TestcaseRequest request,
+                                             @CurrentUser User user) {
+        Map<String, Object> container = service.adjustTestcases(id, request, user);
+
+        return ResponseEntity.ok(RestResponse.build(container, HttpStatus.OK));
+    }
+
+    @PostMapping("/{id}/configs")
+    public ResponseEntity<?> updateLanguageConfig(@PathVariable("id") Long id) {
+        return null;
     }
 }

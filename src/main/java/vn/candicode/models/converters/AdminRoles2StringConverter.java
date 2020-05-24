@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Converter
-public class List2StringConverter implements AttributeConverter<List<AdminRole>, String> {
+public class AdminRoles2StringConverter implements AttributeConverter<List<AdminRole>, String> {
     @Override
     public String convertToDatabaseColumn(List<AdminRole> enums) {
         List<String> list = new ArrayList<>();

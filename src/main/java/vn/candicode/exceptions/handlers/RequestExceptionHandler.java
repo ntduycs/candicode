@@ -131,7 +131,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler impl
             getRequestURI(request),
             List.of(new SubError(
                 ex.getParameterName() + " should be given with type " + ex.getParameterType(),
-                ex.getParameterName() + "request parameter is missing"
+                ex.getParameterName() + " request parameter is missing"
             ))
         ));
     }

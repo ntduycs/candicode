@@ -1,5 +1,6 @@
 package vn.candicode.services;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -7,14 +8,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.commons.storage.StorageLocation;
+import vn.candicode.exceptions.ForbiddenException;
 import vn.candicode.exceptions.ResourceNotFoundException;
 import vn.candicode.exceptions.StorageException;
 import vn.candicode.models.Challenge;
 import vn.candicode.models.ChallengeConfig;
+import vn.candicode.models.ChallengeTestcase;
 import vn.candicode.models.User;
 import vn.candicode.models.enums.ChallengeLanguage;
 import vn.candicode.models.enums.ChallengeLevel;
+import vn.candicode.payloads.requests.ChallengeMetadataRequest;
 import vn.candicode.payloads.requests.ChallengeRequest;
+import vn.candicode.payloads.requests.Testcase;
+import vn.candicode.payloads.requests.TestcaseRequest;
 import vn.candicode.payloads.responses.ChallengeContent;
 import vn.candicode.payloads.responses.ChallengeDetail;
 import vn.candicode.payloads.responses.ChallengeSummary;
@@ -26,10 +32,15 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository repository;
 
@@ -139,6 +150,12 @@ public class ChallengeServiceImpl implements ChallengeService {
             }
         });
 
+        List<vn.candicode.payloads.responses.Testcase> testcases = challenge.getTestcases().stream().map(testcase -> new vn.candicode.payloads.responses.Testcase(
+            testcase.getInput(),
+            testcase.isPublicTestcase() ? testcase.getExpectedOutput() : null,
+            testcase.isPublicTestcase()
+        )).collect(Collectors.toList());
+
         return new ChallengeDetail(
             challenge.getTitle(),
             challenge.getDescription(),
@@ -147,7 +164,8 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.getPoints(),
             challenge.getTestcaseInputFormat(),
             challenge.getTestcaseOutputFormat(),
-            contents
+            contents,
+            testcases
         );
 
     }
@@ -179,5 +197,64 @@ public class ChallengeServiceImpl implements ChallengeService {
         ret.put("items", items);
 
         return ret;
+    }
+
+    @Override
+    public Long updateChallengeMetadata(Long id, ChallengeMetadataRequest request, User user) {
+        Challenge challenge = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", id));
+
+        if (!challenge.getCreatedBy().equals(user.getId())) {
+            throw new ForbiddenException("You are not the owner of this challenge");
+        }
+
+        String bannerPath = null;
+
+        try {
+            if (request.getBanner() != null && !request.getBanner().isEmpty()) {
+                bannerPath = storeFiles(request.getBanner(), user);
+            }
+        } catch (IOException e) {
+            log.error("Error when storing banner image of challenge having id - {}. Message: {}", id, e.getMessage());
+        }
+
+        challenge.setTitle(request.getTitle());
+        challenge.setDescription(request.getDescription());
+        challenge.setLevel(ChallengeLevel.valueOf(request.getLevel().toUpperCase()));
+        challenge.setBannerPath(bannerPath != null ? bannerPath : challenge.getBannerPath());
+
+        return repository.save(challenge).getId();
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> adjustTestcases(Long challengeId, TestcaseRequest request, User user) {
+        Challenge challenge = repository.findById(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
+
+        if (!challenge.getCreatedBy().equals(user.getId())) {
+            throw new ForbiddenException("You are not the owner of this challenge");
+        }
+
+        int numValidTestcases = 0;
+        int numInvalidTestcases = 0;
+        List<String> invalidTestcases = new ArrayList<>();
+
+        for (Testcase testcase : request.getTestcases()) {
+            if (Pattern.matches(challenge.getTestcaseInputFormat(), testcase.getInput()) &&
+                Pattern.matches(challenge.getTestcaseOutputFormat(), testcase.getOutput())) {
+                challenge.addTestcase(new ChallengeTestcase(testcase.getInput(), testcase.getOutput(), testcase.getPublicTestcase()));
+                numValidTestcases++;
+            } else {
+                numInvalidTestcases++;
+                invalidTestcases.add(testcase.toString());
+            }
+        }
+
+        return Map.of(
+            "numValidTestcases", numValidTestcases,
+            "numInvalidTestcases", numInvalidTestcases,
+            "invalidTestcases", invalidTestcases
+        );
     }
 }

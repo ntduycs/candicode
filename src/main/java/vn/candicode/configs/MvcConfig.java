@@ -14,8 +14,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import vn.candicode.payloads.converters.String2DirectionConverter;
 import vn.candicode.commons.rest.RestError;
+import vn.candicode.payloads.converters.String2DirectionConverter;
 
 import java.util.Locale;
 import java.util.TimeZone;
@@ -59,8 +59,10 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(Long.parseLong(appProperties.getStorage().get("upload-max-size")));
-        multipartResolver.setMaxUploadSizePerFile(Long.parseLong(appProperties.getStorage().get("upload-max-size-per-file")));
+        multipartResolver.setMaxUploadSize(
+            Long.parseLong(appProperties.getStorage().get("upload-max-size")));
+        multipartResolver.setMaxUploadSizePerFile(
+            Long.parseLong(appProperties.getStorage().get("upload-max-size-per-file")));
         multipartResolver.setDefaultEncoding("UTF-8");
         multipartResolver.setResolveLazily(true);
         return multipartResolver;

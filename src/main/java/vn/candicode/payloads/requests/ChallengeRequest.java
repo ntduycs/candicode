@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class ChallengeRequest extends MultipartRequest {
+public class ChallengeRequest extends ChallengeMultipartRequest {
     @NotBlank(message = "Field 'title' is required but not be given")
     private String title;
 
