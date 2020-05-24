@@ -1,9 +1,6 @@
 package vn.candicode.commons.rest;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
@@ -17,6 +14,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class RestResponse implements Serializable {
     public static final long serialVersionUID = 1L;
 
@@ -26,7 +24,6 @@ public class RestResponse implements Serializable {
     @NonNull
     private String message;
 
-    @NonNull
     private Object result;
 
     public static RestResponse build(Object data, @Nullable HttpStatus status) {

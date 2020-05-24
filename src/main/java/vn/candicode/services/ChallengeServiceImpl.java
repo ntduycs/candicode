@@ -142,7 +142,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         challenge.getConfigurations().forEach(config -> {
             try {
-                contents.add(new ChallengeContent(config.getLanguage().getName().name(), fileUtils.readFile(config.getTargetPath())));
+                contents.add(new ChallengeContent(config.getLanguage().getName().name(), fileUtils.readFile(config.getEditPath())));
             } catch (IOException e) {
                 throw new StorageException("Cannot read file");
             }

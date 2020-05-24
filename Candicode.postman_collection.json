@@ -1,0 +1,1148 @@
+{
+	"info": {
+		"_postman_id": "c77998f3-916a-4171-9659-c344c506e86a",
+		"name": "Candicode",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9507495f-58ef-42fd-af11-e2404d7a7f06",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Language",
+						"value": "vi-VN",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"coder1@gmail.com\",\n\t\"password\":\"khongco123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7d253045-7f78-46de-ab72-2e5d4916b9ea",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Language",
+						"type": "text",
+						"value": "vi-VN"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"coder1@gmail.com\",\n\t\"password\":\"coder1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/current",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CODER: Store",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "vi-VN",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"password\":\"khongco123\",\n\t\"confirmPassword\":\"khongco123\",\n\t\"email\":\"coder1@gmail.com\",\n\t\"firstName\":\"Coder 1\",\n\t\"lastName\":\"Duy\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/coders",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"coders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CODER: Show",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4MDkyNDg0LCJleHAiOjE1ODgxMjg0ODR9.SBVGmXXJ1a8K9oyQLCKCcBdcxx3AZLt1e6zfW9rG1sMHU48MSADxSOqkHd7AannaqvwkoEnIfiIIrwYyUcGgxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/coders/1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"coders",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CODER: Index",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4MDkyNDg0LCJleHAiOjE1ODgxMjg0ODR9.SBVGmXXJ1a8K9oyQLCKCcBdcxx3AZLt1e6zfW9rG1sMHU48MSADxSOqkHd7AannaqvwkoEnIfiIIrwYyUcGgxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/coders?page=0&perPage=2",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"coders"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "perPage",
+							"value": "2"
+						},
+						{
+							"key": "sortBy",
+							"value": "firstname",
+							"disabled": true
+						},
+						{
+							"key": "direction",
+							"value": "asc",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADMIN: Store",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"admin4@gmail.com\",\n\t\"password\":\"admin4\",\n\t\"confirmPassword\":\"admin4\",\n\t\"firstName\":\"Admin 4\",\n\t\"lastName\":\"Duy\",\n\t\"roles\":[\"MAStER\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/admins",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADMIN: Index",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTg5MDE4NDA1LCJleHAiOjE1ODkwNTQ0MDV9.pHRVBladWS0Vvafi_-rLO0aF8K0CeX4unmUrOJznAmIpsUMYWOMMofuiJ8LCEJ7_-PdQm9oaOcGgPeuzuAW60Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/admins?page=0&perPage=2",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"admins"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "perPage",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADMIN: Show",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg3ODU2NTM5LCJleHAiOjE1ODc4NjAxMzl9.i5myCcA8jz-JD8i1IZ0WaQ9M8b9NsWn13sSEg_Yb74VnGgnXpvAjjgYhzu6Y2IX1xXXzBjigo2MS0nlRP1iv4w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/admins/854a5355-3ba1-4337-8a39-b794bd91aeea",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"admins",
+						"854a5355-3ba1-4337-8a39-b794bd91aeea"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjkzNjc5LCJleHAiOjE1OTAzMjk2Nzl9.EDljLRPDl49tNwpxjajQGSgwjP22tjpHuUbgAC0vBgAzFWrK6hPxF3pdIjTDGn4HU2P2FJ59T8tqrOv5LP_9HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Code Challenge 1",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "easy",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "<p></p>",
+							"type": "text"
+						},
+						{
+							"key": "language",
+							"value": "java",
+							"type": "text"
+						},
+						{
+							"key": "buildPath",
+							"value": "/Users/ntduycs/Desktop/challenges/1/e1cbc126-fb86-4531-a5be-d8847f499c9f/excel2csv.py",
+							"type": "text"
+						},
+						{
+							"key": "targetPath",
+							"value": "/Users/ntduycs/Desktop/challenges/1/e1cbc126-fb86-4531-a5be-d8847f499c9f/excel2csv.py",
+							"type": "text"
+						},
+						{
+							"key": "tcInputFormat",
+							"value": "\\d{1,2}",
+							"type": "text"
+						},
+						{
+							"key": "tcOutputFormat",
+							"value": "[a-zA-Z]+",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": "/Users/ntduycs/Desktop/Screen Shot 2020-05-23 at 15.38.59.png"
+						},
+						{
+							"key": "editPath",
+							"value": "/Users/ntduycs/Desktop/challenges/1/e1cbc126-fb86-4531-a5be-d8847f499c9f/excel2csv.py",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: source upload",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjkzNjc5LCJleHAiOjE1OTAzMjk2Nzl9.EDljLRPDl49tNwpxjajQGSgwjP22tjpHuUbgAC0vBgAzFWrK6hPxF3pdIjTDGn4HU2P2FJ59T8tqrOv5LP_9HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "sourceCode",
+							"type": "file",
+							"src": "/Users/ntduycs/Desktop/excel2csv.py.zip"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/source-upload",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"source-upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: get",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjkzNjc5LCJleHAiOjE1OTAzMjk2Nzl9.EDljLRPDl49tNwpxjajQGSgwjP22tjpHuUbgAC0vBgAzFWrK6hPxF3pdIjTDGn4HU2P2FJ59T8tqrOv5LP_9HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "multipart/form-data",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/challenges/3",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: get all",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjkzNjc5LCJleHAiOjE1OTAzMjk2Nzl9.EDljLRPDl49tNwpxjajQGSgwjP22tjpHuUbgAC0vBgAzFWrK6hPxF3pdIjTDGn4HU2P2FJ59T8tqrOv5LP_9HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/challenges",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENG: Edit basic info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Hello World",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "hard",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Something goood",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": []
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"1"
+					]
+				},
+				"description": "Update challenge info basic"
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: edit testcase",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjkzNjc5LCJleHAiOjE1OTAzMjk2Nzl9.EDljLRPDl49tNwpxjajQGSgwjP22tjpHuUbgAC0vBgAzFWrK6hPxF3pdIjTDGn4HU2P2FJ59T8tqrOv5LP_9HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"12\",\n\t\t\t\"output\":\"avC\",\n\t\t\t\"publicTestcase\":true\n\t\t},{\n\t\t\t\"input\":\"23\",\n\t\t\t\"output\":\"acascsa\",\n\t\t\t\"publicTestcase\":false\n\t\t}, {\n\t\t\t\"input\":\"avc\",\n\t\t\t\"output\":\"OK0\"\n\t\t}]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/1/testcases",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"1",
+						"testcases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: edit source language",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjkzNjc5LCJleHAiOjE1OTAzMjk2Nzl9.EDljLRPDl49tNwpxjajQGSgwjP22tjpHuUbgAC0vBgAzFWrK6hPxF3pdIjTDGn4HU2P2FJ59T8tqrOv5LP_9HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"language\":\"python\",\n\t\"editPath\":\"ok\",\n\t\"targetPath\":\"alright\",\n\t\"buildPath\":\"omgdsadasd\",\n\t\"removedLanguages\":[],\n\t\"crudaction\":\"update,update/remove,remove\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/1/configs",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"1",
+						"configs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CHALLENGE: delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Code Challenge 1",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "easy",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "<p></p>",
+							"type": "text"
+						},
+						{
+							"key": "buildPath",
+							"value": "/src/main/Main.java",
+							"type": "text"
+						},
+						{
+							"key": "targetPath",
+							"value": "/src/main/Sort.java",
+							"type": "text"
+						},
+						{
+							"key": "editPath",
+							"value": "/src/main/null.java",
+							"type": "text"
+						},
+						{
+							"key": "tcInputFormat",
+							"value": "[\\d+]",
+							"type": "text"
+						},
+						{
+							"key": "tcOutputFormat",
+							"value": "[\\w*]\\.[a-z]?",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": []
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LANG: Store",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4MjM5OTkwLCJleHAiOjE1ODgyNzU5OTB9.1K0njyB7BrvJhFwYO9d1E05wm0E63A_V1M3iu4fEO4Hs2pHmf3bdtzF60Uu5lSJ2X3ctKT6qrxj6ZXdgXcDuHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"language\":\"SQL\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenge-languages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenge-languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LANG: Show",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4NTgwNDEzLCJleHAiOjE1ODg2MTY0MTN9.AOgd4pU7FwBrg6OSwzHpgQNr-6eQgCv4JbrBSzGb2bRgyblC7nY_OarcoHuyHrnjiwUIAxe1khBldYmG_zJ2Ug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/challenge-languages/3bd0f156-5dd8-4a72-af7f-3e77e698475c",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenge-languages",
+						"3bd0f156-5dd8-4a72-af7f-3e77e698475c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LANG: Index",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4NTgwNDEzLCJleHAiOjE1ODg2MTY0MTN9.AOgd4pU7FwBrg6OSwzHpgQNr-6eQgCv4JbrBSzGb2bRgyblC7nY_OarcoHuyHrnjiwUIAxe1khBldYmG_zJ2Ug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/challenge-languages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenge-languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONSTRAINT: Store",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4NTgwNDEzLCJleHAiOjE1ODg2MTY0MTN9.AOgd4pU7FwBrg6OSwzHpgQNr-6eQgCv4JbrBSzGb2bRgyblC7nY_OarcoHuyHrnjiwUIAxe1khBldYmG_zJ2Ug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"max_attempts\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenge-constraint-types",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenge-constraint-types"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONSTRAINT: Show",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4NTgwNDEzLCJleHAiOjE1ODg2MTY0MTN9.AOgd4pU7FwBrg6OSwzHpgQNr-6eQgCv4JbrBSzGb2bRgyblC7nY_OarcoHuyHrnjiwUIAxe1khBldYmG_zJ2Ug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/challenge-constraint-types/dbe276b2-92ee-4197-b86d-73332d1a14d0",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenge-constraint-types",
+						"dbe276b2-92ee-4197-b86d-73332d1a14d0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONSTRAINT: Index",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTg4NTgwNDEzLCJleHAiOjE1ODg2MTY0MTN9.AOgd4pU7FwBrg6OSwzHpgQNr-6eQgCv4JbrBSzGb2bRgyblC7nY_OarcoHuyHrnjiwUIAxe1khBldYmG_zJ2Ug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/challenge-constraint-types",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenge-constraint-types"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SUBMISSION: store",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjE4ODcxLCJleHAiOjE1OTAyNTQ4NzF9.skfWzsQjjmacK0fkIeBEADRqHXCcZPAjRM-Gj4yoqH-mgEY1Qa_SWqgK_jhkGjUMI1dZxxWQrhmwDCWqRoc1FA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "language",
+							"value": "java",
+							"type": "text"
+						},
+						{
+							"key": "answer",
+							"type": "file",
+							"src": []
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/id/submissions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"id",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SUBMISSION: get all",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "47a501dc-c5eb-4412-858a-cb5dab0d9175",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb2RlcjFAZ21haWwuY29tIiwiaWF0IjoxNTkwMjIxMjczLCJleHAiOjE1OTAyNTcyNzN9.9976hLe07NSlKDJOQt9TqYXhSQbrxcx6S0Mplri-CVRpHUMCNDke7RztiP45lgdd-553Tiz3CivwrJFiBM_Yiw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Language",
+						"type": "text",
+						"value": "vi-VN"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"coder1@gmail.com\",\n\t\"password\":\"coder1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/2/submissions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"2",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

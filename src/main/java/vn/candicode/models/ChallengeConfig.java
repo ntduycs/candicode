@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"id"})
 @Entity
 @Table(name = "challenge_configs")
 @EntityListeners({AuditingEntityListener.class})
