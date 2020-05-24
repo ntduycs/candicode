@@ -17,7 +17,6 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
 @EqualsAndHashCode
 @Entity
 @Table(name = "challenge_configs")

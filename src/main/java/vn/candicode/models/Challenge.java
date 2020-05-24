@@ -58,6 +58,10 @@ public class Challenge extends BaseModel {
         configurations.add(config);
     }
 
+    public void addConfigs(List<ChallengeConfig> configs) {
+        configurations.addAll(configs);
+    }
+
     public void removeConfig(ChallengeLanguage language) {
         for (Iterator<ChallengeConfig> iterator = configurations.iterator(); iterator.hasNext(); ) {
             ChallengeConfig config = iterator.next();
@@ -65,6 +69,19 @@ public class Challenge extends BaseModel {
             if (config.getChallenge().equals(this) && config.getLanguage().getName().equals(language)) {
                 iterator.remove();
                 config.setDeletedAt(LocalDateTime.now());
+            }
+        }
+    }
+
+    public void removeConfigs(List<ChallengeConfig> configs) {
+        if (configurations != null) {
+            for (Iterator<ChallengeConfig> iterator = configurations.iterator(); iterator.hasNext(); ) {
+                ChallengeConfig config = iterator.next();
+
+                if (configs.contains(config)) {
+                    iterator.remove();
+                    config.setDeletedAt(LocalDateTime.now());
+                }
             }
         }
     }

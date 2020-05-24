@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.commons.storage.StorageLocation;
+import vn.candicode.exceptions.BadRequestException;
 import vn.candicode.exceptions.ForbiddenException;
 import vn.candicode.exceptions.ResourceNotFoundException;
 import vn.candicode.exceptions.StorageException;
@@ -17,10 +18,7 @@ import vn.candicode.models.ChallengeTestcase;
 import vn.candicode.models.User;
 import vn.candicode.models.enums.ChallengeLanguage;
 import vn.candicode.models.enums.ChallengeLevel;
-import vn.candicode.payloads.requests.ChallengeMetadataRequest;
-import vn.candicode.payloads.requests.ChallengeRequest;
-import vn.candicode.payloads.requests.Testcase;
-import vn.candicode.payloads.requests.TestcaseRequest;
+import vn.candicode.payloads.requests.*;
 import vn.candicode.payloads.responses.ChallengeContent;
 import vn.candicode.payloads.responses.ChallengeDetail;
 import vn.candicode.payloads.responses.ChallengeSummary;
@@ -156,10 +154,9 @@ public class ChallengeServiceImpl implements ChallengeService {
             testcase.isPublicTestcase()
         )).collect(Collectors.toList());
 
-        return new ChallengeDetail(
+        ChallengeDetail challengeDetail = new ChallengeDetail(
             challenge.getTitle(),
             challenge.getDescription(),
-            challenge.getBannerPath(),
             challenge.getLevel().name(),
             challenge.getPoints(),
             challenge.getTestcaseInputFormat(),
@@ -168,6 +165,9 @@ public class ChallengeServiceImpl implements ChallengeService {
             testcases
         );
 
+        challengeDetail.setBanner(challenge.getBannerPath());
+
+        return challengeDetail;
     }
 
     @Override
@@ -256,5 +256,64 @@ public class ChallengeServiceImpl implements ChallengeService {
             "numInvalidTestcases", numInvalidTestcases,
             "invalidTestcases", invalidTestcases
         );
+    }
+
+    @Override
+    @Transactional
+    public void updateLanguageConfig(Long challengeId, ChallengeConfigRequest request, User user) {
+        List<String> removedLanguages = request.getRemovedLanguages().stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
+
+        if (removedLanguages.contains(request.getLanguage().toUpperCase())) {
+            throw new BadRequestException("Cannot modify and delete the same config simultaneously");
+        }
+
+        Challenge challenge = repository.findById(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
+
+        /*
+        * For each request, user can only add/update a single challenge config, so if this flag is set to true,
+        * the process should be ignored
+        * */
+        boolean updated = false;
+
+        List<ChallengeConfig> removedConfigs = new ArrayList<>();
+        List<ChallengeConfig> addedConfigs = new ArrayList<>();
+
+        for (ChallengeConfig config : challenge.getConfigurations()) {
+            String language = config.getLanguage().getName().name();
+            if (language.equalsIgnoreCase(request.getLanguage())) { // Config has been already existing
+                if (removedLanguages.contains(language)) { // Remove config conditionally
+                    removedConfigs.add(config);
+                }
+
+                if (!updated) {
+                    config.setTargetPath(request.getTargetPath());
+                    config.setBuildPath(request.getBuildPath());
+                    config.setEditPath(request.getEditPath());
+                    updated = true;
+                }
+            } else {
+                if (!updated) {
+                    addedConfigs.add(new ChallengeConfig(
+                        challenge,
+                        inMemoryService.challengeLanguages().get(ChallengeLanguage.valueOf(language)),
+                        request.getTargetPath(),
+                        request.getBuildPath(),
+                        request.getEditPath()
+                    ));
+                    updated = true;
+                }
+            }
+        }
+
+        /*
+        * We do not remove config inside the above loop to avoid {ConcurrentModificationException}
+        * */
+        challenge.removeConfigs(removedConfigs);
+        challenge.addConfigs(addedConfigs);
+
+        repository.save(challenge);
     }
 }

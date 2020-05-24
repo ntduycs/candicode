@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.commons.rest.RestResponse;
 import vn.candicode.models.User;
+import vn.candicode.payloads.requests.ChallengeConfigRequest;
 import vn.candicode.payloads.requests.ChallengeMetadataRequest;
 import vn.candicode.payloads.requests.ChallengeRequest;
 import vn.candicode.payloads.requests.TestcaseRequest;
@@ -115,7 +116,11 @@ public class ChallengeController extends BaseController {
     }
 
     @PostMapping("/{id}/configs")
-    public ResponseEntity<?> updateLanguageConfig(@PathVariable("id") Long id) {
-        return null;
+    public ResponseEntity<?> updateLanguageConfig(@PathVariable("id") Long id,
+                                                  @RequestBody @Valid ChallengeConfigRequest request,
+                                                  @CurrentUser User user) {
+        service.updateLanguageConfig(id, request, user);
+
+        return ResponseEntity.ok(RestResponse.build(null, HttpStatus.OK));
     }
 }

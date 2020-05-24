@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -61,7 +62,7 @@ public class FileUtils {
             destinationDir.mkdirs();
         }
 
-        File challengeDir = new File(destinationDir.getAbsolutePath() + File.separator + Files.getNameWithoutExtension(file.getOriginalFilename()));
+        File challengeDir = new File(destinationDir.getAbsolutePath() + File.separator + UUID.randomUUID().toString());
 
         if (!challengeDir.exists()) {
             challengeDir.mkdirs();

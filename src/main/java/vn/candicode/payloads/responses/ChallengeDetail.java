@@ -16,7 +16,6 @@ public class ChallengeDetail implements Serializable {
     @NonNull
     private String description;
 
-    @NonNull
     private String banner;
 
     @NonNull

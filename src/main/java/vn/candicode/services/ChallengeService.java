@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
 import vn.candicode.models.User;
+import vn.candicode.payloads.requests.ChallengeConfigRequest;
 import vn.candicode.payloads.requests.ChallengeMetadataRequest;
 import vn.candicode.payloads.requests.ChallengeRequest;
 import vn.candicode.payloads.requests.TestcaseRequest;
@@ -23,4 +24,6 @@ public interface ChallengeService {
     Long updateChallengeMetadata(Long id, ChallengeMetadataRequest request, User user);
 
     Map<String, Object> adjustTestcases(Long challengeId, TestcaseRequest request, User user);
+
+    void updateLanguageConfig(Long challengeId, ChallengeConfigRequest request, User user);
 }
