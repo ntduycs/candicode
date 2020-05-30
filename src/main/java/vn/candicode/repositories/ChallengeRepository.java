@@ -11,4 +11,6 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Optional<Challenge> findByIdAndDeletedAtIsNull(Long id);
 
     Page<Challenge> findAllByDeletedAtIsNull(Pageable pageable);
+
+    Page<Challenge> findAllByCreatedByAndDeletedAtIsNull(Long userId, Pageable pageable);
 }

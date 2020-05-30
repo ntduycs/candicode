@@ -29,7 +29,7 @@ import java.util.Collections;
 })
 @Entity
 @Table(name = "users")
-public class User extends BaseModel implements UserDetails {
+public class User extends FullyBaseModel implements UserDetails {
     @NaturalId
     @Column(nullable = false)
     @NonNull String email;

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "testcases")
-public class ChallengeTestcase extends BaseModel {
+public class ChallengeTestcase extends FullyBaseModel {
     @Column(nullable = false)
     @NonNull
     private String input;

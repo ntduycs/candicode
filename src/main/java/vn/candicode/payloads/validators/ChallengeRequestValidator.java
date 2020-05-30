@@ -58,12 +58,12 @@ public class ChallengeRequestValidator implements Validator {
             }
         }
 
-        if (!StringUtils.hasText(request.getTargetPath())) {
-            errors.rejectValue("targetPath", "challenge.field.missing", new String[]{"targetPath"}, "Required field is missing");
+        if (!StringUtils.hasText(request.getRunPath())) {
+            errors.rejectValue("runPath", "challenge.field.missing", new String[]{"runPath"}, "Required field is missing");
         }
 
-        if (!StringUtils.hasText(request.getBuildPath())) {
-            errors.rejectValue("buildPath", "challenge.field.missing", new String[]{"buildPath"}, "Required field is missing");
+        if (!StringUtils.hasText(request.getCompilePath())) {
+            errors.rejectValue("compilePath", "challenge.field.missing", new String[]{"compilePath"}, "Required field is missing");
         }
 
         if (!StringUtils.hasText(request.getTcInputFormat())) {

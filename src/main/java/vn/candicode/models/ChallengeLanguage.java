@@ -12,7 +12,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "challenge_langs")
-public class ChallengeLanguage extends BaseModel {
+public class ChallengeLanguage extends FullyBaseModel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NonNull

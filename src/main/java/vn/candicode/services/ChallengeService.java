@@ -15,11 +15,13 @@ import java.util.Map;
 public interface ChallengeService {
     Long createChallenge(ChallengeRequest request, User user);
 
-    Component parseDirTree(MultipartFile sourceCode, User user);
+    Map<String, Object> parseDirTree(MultipartFile sourceCode, User user);
 
     ChallengeDetail getChallengeById(Long id);
 
     Map<String, Object> getChallenges(Pageable pageable);
+
+    Map<String, Object> getMyChallenges(Pageable pageable, User user);
 
     Long updateChallengeMetadata(Long id, ChallengeMetadataRequest request, User user);
 

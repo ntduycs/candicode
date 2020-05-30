@@ -33,14 +33,23 @@ public class ChallengeConfig implements Serializable {
     @MapsId("languageId")
     private ChallengeLanguage language;
 
-    @Column(nullable = false)
-    private String targetPath;
+    @Column
+    private Boolean compatible = false;
 
     @Column(nullable = false)
-    private String buildPath;
+    private String challengeDir;
 
     @Column(nullable = false)
-    private String editPath;
+    private String implementedPath;
+
+    @Column()
+    private String compilePath;
+
+    @Column(nullable = false)
+    private String runPath;
+
+    @Column(nullable = false)
+    private String nonImplementedPath;
 
     @CreatedDate
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss.SS")
@@ -53,12 +62,14 @@ public class ChallengeConfig implements Serializable {
     @JsonIgnore
     private LocalDateTime deletedAt;
 
-    public ChallengeConfig(Challenge challenge, ChallengeLanguage language, String targetPath, String buildPath, String editPath) {
+    public ChallengeConfig(Challenge challenge, ChallengeLanguage language, String runPath, String compilePath, String implementedPath, String nonImplementedPath, String challengeDir) {
         this.challenge = challenge;
         this.language = language;
         this.id = new ChallengeConfigId(challenge.getId(), language.getId());
-        this.targetPath = targetPath;
-        this.buildPath = buildPath;
-        this.editPath = editPath;
+        this.runPath = runPath;
+        this.compilePath = compilePath;
+        this.implementedPath = implementedPath;
+        this.nonImplementedPath = nonImplementedPath;
+        this.challengeDir = challengeDir;
     }
 }

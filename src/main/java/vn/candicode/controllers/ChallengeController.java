@@ -61,9 +61,9 @@ public class ChallengeController extends BaseController {
 
     @PostMapping(path = "source-upload")
     public ResponseEntity<?> parseDirTree(@RequestParam("sourceCode") MultipartFile sourceCode, @CurrentUser User user) {
-        Component dirTree = service.parseDirTree(sourceCode, user);
+        Map<String, Object> container = service.parseDirTree(sourceCode, user);
 
-        return ResponseEntity.ok(RestResponse.build(dirTree, HttpStatus.OK));
+        return ResponseEntity.ok(RestResponse.build(container, HttpStatus.OK));
     }
 
     @GetMapping(path = "/{id}")
@@ -84,6 +84,23 @@ public class ChallengeController extends BaseController {
         Pageable pageable = PageRequest.of(page, perPage, sortingConfig);
 
         Map<String, Object> container = service.getChallenges(pageable);
+
+        return ResponseEntity.ok(RestResponse.build(container, HttpStatus.OK));
+    }
+
+    @GetMapping(path = "/me")
+    public ResponseEntity<?> getMyChallenges(@RequestParam(name = "page", defaultValue = "0") int page,
+                                             @RequestParam(name = "size", defaultValue = "10") int perPage,
+                                             @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+                                             @RequestParam(name = "direction", defaultValue = "desc") Sort.Direction direction,
+                                             @CurrentUser User user) {
+        Sort sortingConfig = sortBy != null && direction != null
+            ? Sort.by(direction, sortBy)
+            : Sort.unsorted();
+
+        Pageable pageable = PageRequest.of(page, perPage, sortingConfig);
+
+        Map<String, Object> container = service.getMyChallenges(pageable, user);
 
         return ResponseEntity.ok(RestResponse.build(container, HttpStatus.OK));
     }

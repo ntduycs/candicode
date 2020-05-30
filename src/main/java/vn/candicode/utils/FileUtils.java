@@ -1,6 +1,5 @@
 package vn.candicode.utils;
 
-import com.google.common.io.Files;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.commons.dsa.Component;
@@ -14,7 +13,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -44,10 +48,10 @@ public class FileUtils {
         this.storageLocation = storageLocation;
     }
 
-    public Component parseDirTree(MultipartFile file, User user) {
+    public Map<String, Object> parseDirTree(MultipartFile file, User user) {
         try {
             String destDir = unzip(file, user);
-            return parseDirTree(destDir);
+            return Map.of("challengeDir", destDir.substring(destDir.lastIndexOf(File.separator) + 1), "tree", parseDirTree(destDir));
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new StorageException("Cannot unzip file");
@@ -156,5 +160,21 @@ public class FileUtils {
         } catch (IOException e) {
             throw new StorageException("Encode file to String failed");
         }
+    }
+
+    public void copyDirectory(String sourceDir, String destinationDir) throws IOException {
+        Path sourcePath = Paths.get(sourceDir );
+        Path destinationPath = Paths.get(destinationDir);
+
+        Files.walk(sourcePath)
+            .forEach(element -> {
+                try {
+                    Path targetPath = destinationPath.resolve(sourcePath.relativize(element));
+                    log.info("Copying {} to {}", element, targetPath);
+                    Files.copy(element, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    log.error("I/O error: {}", e.getMessage());
+                }
+            });
     }
 }

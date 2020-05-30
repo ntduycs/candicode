@@ -14,15 +14,19 @@ public class ChallengeConfigRequest {
     @Enum(target = ChallengeLanguage.class)
     private String language;
 
-    private String targetPath;
+    private String runPath;
 
-    private String buildPath;
+    private String compilePath;
 
-    private String editPath;
+    private String implementedPath;
+
+    private String nonImplementedPath;
 
     @Enum(target = ChallengeLanguage.class)
     private List<String> removedLanguages;
 
     private String crudaction;
+
+    private String challengeDir;
 
 }

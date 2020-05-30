@@ -31,14 +31,17 @@ public class ChallengeRequest extends ChallengeMultipartRequest {
     @Enum(target = ChallengeLanguage.class)
     private String language;
 
-    @NotBlank(message = "Field 'targetPath' is required but not be given")
-    private String targetPath;
+    @NotBlank(message = "Field 'runPath' is required but not be given")
+    private String runPath;
 
-    @NotBlank(message = "Field 'buildPath' is required but not be given")
-    private String buildPath;
+    @NotBlank(message = "Field 'compilePath' is required but not be given")
+    private String compilePath;
 
-    @NotBlank(message = "Field 'editPath' is required but not be given")
-    private String editPath;
+    @NotBlank(message = "Field 'implementedPath' is required but not be given")
+    private String implementedPath;
+
+    @NotBlank(message = "Field 'nonImplementedPath' is required but not be given")
+    private String nonImplementedPath;
 
     @NotBlank(message = "Field 'tcInputFormat' is required but not be given")
     @Regex
@@ -47,4 +50,7 @@ public class ChallengeRequest extends ChallengeMultipartRequest {
     @NotBlank(message = "Field 'tcOutputFormat' is required but not be given")
     @Regex
     private String tcOutputFormat;
+
+    @NotBlank(message = "Field 'challengeDir' is required but not be given")
+    private String challengeDir;
 }

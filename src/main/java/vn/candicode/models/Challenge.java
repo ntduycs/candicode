@@ -18,7 +18,16 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, exclude = {"description"})
 @Entity
 @Table(name = "challenges", indexes = {@Index(columnList = "title")})
-public class Challenge extends BaseModel {
+public class Challenge extends PartialBaseModel {
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by", nullable = false)
+    @NonNull
+    private User createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
+
     @Column(nullable = false)
     @NonNull
     private String title;

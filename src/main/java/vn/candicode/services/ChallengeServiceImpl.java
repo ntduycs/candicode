@@ -71,6 +71,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             }
 
             Challenge challenge = new Challenge(
+                user,
                 request.getTitle(),
                 level,
                 request.getDescription(),
@@ -86,9 +87,11 @@ public class ChallengeServiceImpl implements ChallengeService {
             ChallengeConfig config = new ChallengeConfig(
                 challenge,
                 inMemoryService.challengeLanguages().get(ChallengeLanguage.valueOf(request.getLanguage().toUpperCase())),
-                request.getTargetPath(),
-                request.getBuildPath(),
-                request.getEditPath()
+                request.getRunPath(),
+                request.getCompilePath(),
+                request.getImplementedPath(),
+                request.getNonImplementedPath(),
+                request.getChallengeDir()
             );
 
             repository.findById(challenge.getId()).ifPresentOrElse(c -> c.addConfig(config), () -> {
@@ -126,7 +129,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Component parseDirTree(MultipartFile sourceCode, User user) {
+    public Map<String, Object> parseDirTree(MultipartFile sourceCode, User user) {
         return fileUtils.parseDirTree(sourceCode, user);
     }
 
@@ -140,7 +143,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         challenge.getConfigurations().forEach(config -> {
             try {
-                contents.add(new ChallengeContent(config.getLanguage().getName().name(), fileUtils.readFile(config.getEditPath())));
+                contents.add(new ChallengeContent(config.getLanguage().getName().name(), fileUtils.readFile(config.getNonImplementedPath())));
             } catch (IOException e) {
                 throw new StorageException("Cannot read file");
             }
@@ -175,6 +178,21 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         Page<Challenge> challenges = repository.findAllByDeletedAtIsNull(pageable);
 
+        return wrapChallenges2Container(ret, challenges);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getMyChallenges(Pageable pageable, User user) {
+        Map<String, Object> ret = new LinkedHashMap<>();
+
+        Page<Challenge> challenges = repository.findAllByCreatedByAndDeletedAtIsNull(user.getId(), pageable);
+
+        return wrapChallenges2Container(ret, challenges);
+    }
+
+    // TODO: Modify to return last 4 fields
+    private Map<String, Object> wrapChallenges2Container(Map<String, Object> ret, Page<Challenge> challenges) {
         List<ChallengeSummary> items = challenges.getContent().stream().map(challenge -> new ChallengeSummary(
             challenge.getId(),
             challenge.getTitle(),
@@ -183,7 +201,13 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.getLevel().name(),
             challenge.getPoints(),
             challenge.getConfigurations().stream().map(config -> config.getLanguage().getName().name()).collect(Collectors.toList()),
-            0L
+            challenge.getCreatedAt().toString(),
+            5L,
+            10L,
+            "Duy Nguyen",
+            List.of("Algorithm", "Complexity"),
+            4.2f,
+            35
         )).collect(Collectors.toList());
 
         ret.put("page", challenges.getNumber());
@@ -202,7 +226,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         Challenge challenge = repository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", id));
 
-        if (!challenge.getCreatedBy().equals(user.getId())) {
+        if (!challenge.getCreatedBy().getId().equals(user.getId())) {
             throw new ForbiddenException("You are not the owner of this challenge");
         }
 
@@ -230,7 +254,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         Challenge challenge = repository.findByIdAndDeletedAtIsNull(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
 
-        if (!challenge.getCreatedBy().equals(user.getId())) {
+        if (!challenge.getCreatedBy().getId().equals(user.getId())) {
             throw new ForbiddenException("You are not the owner of this challenge");
         }
 
@@ -276,7 +300,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         Challenge challenge = repository.findByIdAndDeletedAtIsNull(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
 
-        if (!challenge.getCreatedBy().equals(user.getId()) && !user.getAuthorities().contains(UserType.ADMIN)) {
+        if (!challenge.getCreatedBy().getId().equals(user.getId()) && !user.getAuthorities().contains(UserType.ADMIN)) {
             throw new ForbiddenException("Only admin and challenge's owner can do this task");
         }
 
@@ -297,9 +321,10 @@ public class ChallengeServiceImpl implements ChallengeService {
                 }
 
                 if (!updated) {
-                    config.setTargetPath(request.getTargetPath());
-                    config.setBuildPath(request.getBuildPath());
-                    config.setEditPath(request.getEditPath());
+                    config.setRunPath(request.getRunPath());
+                    config.setCompilePath(request.getCompilePath());
+                    config.setImplementedPath(request.getImplementedPath());
+                    config.setNonImplementedPath(request.getNonImplementedPath());
                     updated = true;
                 }
             } else {
@@ -307,9 +332,11 @@ public class ChallengeServiceImpl implements ChallengeService {
                     addedConfigs.add(new ChallengeConfig(
                         challenge,
                         inMemoryService.challengeLanguages().get(ChallengeLanguage.valueOf(language)),
-                        request.getTargetPath(),
-                        request.getBuildPath(),
-                        request.getEditPath()
+                        request.getRunPath(),
+                        request.getCompilePath(),
+                        request.getImplementedPath(),
+                        request.getNonImplementedPath(),
+                        request.getChallengeDir()
                     ));
                     updated = true;
                 }
@@ -363,16 +390,20 @@ public class ChallengeServiceImpl implements ChallengeService {
             }
         }
 
-        if (!StringUtils.hasText(request.getBuildPath())) {
-            bindingResult.put("buildPath", request.getBuildPath());
+        if (!StringUtils.hasText(request.getRunPath())) {
+            bindingResult.put("runPath", request.getRunPath());
         }
 
-        if (!StringUtils.hasText(request.getEditPath())) {
-            bindingResult.put("editPath", request.getEditPath());
+        if (!StringUtils.hasText(request.getCompilePath())) {
+            bindingResult.put("compilePath", request.getCompilePath());
         }
 
-        if (!StringUtils.hasText(request.getTargetPath())) {
-            bindingResult.put("targetPath", request.getTargetPath());
+        if (!StringUtils.hasText(request.getImplementedPath())) {
+            bindingResult.put("implementedPath", request.getImplementedPath());
+        }
+
+        if (!StringUtils.hasText(request.getNonImplementedPath())) {
+            bindingResult.put("nonImplementedPath", request.getNonImplementedPath());
         }
     }
 
@@ -387,7 +418,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         Challenge challenge = repository.findByIdAndDeletedAtIsNull(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge", "id", challengeId));
 
-        if (!challenge.getCreatedBy().equals(user.getId())) {
+        if (!challenge.getCreatedBy().getId().equals(user.getId())) {
             throw new ForbiddenException("You are not the owner of this challenge");
         }
 
