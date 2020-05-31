@@ -19,7 +19,9 @@ import vn.candicode.repositories.SubmissionRepository;
 import vn.candicode.repositories.TestcaseRepository;
 import vn.candicode.utils.FileUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -70,9 +72,9 @@ public class SubmissionServiceImpl implements SubmissionService {
         ChallengeConfig challengeConfig = challengeConfigRepository.findByChallengeAndLanguage(challenge, language)
             .orElseThrow(() -> new ResourceNotFoundException("Challenge Config", "{challengeId and language}", String.format("%s and %s", request.getChallengeId(), request.getCodeLanguage())));
 
-        String challengeSourceDir = challengeConfig.getRunPath().substring(0, challengeConfig.getRunPath().lastIndexOf(File.separator));
+        String challengeSourceDir = storageLocation.getChallengeStorageLocationByUser(user.getId()) + File.separator + challengeConfig.getChallengeDir();
 
-        String challengeSubmissionDir = storageLocation.getSubmissionStorageLocationByUser(user.getId()).toString();
+        String challengeSubmissionDir = storageLocation.getSubmissionStorageLocationByUser(user.getId()).toString() + File.separator + challengeConfig.getChallengeDir();
 
         try {
             fileUtils.copyDirectory(challengeSourceDir, challengeSubmissionDir);
@@ -80,6 +82,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             log.error("\n\nError when copying source code to submission folder. Message - {}", e.getMessage());
             throw new StorageException("Error when copying source code to submission folder.");
         }
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(challengeConfig.getNonImplementedPath().replaceFirst("challenges", "submissions")))
 
         return null;
     }
