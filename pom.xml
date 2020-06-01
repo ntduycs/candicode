@@ -20,6 +20,7 @@
         <guava.version>29.0-jre</guava.version>
         <hibernate-module.version>2.11.0</hibernate-module.version>
         <commons-fileupload.version>1.4</commons-fileupload.version>
+        <tika-core.version>1.24.1</tika-core.version>
     </properties>
 
     <dependencies>
@@ -47,8 +48,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -97,6 +98,11 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>${commons-fileupload.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>${tika-core.version}</version>
         </dependency>
 
     </dependencies>
