@@ -30,4 +30,8 @@ public class GenericResponse implements Serializable {
 
         return new GenericResponse(status.value(), status.getReasonPhrase(), result);
     }
+
+    public static GenericResponse from(Object result) {
+        return from(result, OK);
+    }
 }

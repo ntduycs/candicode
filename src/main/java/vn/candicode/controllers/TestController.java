@@ -40,4 +40,9 @@ public class TestController extends GenericController {
 
         return ResponseEntity.ok().body(Map.of("message", "Copied successfully"));
     }
+
+    @Override
+    protected String getResourceBasePath() {
+        return "test";
+    }
 }

@@ -61,6 +61,10 @@ public class WebTokenProvider {
         return DatetimeUtils.asLocalDateTime(expiration);
     }
 
+    public String getTokenType() {
+        return "Bearer";
+    }
+
     public boolean validate(String token) {
         try {
             Jwts.parser().setSigningKey(TOKEN_SECRET).parseClaimsJws(token);
