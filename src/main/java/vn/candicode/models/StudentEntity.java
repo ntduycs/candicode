@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Loader;
 
 import javax.persistence.*;
 
@@ -13,8 +12,6 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "students")
-@Loader(namedQuery = "findStudentEntityByUserId")
-@NamedQuery(name = "findStudentEntityByUserId", query = "select u from StudentEntity u where u.userId = ?1 and u.deletedAt is null")
 @NoArgsConstructor
 public class StudentEntity extends UserEntity {
     @Column

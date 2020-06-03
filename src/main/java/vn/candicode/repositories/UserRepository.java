@@ -6,5 +6,7 @@ import vn.candicode.models.UserEntity;
 import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<UserEntity, Long> {
-    Optional<UserEntity> findUserEntitiesByEmail(String email);
+    Optional<UserEntity> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

@@ -6,5 +6,5 @@ import vn.candicode.models.StudentEntity;
 import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
-    Optional<StudentEntity> findStudentEntityByUserId(Long id);
+    Optional<StudentEntity> findByUserId(Long id);
 }

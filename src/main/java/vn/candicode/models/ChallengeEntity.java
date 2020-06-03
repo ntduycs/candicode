@@ -4,10 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Loader;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import vn.candicode.models.enums.ChallengeLevel;
 
 import javax.persistence.*;
@@ -20,11 +17,6 @@ import java.util.List;
 @EqualsAndHashCode(of = {"challengeId"}, callSuper = false)
 @Entity
 @Table(name = "challenges")
-@SQLDelete(sql = "update challenge set deleted_at = now() where challenge_id = ?")
-@Loader(namedQuery = "findChallengeEntityByChallengeId")
-@NamedQuery(name = "findChallengeEntityByChallengeId",
-    query = "select c from ChallengeEntity c " + "where c.challengeId = ?1 and c.deletedAt is null")
-@Where(clause = "deleted_at is null")
 public class ChallengeEntity extends GenericEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

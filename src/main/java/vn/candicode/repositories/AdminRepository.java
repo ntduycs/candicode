@@ -6,5 +6,5 @@ import vn.candicode.models.AdminEntity;
 import java.util.Optional;
 
 public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
-    Optional<AdminEntity> findAdminEntityByUserId(Long id);
+    Optional<AdminEntity> findByUserId(Long id);
 }

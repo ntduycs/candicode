@@ -6,5 +6,5 @@ import vn.candicode.models.ChallengeEntity;
 import java.util.Optional;
 
 public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long> {
-    Optional<ChallengeEntity> findChallengeEntityByChallengeId(Long id);
+    Optional<ChallengeEntity> findByChallengeId(Long id);
 }
