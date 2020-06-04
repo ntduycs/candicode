@@ -4,12 +4,12 @@ import lombok.Getter;
 import vn.candicode.common.structure.composite.LeafNode;
 
 @Getter
-public class AntLeafNode extends LeafNode {
+public class AntdLeafNode extends LeafNode implements AntdNode {
     private final String label;
     private final String value;
     private final String type = "file";
 
-    public AntLeafNode(String label, String value) {
+    public AntdLeafNode(String label, String value) {
         this.label = label;
         this.value = value;
     }

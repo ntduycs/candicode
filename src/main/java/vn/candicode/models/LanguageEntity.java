@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 import vn.candicode.models.enums.LanguageName;
 
 import javax.persistence.*;
@@ -12,6 +13,8 @@ import javax.persistence.*;
 @Setter
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"name"})
+@Entity
+@Table(name = "languages")
 public class LanguageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -20,5 +23,6 @@ public class LanguageEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NaturalId
     private LanguageName name;
 }

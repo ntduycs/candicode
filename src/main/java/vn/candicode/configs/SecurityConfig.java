@@ -12,19 +12,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import vn.candicode.security.UserPrincipalService;
 import vn.candicode.security.WebEntryPoint;
 import vn.candicode.security.WebTokenFilter;
-import vn.candicode.security.WebUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     final WebEntryPoint entryPoint;
-    final WebUserDetailsService userDetailsService;
+    final UserPrincipalService userDetailsService;
     final WebTokenFilter tokenFilter;
 
     public SecurityConfig(WebEntryPoint entryPoint,
-                          WebUserDetailsService userDetailsService,
+                          UserPrincipalService userDetailsService,
                           WebTokenFilter tokenFilter) {
         this.entryPoint = entryPoint;
         this.userDetailsService = userDetailsService;

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.candicode.payloads.GenericResponse;
 import vn.candicode.payloads.requests.LoginRequest;
 import vn.candicode.security.CurrentUser;
+import vn.candicode.security.UserPrincipal;
 import vn.candicode.security.WebTokenProvider;
-import vn.candicode.security.WebUserDetails;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class LoginController extends GenericController {
     }
 
     @GetMapping("/auth/current")
-    public ResponseEntity<?> currentUser(@CurrentUser WebUserDetails currentUser) {
+    public ResponseEntity<?> currentUser(@CurrentUser UserPrincipal currentUser) {
         return ResponseEntity.ok(GenericResponse.from(currentUser));
     }
 

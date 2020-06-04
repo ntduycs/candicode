@@ -20,9 +20,9 @@ import java.io.IOException;
 @Log4j2
 public class WebTokenFilter extends OncePerRequestFilter {
     final WebTokenProvider tokenProvider;
-    final WebUserDetailsService userDetailsService;
+    final UserPrincipalService userDetailsService;
 
-    public WebTokenFilter(WebTokenProvider tokenProvider, WebUserDetailsService userDetailsService) {
+    public WebTokenFilter(WebTokenProvider tokenProvider, UserPrincipalService userDetailsService) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
     }

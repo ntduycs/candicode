@@ -39,6 +39,9 @@ public class ChallengeEntity extends GenericEntity {
     @Column
     private String banner;
 
+    @Column
+    private Integer point;
+
     @Column(nullable = false, name = "tc_in_format")
     private String testcaseInputFormat;
 

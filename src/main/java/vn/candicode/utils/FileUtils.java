@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -140,5 +142,19 @@ public class FileUtils {
                     log.error("Error when copying file {}: {}", copiedDirPath.toString(), e.getMessage());
                 }
             });
+    }
+
+    public static String generateFileName(String originalFilename, Object subject) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        return timestamp + "-" + subject + "-" + originalFilename;
+    }
+
+    public static String generateDirectoryName(String filenameWoExtension, Object subject) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        return timestamp + "-" + subject + "-" + filenameWoExtension;
+    }
+
+    public static String getFilenameWoExtension(String originalFilename) {
+        return originalFilename.substring(0, originalFilename.lastIndexOf("."));
     }
 }
