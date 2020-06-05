@@ -18,6 +18,7 @@ public class StudentEntity extends UserEntity {
     private Long gainedPoint = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id")
     private PlanEntity plan;
 
     public StudentEntity(String email, String password, String firstName, String lastName) {

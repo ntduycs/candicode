@@ -6,7 +6,7 @@ public interface GenericExceptionHandler {
     boolean includeClientInfo = false;
 
     default String getRequestUri(WebRequest webRequest) {
-        return webRequest.getDescription(includeClientInfo);
+        return webRequest.getDescription(includeClientInfo).substring(4);
     }
 
     default String getExceptionName(Exception e) {

@@ -11,6 +11,8 @@ public class DatetimeUtils {
     private DatetimeUtils() {
     }
 
+    public static final DateTimeFormatter DEFAULT_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.SSS");
+
     public static Date asDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
@@ -25,9 +27,5 @@ public class DatetimeUtils {
 
     public static LocalDateTime asLocalDateTime(Date date) {
         return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    public static DateTimeFormatter getDatetimeFormatter() {
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS");
     }
 }

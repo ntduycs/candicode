@@ -2,7 +2,6 @@ package vn.candicode.utils;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.tika.Tika;
-import vn.candicode.exceptions.FileNotFoundException;
 import vn.candicode.exceptions.UnsupportedFileTypeException;
 
 import java.io.*;
@@ -74,8 +73,8 @@ public class FileUtils {
             throw new UnsupportedFileTypeException(mimeType, ZIP_MIME_TYPES, RAR_MIME_TYPES);
         }
 
-        if (destinationDirectory.isFile() || !destinationDirectory.exists()) {
-            throw new FileNotFoundException("Cannot unzip file. Destination does not exist or is a regular file");
+        if (!destinationDirectory.exists()) {
+            Files.createDirectory(Paths.get(destinationDirectory.getAbsolutePath()));
         }
 
         log.info("Unzipping file " + file.getName() + " ...");

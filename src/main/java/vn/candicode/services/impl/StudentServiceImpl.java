@@ -9,6 +9,12 @@ import vn.candicode.payloads.requests.StudentRequest;
 import vn.candicode.repositories.StudentRepository;
 import vn.candicode.services.StorageService;
 import vn.candicode.services.StudentService;
+import vn.candicode.utils.PreloadEntities;
+
+import java.util.Set;
+
+import static vn.candicode.models.enums.PlanName.BASIC;
+import static vn.candicode.models.enums.Role.STUDENT;
 
 @Service
 @Log4j2
@@ -19,12 +25,16 @@ public class StudentServiceImpl implements StudentService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final PreloadEntities preloadEntities;
+
     public StudentServiceImpl(StorageService storageService,
                               StudentRepository studentRepository,
-                              PasswordEncoder passwordEncoder) {
+                              PasswordEncoder passwordEncoder,
+                              PreloadEntities preloadEntities) {
         this.storageService = storageService;
         this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
+        this.preloadEntities = preloadEntities;
     }
 
     /**
@@ -44,6 +54,10 @@ public class StudentServiceImpl implements StudentService {
             payload.getFirstName(),
             payload.getLastName()
         );
+
+        studentEntity.setPlan(preloadEntities.getPlanEntities().get(BASIC));
+
+        studentEntity.setRoles(Set.of(STUDENT));
 
         studentEntity = studentRepository.save(studentEntity);
 

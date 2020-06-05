@@ -35,10 +35,14 @@ public class Belong2EnumValidator extends GenericValidator implements Constraint
         }
 
         try {
-            return (boolean) clazz.getDeclaredMethod("valueOf", String.class).invoke(null, str.toUpperCase());
+            clazz.getDeclaredMethod("valueOf", String.class).invoke(null, str.toUpperCase());
+            return VALID;
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error(e.getMessage());
             return NO_NEED_VALIDATE;
+        } catch (IllegalArgumentException e) {
+            log.info(e.getMessage());
+            return INVALID;
         }
     }
 

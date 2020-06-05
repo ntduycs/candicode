@@ -19,8 +19,8 @@ public class UserPrincipalService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(s)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + s));
+        UserEntity user = userRepository.findByEmailFetchedRoles(s)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + s));
 
         return UserPrincipal.from(user);
     }

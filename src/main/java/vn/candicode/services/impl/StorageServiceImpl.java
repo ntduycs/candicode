@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.common.structure.composite.Node;
 import vn.candicode.common.structure.composite.impl.CCDirectory;
 import vn.candicode.common.structure.composite.impl.CCFile;
+import vn.candicode.models.ChallengeConfigEntity;
+import vn.candicode.models.ChallengeEntity;
 import vn.candicode.services.StorageService;
 import vn.candicode.utils.FileUtils;
 
@@ -20,7 +22,7 @@ import java.util.Map;
 @Service
 @Log4j2
 public class StorageServiceImpl implements StorageService {
-    private static final String ROOT_DIR = System.getProperty("user.home") + File.separator + "Desktop";
+    private static final String ROOT_DIR = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "Candicode";
 
     public StorageServiceImpl() throws IOException, SecurityException {
         boolean initSuccess = createRequiredDirectories();
@@ -52,7 +54,11 @@ public class StorageServiceImpl implements StorageService {
         String filenameWoExtension = FileUtils.getFilenameWoExtension(zipFile.getOriginalFilename());
         String challengeDir = getChallengeDirByUserId(id) + File.separator + FileUtils.generateDirectoryName(filenameWoExtension, id);
 
-        FileUtils.unzip(zipFile.getResource().getFile(), new File(challengeDir));
+        File tempFile = new File(getTempDir() + File.separator + zipFile.getOriginalFilename());
+
+        zipFile.transferTo(tempFile);
+
+        FileUtils.unzip(tempFile, new File(challengeDir));
 
         return challengeDir;
     }
@@ -115,6 +121,17 @@ public class StorageServiceImpl implements StorageService {
         String eliminatedPath = getEliminatedPath(factor, parameters);
 
         return path.replaceFirst(eliminatedPath, "");
+    }
+
+    @Override
+    public String getNonImplementedPathByChallengeAndConfig(ChallengeEntity challenge, ChallengeConfigEntity config) {
+        Long authorId = challenge.getAuthor().getUserId();
+
+        return getChallengeDirByUserId(authorId) + config.getChallengeDir() + config.getNonImplementedPath();
+    }
+
+    private String getTempDir() {
+        return ROOT_DIR + File.separator + "temp";
     }
 
     private String getChallengeRootDir() {
@@ -180,6 +197,10 @@ public class StorageServiceImpl implements StorageService {
 
         if (!Files.exists(Paths.get(getBannerRootDir()))) {
             initSuccess = (new File(getBannerRootDir()).mkdirs());
+        }
+
+        if (!Files.exists(Paths.get(getTempDir()))) {
+            initSuccess = (new File(getTempDir()).mkdirs());
         }
 
         return initSuccess;

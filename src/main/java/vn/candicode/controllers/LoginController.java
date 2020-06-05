@@ -15,6 +15,7 @@ import vn.candicode.payloads.requests.LoginRequest;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.security.WebTokenProvider;
+import vn.candicode.utils.DatetimeUtils;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class LoginController extends GenericController {
             Map.of(
                 "token", token,
                 "tokenType", tokenProvider.getTokenType(),
-                "expiration", tokenProvider.getExpiration(token),
+                "expiration", tokenProvider.getExpiration(token).format(DatetimeUtils.DEFAULT_DATETIME_FORMAT),
                 "roles", authentication.getAuthorities()
             )
         ));

@@ -1,4 +1,6 @@
 package vn.candicode.payloads;
 
-public class GenericRequest {
+import java.io.Serializable;
+
+public class GenericRequest implements Serializable {
 }
