@@ -11,6 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 public class SourceCodeStructure implements Serializable {
-    private String root;
-    private List<AntdNode> nodes = new ArrayList<>();
+    private String challengeDir;
+    private List<AntdNode> children = new ArrayList<>();
 }

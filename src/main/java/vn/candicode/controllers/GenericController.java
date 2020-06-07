@@ -33,6 +33,6 @@ public abstract class GenericController {
             ? Sort.by(direction, sortBy)
             : Sort.unsorted();
 
-        return PageRequest.of(page, size, sortConfig);
+        return PageRequest.of(page - 1, size, sortConfig);
     }
 }

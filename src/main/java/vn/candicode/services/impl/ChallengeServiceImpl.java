@@ -2,6 +2,8 @@ package vn.candicode.services.impl;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -12,6 +14,7 @@ import vn.candicode.exceptions.*;
 import vn.candicode.models.ChallengeConfigEntity;
 import vn.candicode.models.ChallengeEntity;
 import vn.candicode.models.TestcaseEntity;
+import vn.candicode.models.dtos.ChallengeLanguageDTO;
 import vn.candicode.models.enums.ChallengeLevel;
 import vn.candicode.models.enums.LanguageName;
 import vn.candicode.payloads.requests.NewChallengeRequest;
@@ -19,9 +22,7 @@ import vn.candicode.payloads.requests.SubmissionRequest;
 import vn.candicode.payloads.requests.TestcaseRequest;
 import vn.candicode.payloads.requests.TestcasesRequest;
 import vn.candicode.payloads.responses.*;
-import vn.candicode.repositories.ChallengeConfigRepository;
-import vn.candicode.repositories.ChallengeRepository;
-import vn.candicode.repositories.TestcaseRepository;
+import vn.candicode.repositories.*;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.services.ChallengeService;
 import vn.candicode.services.StorageService;
@@ -37,10 +38,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -56,6 +54,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeConfigRepository challengeConfigRepository;
     private final TestcaseRepository testcaseRepository;
+    private final SubmissionRepository submissionRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
     private PreloadEntities preloadEntities;
@@ -66,11 +66,15 @@ public class ChallengeServiceImpl implements ChallengeService {
     public ChallengeServiceImpl(StorageService storageService,
                                 ChallengeRepository challengeRepository,
                                 ChallengeConfigRepository challengeConfigRepository,
-                                TestcaseRepository testcaseRepository) {
+                                TestcaseRepository testcaseRepository,
+                                SubmissionRepository submissionRepository,
+                                CommentRepository commentRepository) {
         this.storageService = storageService;
         this.challengeRepository = challengeRepository;
         this.challengeConfigRepository = challengeConfigRepository;
         this.testcaseRepository = testcaseRepository;
+        this.submissionRepository = submissionRepository;
+        this.commentRepository = commentRepository;
     }
 
     /**
@@ -141,8 +145,8 @@ public class ChallengeServiceImpl implements ChallengeService {
             String challengeDirname = challengeDir.substring(challengeDir.lastIndexOf(File.separator));
 
             SourceCodeStructure payload = new SourceCodeStructure();
-            payload.setRoot(challengeDirname);
-            payload.setNodes(AntdAdapter.fromNodes(storageService.getDirectoryTree(challengeDir)));
+            payload.setChallengeDir(challengeDirname);
+            payload.setChildren(AntdAdapter.fromNodes(storageService.getDirectoryTree(challengeDir)));
 
             return payload;
         } catch (IOException e) {
@@ -231,6 +235,49 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         return challengeDetails;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
+        Page<ChallengeEntity> challenges = challengeRepository.findAll(pageable);
+
+        PaginatedResponse<ChallengeSummary> response = new PaginatedResponse<>();
+
+        response.setPage(challenges.getNumber() + 1);
+        response.setSize(challenges.getSize());
+        response.setTotalElements(challenges.getTotalElements());
+        response.setTotalPages(challenges.getTotalPages());
+        response.setFirst(challenges.isFirst());
+        response.setLast(challenges.isLast());
+
+        List<ChallengeSummary> items = new ArrayList<>();
+
+        for (ChallengeEntity challenge : challenges) {
+            ChallengeSummary challengeSummary = new ChallengeSummary();
+            challengeSummary.setAuthor(challenge.getAuthor().getFullName());
+            challengeSummary.setBanner(challenge.getBanner());
+            challengeSummary.setChallengeId(challenge.getChallengeId());
+            challengeSummary.setCreatedAt(challenge.getCreatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
+            challengeSummary.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
+            challengeSummary.setLevel(challenge.getLevel().name());
+            challengeSummary.setCategories(challenge
+                .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
+            List<ChallengeLanguageDTO> languages = challengeConfigRepository.findLanguageListByChallenge(challenge);
+            challengeSummary.setLanguages(languages.stream().map(l -> l.getText().name()).collect(Collectors.toList()));
+            challengeSummary.setNumAttendees(submissionRepository.countAllByChallenge(challenge));
+            challengeSummary.setTitle(challenge.getTitle());
+            challengeSummary.setNumRates(10);
+            challengeSummary.setRate(4.5f);
+            challengeSummary.setPoint(challenge.getPoint());
+            challengeSummary.setNumComments(commentRepository.countAllByChallenge(challenge));
+
+            items.add(challengeSummary);
+        }
+
+        response.setItems(items);
+
+        return response;
     }
 
     @Override
