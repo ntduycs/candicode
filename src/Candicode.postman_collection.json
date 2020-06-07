@@ -144,7 +144,7 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "Sample Challenge 2",
+                            "value": "Sample Challenge 3",
                             "type": "text"
                         },
                         {
@@ -293,7 +293,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"language\":\"Java\",\n\t\"code\":\"public class Impl implements Base { @Override public int add(int... numbers) { int sum = 0; for (int i = 0; i < numbers.length; i++) { sum += numbers[i] ; } return sum; } }\"\n}",
+                    "raw": "{\n\t\"language\":\"Java\",\n\t\"code\":\"public class Impl implements Base { @Override public int add(int... numbers) { int sum = 0; for (int i = 0; i < numbers.length; i++) { sum += numbers[i] -1 ; } return sum; } }\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -347,6 +347,45 @@
                         "challenges",
                         "41",
                         "testcases"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Testcase: Verify",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE1OTE0ODE1NzIsImV4cCI6MTU5MTU2Nzk3Mn0.sWTOawmLPgzRCJmpVinO5UR64zR8ThHv67RH-SrRrydAXyW5B1ZN2iID86yU3dOA8bmvT3AeY_TJj4LsqBallQ",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"language\":\"Java\",\n\t\"input\":\"1|2\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/challenges/48/testcases/verification",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "48",
+                        "testcases",
+                        "verification"
                     ]
                 }
             },
