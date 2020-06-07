@@ -13,8 +13,8 @@ import vn.candicode.utils.PreloadEntities;
 
 import java.util.Set;
 
-import static vn.candicode.models.enums.PlanName.BASIC;
-import static vn.candicode.models.enums.Role.STUDENT;
+import static vn.candicode.models.enums.PlanName.Basic;
+import static vn.candicode.models.enums.Role.Student;
 
 @Service
 @Log4j2
@@ -55,9 +55,9 @@ public class StudentServiceImpl implements StudentService {
             payload.getLastName()
         );
 
-        studentEntity.setPlan(preloadEntities.getPlanEntities().get(BASIC));
+        studentEntity.setPlan(preloadEntities.getPlanEntities().get(Basic));
 
-        studentEntity.setRoles(Set.of(STUDENT));
+        studentEntity.setRoles(Set.of(Student));
 
         studentEntity = studentRepository.save(studentEntity);
 

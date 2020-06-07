@@ -1,15 +1,18 @@
 package vn.candicode.controllers;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.payloads.GenericResponse;
 import vn.candicode.payloads.requests.NewChallengeRequest;
+import vn.candicode.payloads.requests.SubmissionRequest;
 import vn.candicode.payloads.requests.TestcasesRequest;
 import vn.candicode.payloads.responses.ChallengeDetails;
 import vn.candicode.payloads.responses.SourceCodeStructure;
+import vn.candicode.payloads.responses.SubmissionResult;
 import vn.candicode.payloads.validators.FileTypeAcceptable;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
@@ -35,6 +38,15 @@ public class ChallengeController extends GenericController {
         ChallengeDetails challengeDetails = challengeService.getChallengeDetails(challengeId);
 
         return ResponseEntity.ok(GenericResponse.from(challengeDetails));
+    }
+
+    @GetMapping(path = "/challenges")
+    public ResponseEntity<?> getChallengeList(@RequestParam(name = "page", defaultValue = "1") int page,
+                                              @RequestParam(name = "size", defaultValue = "10") int size,
+                                              @RequestParam(name = "sort", defaultValue = "createdAt") String sortBy,
+                                              @RequestParam(name = "direction", defaultValue = "desc") String direction) {
+        Pageable pageable = getPaginationConfig(page, size, sortBy, direction);
+        return null;
     }
 
     @PostMapping(path = "/challenges")
@@ -65,6 +77,15 @@ public class ChallengeController extends GenericController {
         return ResponseEntity.ok(GenericResponse.from(Map.of(
             "message", "Created " + numCreatedTestcases + " newly testcases successfully"
         )));
+    }
+
+    @PostMapping(path = "/challenges/{id}/submissions")
+    public ResponseEntity<?> submitCode(@PathVariable("id") Long challengeId,
+                                        @RequestBody @Valid SubmissionRequest payload,
+                                        @CurrentUser UserPrincipal currentUser) {
+        SubmissionResult result = challengeService.evaluateSubmission(challengeId, payload, currentUser);
+
+        return ResponseEntity.ok(GenericResponse.from(result));
     }
 
     @Override

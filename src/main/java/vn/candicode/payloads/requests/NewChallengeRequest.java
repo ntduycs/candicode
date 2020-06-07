@@ -9,9 +9,11 @@ import vn.candicode.models.enums.LanguageName;
 import vn.candicode.payloads.GenericRequest;
 import vn.candicode.payloads.validators.Belong2Enum;
 import vn.candicode.payloads.validators.FileTypeAcceptable;
-import vn.candicode.payloads.validators.Regex;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,13 +47,13 @@ public class NewChallengeRequest extends GenericRequest {
     @NotBlank(message = "Field 'nonImplementedPath' is required but not be given")
     private String nonImplementedPath;
 
-    @NotBlank(message = "Field 'tcInputFormat' is required but not be given")
-    @Regex
-    private String tcInputFormat;
+    @NotNull(message = "Field 'tcInputFormat' is required but not be given")
+    @Size(min = 1, message = "Field 'tcInputFormat' must contain at least 1 element")
+    private List<String> tcInputFormat;
 
-    @NotBlank(message = "Field 'tcOutputFormat' is required but not be given")
-    @Regex
-    private String tcOutputFormat;
+    @NotNull(message = "Field 'tcOutputFormat' is required but not be given")
+    @Size(min = 1, message = "Field 'tcOutputFormat' must contain at least 1 element")
+    private List<String> tcOutputFormat;
 
     @NotBlank(message = "Field 'challengeDir' is required but not be given")
     private String challengeDir;

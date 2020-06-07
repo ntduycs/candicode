@@ -19,10 +19,10 @@ public class PreloadEntities {
 
     public PreloadEntities(LanguageRepository languageRepository, PlanRepository planRepository) {
         this.languageEntities = languageRepository.findAll().stream()
-            .collect(Collectors.toMap(LanguageEntity::getName, entity -> entity));
+            .collect(Collectors.toMap(LanguageEntity::getText, entity -> entity));
 
         this.planEntities = planRepository.findAll().stream()
-            .collect(Collectors.toMap(PlanEntity::getName, entity -> entity));
+            .collect(Collectors.toMap(PlanEntity::getText, entity -> entity));
     }
 
     public Map<LanguageName, LanguageEntity> getLanguageEntities() {

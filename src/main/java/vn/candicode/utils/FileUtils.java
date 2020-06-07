@@ -3,6 +3,7 @@ package vn.candicode.utils;
 import lombok.extern.log4j.Log4j2;
 import org.apache.tika.Tika;
 import vn.candicode.exceptions.UnsupportedFileTypeException;
+import vn.candicode.models.ChallengeEntity;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -20,6 +21,10 @@ import java.util.zip.ZipInputStream;
 public class FileUtils {
     private FileUtils() {
     }
+
+    public static final String INPUT_TESTCASE_FILE = "in.txt";
+    public static final String OUTPUT_TESTCASE_FILE = "out.txt";
+    public static final String ERROR_FILE = "err.txt";
 
     private static final int END_OF_STREAM = -1;
 
@@ -143,6 +148,11 @@ public class FileUtils {
             });
     }
 
+    @SuppressWarnings("UnstableApiUsage")
+    public static void copyFile2File(File copiedFile, File destFile) throws IOException {
+        com.google.common.io.Files.copy(copiedFile, destFile);
+    }
+
     public static String generateFileName(String originalFilename, Object subject) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         return timestamp + "-" + subject + "-" + originalFilename;
@@ -153,7 +163,51 @@ public class FileUtils {
         return timestamp + "-" + subject + "-" + filenameWoExtension;
     }
 
+    public static String getInputTestcaseFileName(Long challengeId) {
+        return challengeId + "-in.txt";
+    }
+
+    public static String getOutputTestcaseFileName(Long challengeId) {
+        return challengeId + "-out.txt";
+    }
+
+    public static String getErrorFileName(ChallengeEntity challenge) {
+        return challenge.getChallengeId() + "-err.txt";
+    }
+
     public static String getFilenameWoExtension(String originalFilename) {
         return originalFilename.substring(0, originalFilename.lastIndexOf("."));
+    }
+
+    public static void appendToFile(File file, List<String> items) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            for (String item : items) {
+                writer.append(item);
+                writer.newLine();
+            }
+        }
+    }
+
+    public static void appendToFile(File file, String item) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            writer.append(item);
+            writer.newLine();
+        }
+    }
+
+    public static void overwriteFile(File file, List<String> items) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+            for (String item : items) {
+                writer.append(item);
+                writer.newLine();
+            }
+        }
+    }
+
+    public static void overwriteFile(File file, String item) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+            writer.write(item);
+            writer.newLine();
+        }
     }
 }

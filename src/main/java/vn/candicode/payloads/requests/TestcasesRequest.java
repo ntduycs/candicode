@@ -12,6 +12,8 @@ import java.util.List;
 @Getter
 @Setter
 public class TestcasesRequest extends GenericRequest {
+    private Double timeout;
+
     @NotNull(message = "Must contain at least one testcase")
     @Size(min = 1, message = "Must contain at least one testcase")
     @Valid

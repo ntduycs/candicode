@@ -64,4 +64,29 @@ public class ChallengeEntity extends GenericEntity {
         testcases.remove(testcase);
         testcase.setChallenge(null);
     }
+
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChallengeCommentEntity> comments = new ArrayList<>();
+
+    public void addComment(ChallengeCommentEntity comment) {
+        comments.add(comment);
+        comment.setChallenge(this);
+    }
+
+    public void removeComment(ChallengeCommentEntity comment) {
+        comments.remove(comment);
+        comment.setChallenge(null);
+    }
+
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChallengeCategoryEntity> categories = new ArrayList<>();
+
+    public void addCategory(CategoryEntity category) {
+        this.categories.add(new ChallengeCategoryEntity(this, category));
+    }
+
+    public void removeCategory(ChallengeCategoryEntity challengeCategory) {
+        this.categories.remove(challengeCategory);
+        challengeCategory.setChallenge(null);
+    }
 }

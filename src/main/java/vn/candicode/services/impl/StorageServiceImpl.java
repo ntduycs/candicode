@@ -7,7 +7,6 @@ import vn.candicode.common.structure.composite.Node;
 import vn.candicode.common.structure.composite.impl.CCDirectory;
 import vn.candicode.common.structure.composite.impl.CCFile;
 import vn.candicode.models.ChallengeConfigEntity;
-import vn.candicode.models.ChallengeEntity;
 import vn.candicode.services.StorageService;
 import vn.candicode.utils.FileUtils;
 
@@ -49,7 +48,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
     public String storeChallengeSourceCode(MultipartFile zipFile, Long id) throws IOException {
         String filenameWoExtension = FileUtils.getFilenameWoExtension(zipFile.getOriginalFilename());
         String challengeDir = getChallengeDirByUserId(id) + File.separator + FileUtils.generateDirectoryName(filenameWoExtension, id);
@@ -59,6 +58,8 @@ public class StorageServiceImpl implements StorageService {
         zipFile.transferTo(tempFile);
 
         FileUtils.unzip(tempFile, new File(challengeDir));
+
+        tempFile.delete();
 
         return challengeDir;
     }
@@ -120,14 +121,42 @@ public class StorageServiceImpl implements StorageService {
 
         String eliminatedPath = getEliminatedPath(factor, parameters);
 
-        return path.replaceFirst(eliminatedPath, "");
+        return path.substring(eliminatedPath.length() - 1);
     }
 
     @Override
-    public String getNonImplementedPathByChallengeAndConfig(ChallengeEntity challenge, ChallengeConfigEntity config) {
-        Long authorId = challenge.getAuthor().getUserId();
-
+    public String getNonImplementedPathByAuthorAndConfig(Long authorId, ChallengeConfigEntity config) {
         return getChallengeDirByUserId(authorId) + config.getChallengeDir() + config.getNonImplementedPath();
+    }
+
+    @Override
+    public String getImplementedPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config) {
+        return getSubmissionDirByUserId(submitterId) + config.getChallengeDir() + config.getImplementedPath();
+    }
+
+    @Override
+    public String getTestcaseInputPathByChallenge(Long challengeId) {
+        return getTestcaseRootDir() + File.separator + FileUtils.getInputTestcaseFileName(challengeId);
+    }
+
+    @Override
+    public String getTestcaseOutputPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config) {
+        return getSubmissionDirPathBySubmitterAndConfig(submitterId, config) + File.separator + FileUtils.OUTPUT_TESTCASE_FILE;
+    }
+
+    @Override
+    public String getErrorPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config) {
+        return getSubmissionDirPathBySubmitterAndConfig(submitterId, config) + File.separator + FileUtils.ERROR_FILE;
+    }
+
+    @Override
+    public String getChallengeDirPathByChallengeAuthorAndConfig(Long authorId, ChallengeConfigEntity config) {
+        return getChallengeDirByUserId(authorId) + config.getChallengeDir();
+    }
+
+    @Override
+    public String getSubmissionDirPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config) {
+        return getSubmissionDirByUserId(submitterId) + config.getChallengeDir();
     }
 
     private String getTempDir() {
@@ -148,6 +177,10 @@ public class StorageServiceImpl implements StorageService {
 
     private String getBannerRootDir() {
         return ROOT_DIR + File.separator + "banners";
+    }
+
+    private String getTestcaseRootDir() {
+        return ROOT_DIR + File.separator + "testcases";
     }
 
     private String getChallengeDirByUserId(Long userId) {
@@ -201,6 +234,10 @@ public class StorageServiceImpl implements StorageService {
 
         if (!Files.exists(Paths.get(getTempDir()))) {
             initSuccess = (new File(getTempDir()).mkdirs());
+        }
+
+        if (!Files.exists(Paths.get(getTestcaseRootDir()))) {
+            initSuccess = new File(getTestcaseRootDir()).mkdirs();
         }
 
         return initSuccess;

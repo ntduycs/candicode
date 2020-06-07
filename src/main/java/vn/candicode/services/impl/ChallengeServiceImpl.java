@@ -4,24 +4,21 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.common.structure.adapter.AntdAdapter;
-import vn.candicode.exceptions.EntityNotFoundException;
-import vn.candicode.exceptions.FileCannotReadException;
-import vn.candicode.exceptions.FileCannotStoreException;
-import vn.candicode.exceptions.PersistenceException;
+import vn.candicode.core.Verdict;
+import vn.candicode.exceptions.*;
 import vn.candicode.models.ChallengeConfigEntity;
 import vn.candicode.models.ChallengeEntity;
 import vn.candicode.models.TestcaseEntity;
 import vn.candicode.models.enums.ChallengeLevel;
 import vn.candicode.models.enums.LanguageName;
 import vn.candicode.payloads.requests.NewChallengeRequest;
+import vn.candicode.payloads.requests.SubmissionRequest;
 import vn.candicode.payloads.requests.TestcaseRequest;
 import vn.candicode.payloads.requests.TestcasesRequest;
-import vn.candicode.payloads.responses.Challenge;
-import vn.candicode.payloads.responses.ChallengeDetails;
-import vn.candicode.payloads.responses.SourceCodeStructure;
-import vn.candicode.payloads.responses.Testcase;
+import vn.candicode.payloads.responses.*;
 import vn.candicode.repositories.ChallengeConfigRepository;
 import vn.candicode.repositories.ChallengeRepository;
 import vn.candicode.repositories.TestcaseRepository;
@@ -31,14 +28,23 @@ import vn.candicode.services.StorageService;
 import vn.candicode.utils.DatetimeUtils;
 import vn.candicode.utils.FileUtils;
 import vn.candicode.utils.PreloadEntities;
+import vn.candicode.utils.RegexUtils;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static vn.candicode.services.StorageService.Factor.CHALLENGE;
 
@@ -81,9 +87,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
             challenge.setTitle(payload.getTitle());
             challenge.setDescription(payload.getDescription());
-            challenge.setTestcaseInputFormat(payload.getTcInputFormat());
-            challenge.setTestcaseOutputFormat(payload.getTcOutputFormat());
-            challenge.setLevel(ChallengeLevel.valueOf(payload.getLevel().toUpperCase()));
+            challenge.setTestcaseInputFormat(RegexUtils.generateRegex(payload.getTcInputFormat()));
+            challenge.setTestcaseOutputFormat(RegexUtils.generateRegex(payload.getTcOutputFormat()));
+            challenge.setLevel(ChallengeLevel.valueOf(payload.getLevel()));
             challenge.setPoint(calculateChallengePoint(challenge.getLevel()));
             challenge.setAuthor(currentUser.getEntityRef());
             challenge.setBanner(bannerPath);
@@ -93,7 +99,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             ChallengeConfigEntity challengeConfig = new ChallengeConfigEntity();
 
             challengeConfig.setChallenge(challenge);
-            challengeConfig.setLanguage(preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage().toUpperCase())));
+            challengeConfig.setLanguage(preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage())));
             challengeConfig.setChallengeDir(payload.getChallengeDir());
             challengeConfig.setImplementedPath(storageService.cleanPath(payload.getImplementedPath(), CHALLENGE, currentUser.getUserId(), payload.getChallengeDir()));
             challengeConfig.setNonImplementedPath(storageService.cleanPath(payload.getNonImplementedPath(), CHALLENGE, currentUser.getUserId(), payload.getChallengeDir()));
@@ -117,11 +123,11 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private Integer calculateChallengePoint(ChallengeLevel level) {
         switch (level) {
-            case HARD:
+            case Hard:
                 return 300;
-            case MODERATE:
+            case Moderate:
                 return 200;
-            case EASY:
+            case Easy:
                 return 100;
             default:
                 return 0;
@@ -165,6 +171,19 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         entityManager.persist(challenge);
 
+        try {
+            FileUtils.appendToFile(
+                new File(storageService.getTestcaseInputPathByChallenge(challenge.getChallengeId())),
+                challenge.getTestcases().stream().map(tc -> {
+                    int numArgs = tc.getInput().split("\\|").length;
+                    return String.format("%s %s %s", tc.getTestcaseId(), numArgs, tc.getInput());
+                }).collect(Collectors.toList())
+            );
+        } catch (IOException e) {
+            log.error("I/O Exception. Message - {}", e.getLocalizedMessage());
+            throw new FileCannotStoreException(e.getLocalizedMessage());
+        }
+
         return challenge.getTestcases().size() - previousNumTestcases;
     }
 
@@ -190,13 +209,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         for (ChallengeConfigEntity challengeConfig : challengeConfigs) {
             Challenge content = new Challenge();
-            content.setLanguage(challengeConfig.getLanguage().getName().name());
+            content.setLanguage(challengeConfig.getLanguage().getText().name());
 
-            String nonImplementedPath = storageService.getNonImplementedPathByChallengeAndConfig(challenge, challengeConfig);
+            String nonImplementedPath = storageService.getNonImplementedPathByAuthorAndConfig(challenge.getAuthor().getUserId(), challengeConfig);
 
             try {
                 content.setText(FileUtils.readFileToString(new File(nonImplementedPath)));
             } catch (IOException e) {
+                log.error(e.getMessage());
                 throw new FileCannotReadException("Some challenge contents cannot be read");
             }
 
@@ -211,5 +231,129 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         return challengeDetails;
+    }
+
+    @Override
+    @Transactional
+    public SubmissionResult evaluateSubmission(Long challengeId, SubmissionRequest payload, UserPrincipal currentUser) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
+
+        ChallengeConfigEntity challengeConfig = challengeConfigRepository
+            .findByChallengeAndLanguage(challenge.getChallengeId(), preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage())))
+            .orElseThrow(() -> new EntityNotFoundException("Challenge config", "challengeId and language", challengeId + " and " + payload.getLanguage()));
+
+        Collection<TestcaseEntity> testcases = challenge.getTestcases();
+
+        File challengeDir = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), challengeConfig));
+        File submissionDir = new File(storageService.getSubmissionDirPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+
+        File originTestcaseInputFile = new File(storageService.getTestcaseInputPathByChallenge(challengeId));
+        File copiedTestcaseInputFile = new File(storageService.getSubmissionDirPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig) + File.separator + FileUtils.INPUT_TESTCASE_FILE);
+
+        File originImplementedFile = new File(storageService.getImplementedPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+
+        try {
+            FileUtils.copyDir2Dir(challengeDir, submissionDir);
+            FileUtils.copyFile2File(originTestcaseInputFile, copiedTestcaseInputFile);
+            FileUtils.overwriteFile(originImplementedFile, payload.getCode());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new FileCannotReadException("Some challenge contents cannot be read");
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        new Verdict(LanguageName.valueOf(payload.getLanguage()), submissionDir.getAbsolutePath(), latch).start();
+
+        try {
+            latch.await(3000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new CodeExecutionException("Cannot wait until get submission response. Message - " + e.getMessage());
+        }
+
+        File errorFile = new File(storageService.getErrorPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+        File outputFile = new File(storageService.getTestcaseOutputPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+
+        SubmissionResult result = new SubmissionResult();
+        result.setTotal(testcases.size());
+
+        try {
+            if (!outputFile.exists() || outputFile.length() == 0) { // Compile error
+                result.setPassed(0);
+                result.setCompiled("Failed");
+                result.setError(retrieveCompileError(errorFile));
+            } else {
+                Map<Long, String> actualOutputs = retrieveSubmissionResults(outputFile);
+                Map<Long, String> runtimeErrors = retrieveRuntimeError(errorFile);
+                int passed = 0;
+                for (TestcaseEntity testcase : testcases) {
+                    String expectedOutput = testcase.getExpectedOutput();
+                    String actualOutput = actualOutputs.get(testcase.getTestcaseId());
+                    if (expectedOutput.equals("Error")) {
+                        result.getDetails().add(new TestcaseResult(
+                            testcase.getHidden(),
+                            testcase.getInput(),
+                            testcase.getExpectedOutput(),
+                            runtimeErrors.get(testcase.getTestcaseId())
+                        ));
+                    } else {
+                        result.getDetails().add(new TestcaseResult(
+                            testcase.getHidden(),
+                            testcase.getInput(),
+                            expectedOutput,
+                            actualOutput
+                        ));
+                        if (expectedOutput.equals(actualOutput)) {
+                            passed++;
+                        }
+                    }
+                }
+                result.setCompiled("Success");
+                result.setPassed(passed);
+            }
+        } catch (IOException e) {
+            log.error("I/O error happened when constructing the submission response. Message - {}", e.getMessage());
+            throw new FileCannotReadException(e.getMessage());
+        }
+
+        return result;
+    }
+
+    private Map<Long /*testcaseid*/, String /*testcaseoutput*/> retrieveSubmissionResults(File outputFile) throws IOException {
+        Map<Long, String> results = new HashMap<>();
+
+        String line;
+        BufferedReader reader = new BufferedReader(new FileReader(outputFile));
+
+        while (StringUtils.hasText(line = reader.readLine())) {
+            String[] parts = line.split(":", 2);
+            Long testcaseId = Long.parseLong(parts[0].split(" ")[1]);
+            String actualOutput = parts[1];
+            results.put(testcaseId, actualOutput);
+        }
+
+        return results;
+    }
+
+    private String retrieveCompileError(File errorFile) throws IOException {
+        return FileUtils.readFileToString(errorFile);
+    }
+
+    private Map<Long, String> retrieveRuntimeError(File errorFile) throws IOException {
+        Map<Long, String> errors = new HashMap<>();
+
+        String line;
+        BufferedReader reader = new BufferedReader(new FileReader(errorFile));
+
+        while (StringUtils.hasText(line = reader.readLine())) {
+            String[] parts = line.split(":", 2);
+            Long testcaseId = Long.parseLong(parts[0].split(" ")[1]);
+            String error = parts[1];
+            errors.put(testcaseId, error);
+        }
+
+        return errors;
     }
 }
