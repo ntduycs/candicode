@@ -10,9 +10,7 @@ import vn.candicode.payloads.GenericResponse;
 import vn.candicode.payloads.requests.NewChallengeRequest;
 import vn.candicode.payloads.requests.SubmissionRequest;
 import vn.candicode.payloads.requests.TestcasesRequest;
-import vn.candicode.payloads.responses.ChallengeDetails;
-import vn.candicode.payloads.responses.SourceCodeStructure;
-import vn.candicode.payloads.responses.SubmissionResult;
+import vn.candicode.payloads.responses.*;
 import vn.candicode.payloads.validators.FileTypeAcceptable;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
@@ -46,7 +44,10 @@ public class ChallengeController extends GenericController {
                                               @RequestParam(name = "sort", defaultValue = "createdAt") String sortBy,
                                               @RequestParam(name = "direction", defaultValue = "desc") String direction) {
         Pageable pageable = getPaginationConfig(page, size, sortBy, direction);
-        return null;
+
+        PaginatedResponse<ChallengeSummary> items = challengeService.getChallengeList(pageable);
+
+        return ResponseEntity.ok(GenericResponse.from(items));
     }
 
     @PostMapping(path = "/challenges")
