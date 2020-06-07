@@ -17,10 +17,7 @@ import vn.candicode.models.TestcaseEntity;
 import vn.candicode.models.dtos.ChallengeLanguageDTO;
 import vn.candicode.models.enums.ChallengeLevel;
 import vn.candicode.models.enums.LanguageName;
-import vn.candicode.payloads.requests.NewChallengeRequest;
-import vn.candicode.payloads.requests.SubmissionRequest;
-import vn.candicode.payloads.requests.TestcaseRequest;
-import vn.candicode.payloads.requests.TestcasesRequest;
+import vn.candicode.payloads.requests.*;
 import vn.candicode.payloads.responses.*;
 import vn.candicode.repositories.*;
 import vn.candicode.security.UserPrincipal;
@@ -85,7 +82,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Transactional
     public Long createChallenge(NewChallengeRequest payload, UserPrincipal currentUser) {
         try {
-            String bannerPath = storageService.storeChallengeBanner(payload.getBanner(), currentUser.getUserId());
+            String bannerPath;
+
+            if (payload.getBanner() == null || payload.getBanner().isEmpty()) {
+                bannerPath = null;
+            } else {
+                bannerPath = storageService.storeChallengeBanner(payload.getBanner(), currentUser.getUserId());
+            }
 
             ChallengeEntity challenge = new ChallengeEntity();
 
@@ -189,6 +192,27 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         return challenge.getTestcases().size() - previousNumTestcases;
+    }
+
+    @Override
+    public TestcaseVerificationResult verifyTestcase(Long challengeId, TestcaseVerificationRequest payload) {
+        TestcaseVerificationResult result = new TestcaseVerificationResult();
+
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
+
+        Pattern testcaseInputFormatValidator = Pattern.compile(challenge.getTestcaseInputFormat());
+
+        if (!testcaseInputFormatValidator.matcher(payload.getInput()).matches()) {
+            result.setValidFormat(false);
+            return result;
+        }
+
+        result.setValidFormat(true);
+
+//        new SimpleVerdict(payload.getLanguage(), payload.getInput()).start();
+
+        return result;
     }
 
     @Override
