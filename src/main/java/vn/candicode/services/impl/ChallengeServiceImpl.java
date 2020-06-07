@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.common.structure.adapter.AntdAdapter;
+import vn.candicode.core.SimpleVerdict;
 import vn.candicode.core.Verdict;
 import vn.candicode.exceptions.*;
 import vn.candicode.models.ChallengeConfigEntity;
@@ -195,6 +196,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
+    @Transactional
     public TestcaseVerificationResult verifyTestcase(Long challengeId, TestcaseVerificationRequest payload) {
         TestcaseVerificationResult result = new TestcaseVerificationResult();
 
@@ -210,7 +212,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         result.setValidFormat(true);
 
-//        new SimpleVerdict(payload.getLanguage(), payload.getInput()).start();
+        ChallengeConfigEntity config = challengeConfigRepository.findByChallengeAndLanguage(challengeId, preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage())))
+            .orElseThrow(() -> new EntityNotFoundException("Challenge Config", "challengeId and language", challengeId + " - " + payload.getLanguage()));
+
+        String challengeDir = storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), config);
+
+        SimpleVerdict verdict = new SimpleVerdict(payload.getLanguage(), payload.getInput(), challengeDir);
+
+        Object[] verifyResult = verdict.verify();
+
+        result.setCompiled((Boolean) verifyResult[0]);
+        result.setOutput(verifyResult[1] != null ? (String) verifyResult[1] : null);
 
         return result;
     }

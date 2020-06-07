@@ -3,7 +3,7 @@ package vn.candicode.core;
 public class C extends Executor {
 
     @Override
-    public Verdict.Result compile() {
+    public VerdictResult compile() {
         return null;
     }
 

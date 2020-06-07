@@ -5,13 +5,10 @@ import vn.candicode.models.enums.LanguageName;
 
 import java.util.concurrent.CountDownLatch;
 
-import static vn.candicode.core.Verdict.Result.COMPILE_FAILED;
+import static vn.candicode.core.VerdictResult.CompileFailed;
 
 @Log4j2
 public class Verdict extends Thread {
-    public enum Result {
-        COMPILE_FAILED, COMPILE_SUCCESS, TIMED_OUT, SUCCESS, FAILED
-    }
 
     private final LanguageName language;
     private final String submissionDir;
@@ -27,12 +24,13 @@ public class Verdict extends Thread {
     public void run() {
         Executor executor = getCodeExecutor(language);
 
-        Result compileResult = executor.compile();
+        VerdictResult compileResult = executor.compile();
 
-        if (compileResult.equals(COMPILE_FAILED)) {
+        if (compileResult.equals(CompileFailed)) {
             log.error("Compile failed");
             return;
         }
+
         log.info("Compile success");
         executor.run();
 
@@ -41,8 +39,8 @@ public class Verdict extends Thread {
 
     protected Executor getCodeExecutor(LanguageName language) {
         switch (language) {
-//            case C:
-//                return new C();
+            case C:
+                return new C();
             case Java:
                 return new Java(submissionDir);
             default:

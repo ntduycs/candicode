@@ -5,9 +5,8 @@ import vn.candicode.exceptions.CodeExecutionException;
 
 import java.io.*;
 
-import static vn.candicode.core.Verdict.Result;
-import static vn.candicode.core.Verdict.Result.COMPILE_FAILED;
-import static vn.candicode.core.Verdict.Result.COMPILE_SUCCESS;
+import static vn.candicode.core.VerdictResult.CompileFailed;
+import static vn.candicode.core.VerdictResult.CompileSuccess;
 
 @Log4j2
 public class Java extends Executor {
@@ -48,7 +47,7 @@ public class Java extends Executor {
     }
 
     @Override
-    public Result compile() {
+    public VerdictResult compile() {
         genCompileShellScript(submissionDir);
         try {
             Runtime terminal = Runtime.getRuntime();
@@ -57,7 +56,7 @@ public class Java extends Executor {
             process = terminal.exec(submissionDir + File.separator + "compile.sh");
             int status = process.waitFor();
 
-            return status == 0 ? COMPILE_SUCCESS : COMPILE_FAILED;
+            return status == 0 ? CompileSuccess : CompileFailed;
         } catch (InterruptedException e) {
             log.error("Thread was suspended accidentally. Message - {}", e.getMessage());
             e.printStackTrace();
@@ -65,7 +64,7 @@ public class Java extends Executor {
             log.error("I/O error happened. Message - {}", e.getMessage());
             e.printStackTrace();
         }
-        return COMPILE_FAILED;
+        return CompileFailed;
     }
 
     private void genCompileShellScript(String submissionDir) {
