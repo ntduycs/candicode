@@ -1,9 +1,11 @@
 package vn.candicode.core;
 
+import vn.candicode.common.structure.wrapper.Pair;
+
 public class C extends Executor {
 
     @Override
-    public VerdictResult compile() {
+    public Pair compile() {
         return null;
     }
 

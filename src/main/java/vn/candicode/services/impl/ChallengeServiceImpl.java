@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.common.structure.adapter.AntdAdapter;
+import vn.candicode.common.structure.wrapper.Triple;
 import vn.candicode.core.SimpleVerdict;
 import vn.candicode.core.Verdict;
 import vn.candicode.exceptions.*;
@@ -36,7 +37,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -182,10 +186,9 @@ public class ChallengeServiceImpl implements ChallengeService {
         try {
             FileUtils.appendToFile(
                 new File(storageService.getTestcaseInputPathByChallenge(challenge.getChallengeId())),
-                challenge.getTestcases().stream().map(tc -> {
-                    int numArgs = tc.getInput().split("\\|").length;
-                    return String.format("%s %s %s", tc.getTestcaseId(), numArgs, tc.getInput());
-                }).collect(Collectors.toList())
+                challenge.getTestcases().stream()
+                    .map(TestcaseEntity::getInput)
+                    .collect(Collectors.toList())
             );
         } catch (IOException e) {
             log.error("I/O Exception. Message - {}", e.getLocalizedMessage());
@@ -207,6 +210,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         if (!testcaseInputFormatValidator.matcher(payload.getInput()).matches()) {
             result.setValidFormat(false);
+            result.setValidFormatError("Input should be " + getTestcaseFormat(challenge));
             return result;
         }
 
@@ -219,12 +223,21 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         SimpleVerdict verdict = new SimpleVerdict(payload.getLanguage(), payload.getInput(), challengeDir);
 
-        Object[] verifyResult = verdict.verify();
+        Triple verifyResult = verdict.verify();
 
-        result.setCompiled((Boolean) verifyResult[0]);
-        result.setOutput(verifyResult[1] != null ? (String) verifyResult[1] : null);
+        result.setCompiled(verifyResult.isCompiled());
+        result.setCompileError(verifyResult.getCompileError());
+        result.setOutput(verifyResult.getOutput());
 
         return result;
+    }
+
+    private String getTestcaseFormat(ChallengeEntity challenge) {
+        try {
+            return StringUtils.collectionToCommaDelimitedString(RegexUtils.resolveRegex(challenge.getTestcaseInputFormat()));
+        } catch (RegexTemplateNotFoundException ignored) {
+        }
+        return null;
     }
 
     @Override
@@ -377,7 +390,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             .findByChallengeAndLanguage(challenge.getChallengeId(), preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage())))
             .orElseThrow(() -> new EntityNotFoundException("Challenge config", "challengeId and language", challengeId + " and " + payload.getLanguage()));
 
-        Collection<TestcaseEntity> testcases = challenge.getTestcases();
+        List<TestcaseEntity> testcases = challenge.getTestcases();
 
         File challengeDir = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), challengeConfig));
         File submissionDir = new File(storageService.getSubmissionDirPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
@@ -419,12 +432,13 @@ public class ChallengeServiceImpl implements ChallengeService {
                 result.setCompiled("Failed");
                 result.setError(retrieveCompileError(errorFile));
             } else {
-                Map<Long, String> actualOutputs = retrieveSubmissionResults(outputFile);
+                List<String> actualOutputs = retrieveSubmissionResults(outputFile);
                 Map<Long, String> runtimeErrors = retrieveRuntimeError(errorFile);
                 int passed = 0;
-                for (TestcaseEntity testcase : testcases) {
+                for (int i = 0, actualOutputsSize = actualOutputs.size(); i < actualOutputsSize; i++) {
+                    TestcaseEntity testcase = testcases.get(i);
+                    String actualOutput = actualOutputs.get(i);
                     String expectedOutput = testcase.getExpectedOutput();
-                    String actualOutput = actualOutputs.get(testcase.getTestcaseId());
                     if (expectedOutput.equals("Error")) {
                         result.getDetails().add(new TestcaseResult(
                             testcase.getHidden(),
@@ -455,18 +469,17 @@ public class ChallengeServiceImpl implements ChallengeService {
         return result;
     }
 
-    private Map<Long /*testcaseid*/, String /*testcaseoutput*/> retrieveSubmissionResults(File outputFile) throws IOException {
-        Map<Long, String> results = new HashMap<>();
+    private List<String> retrieveSubmissionResults(File outputFile) throws IOException {
+        List<String> results = new ArrayList<>();
 
         String line;
         BufferedReader reader = new BufferedReader(new FileReader(outputFile));
 
         while (StringUtils.hasText(line = reader.readLine())) {
-            String[] parts = line.split(":", 2);
-            Long testcaseId = Long.parseLong(parts[0].split(" ")[1]);
-            String actualOutput = parts[1];
-            results.put(testcaseId, actualOutput);
+            results.add(line);
         }
+
+        reader.close();
 
         return results;
     }

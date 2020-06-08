@@ -1,6 +1,8 @@
 package vn.candicode.core;
 
 import lombok.extern.log4j.Log4j2;
+import vn.candicode.common.structure.wrapper.Pair;
+import vn.candicode.common.structure.wrapper.Triple;
 import vn.candicode.utils.FileUtils;
 
 import java.io.File;
@@ -24,11 +26,11 @@ public class SimpleVerdict {
         return null;
     }
 
-    public Object[] verify() {
-        VerdictResult compileResult = executor.compile();
+    public Triple verify() {
+        Pair compileResult = executor.compile();
 
-        if (compileResult.equals(VerdictResult.CompileFailed)) {
-            return new Object[]{false, null};
+        if (!compileResult.isCompiled()) {
+            return new Triple(false, compileResult.getCompileError(), null);
         }
 
         executor.run();
@@ -36,12 +38,12 @@ public class SimpleVerdict {
         File outputFile = new File(challengeDirPath + File.separator + "out.txt");
 
         try {
-            return new Object[]{true, FileUtils.readFileToString(outputFile)};
+            return new Triple(true, null, FileUtils.readFileToString(outputFile));
         } catch (IOException e) {
             log.error("Error when read output file. Message - {}", e.getLocalizedMessage());
             e.printStackTrace();
         }
 
-        return new Object[]{true, "File Error"};
+        return new Triple(true, null, "Cannot read the generated output");
     }
 }

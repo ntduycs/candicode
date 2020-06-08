@@ -1,11 +1,10 @@
 package vn.candicode.core;
 
 import lombok.extern.log4j.Log4j2;
+import vn.candicode.common.structure.wrapper.Pair;
 import vn.candicode.models.enums.LanguageName;
 
 import java.util.concurrent.CountDownLatch;
-
-import static vn.candicode.core.VerdictResult.CompileFailed;
 
 @Log4j2
 public class Verdict extends Thread {
@@ -24,9 +23,9 @@ public class Verdict extends Thread {
     public void run() {
         Executor executor = getCodeExecutor(language);
 
-        VerdictResult compileResult = executor.compile();
+        Pair compileResult = executor.compile();
 
-        if (compileResult.equals(CompileFailed)) {
+        if (!compileResult.isCompiled()) {
             log.error("Compile failed");
             return;
         }
