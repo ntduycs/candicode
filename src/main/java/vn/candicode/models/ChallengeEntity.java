@@ -27,7 +27,7 @@ public class ChallengeEntity extends GenericEntity {
     @Column(nullable = false)
     private ChallengeLevel level;
 
-    @NaturalId
+    @NaturalId(mutable = true)
     @Column(nullable = false)
     private String title;
 

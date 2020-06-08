@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.payloads.GenericResponse;
-import vn.candicode.payloads.requests.NewChallengeRequest;
-import vn.candicode.payloads.requests.SubmissionRequest;
-import vn.candicode.payloads.requests.TestcaseVerificationRequest;
-import vn.candicode.payloads.requests.TestcasesRequest;
+import vn.candicode.payloads.requests.*;
 import vn.candicode.payloads.responses.*;
 import vn.candicode.payloads.validators.FileTypeAcceptable;
 import vn.candicode.security.CurrentUser;
@@ -51,8 +48,41 @@ public class ChallengeController extends GenericController {
         return ResponseEntity.ok(GenericResponse.from(items));
     }
 
+    @GetMapping(path = "/challenges/me")
+    public ResponseEntity<?> getMyChallengesList(@RequestParam(name = "page", defaultValue = "1") int page,
+                                                 @RequestParam(name = "size", defaultValue = "10") int size,
+                                                 @RequestParam(name = "sort", defaultValue = "createdAt") String sortBy,
+                                                 @RequestParam(name = "direction", defaultValue = "desc") String direction,
+                                                 @CurrentUser UserPrincipal currentUser) {
+        Pageable pageable = getPaginationConfig(page, size, sortBy, direction);
+
+        PaginatedResponse<ChallengeSummary> items = challengeService.getMyChallengeList(pageable, currentUser);
+
+        return ResponseEntity.ok(GenericResponse.from(items));
+    }
+
+    @PostMapping(path = "/challenges/{id}")
+    public ResponseEntity<?> editChallenge(@PathVariable("id") Long challengeId,
+                                           @Valid @ModelAttribute EditChallengeRequest payload) {
+        challengeService.editChallenge(challengeId, payload);
+
+        return ResponseEntity.ok(GenericResponse.from(
+            Map.of("message", "Edited challenge successfully"), HttpStatus.OK
+        ));
+    }
+
+    @DeleteMapping(path = "/challenges/{id}")
+    public ResponseEntity<?> deleteChallenge(@PathVariable("id") Long challengeId) {
+        challengeService.deleteChallenge(challengeId);
+
+        return ResponseEntity.ok(GenericResponse.from(
+            Map.of("message", "Delete challenge successfully"), HttpStatus.OK
+        ));
+    }
+
     @PostMapping(path = "/challenges")
-    public ResponseEntity<?> createChallenge(@Valid @ModelAttribute NewChallengeRequest payload, @CurrentUser UserPrincipal currentUser) {
+    public ResponseEntity<?> createChallenge(@Valid @ModelAttribute NewChallengeRequest payload,
+                                             @CurrentUser UserPrincipal currentUser) {
         Long challengeId = challengeService.createChallenge(payload, currentUser);
 
         return ResponseEntity.created(getResourcePath(challengeId)).body(GenericResponse.from(

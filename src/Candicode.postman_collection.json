@@ -229,7 +229,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE1OTE0ODE1NzIsImV4cCI6MTU5MTU2Nzk3Mn0.sWTOawmLPgzRCJmpVinO5UR64zR8ThHv67RH-SrRrydAXyW5B1ZN2iID86yU3dOA8bmvT3AeY_TJj4LsqBallQ",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
                             "type": "string"
                         }
                     ]
@@ -257,7 +257,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE1MjA3OTUsImV4cCI6MTU5MTYwNzE5NX0.ys1KcslUlAeB91p2SXpkpljrk6iHoy9qpS2e6TLsrztzaCK0K0xWDAQYbiwVNwN8RAkgdvbHqXiRiRJfvodPNw",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
                             "type": "string"
                         }
                     ]
@@ -271,6 +271,131 @@
                     ],
                     "path": [
                         "challenges"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: All of Me",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/challenges/me",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "me"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Edit",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "title",
+                            "value": "Edited Challenge 3",
+                            "type": "text"
+                        },
+                        {
+                            "key": "description",
+                            "value": "Edited Description",
+                            "type": "text"
+                        },
+                        {
+                            "key": "level",
+                            "value": "Hard",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tcInputFormat",
+                            "value": "integer",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tcInputFormat",
+                            "value": "float",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tcOutputFormat",
+                            "value": "float",
+                            "type": "text"
+                        },
+                        {
+                            "key": "banner",
+                            "value": "",
+                            "type": "text",
+                            "disabled": true
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{host}}/challenges/48",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "48"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Delete",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/challenges/48",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "48"
                     ]
                 }
             },

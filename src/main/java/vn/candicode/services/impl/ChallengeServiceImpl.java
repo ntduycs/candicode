@@ -245,6 +245,13 @@ public class ChallengeServiceImpl implements ChallengeService {
         challengeDetails.setCreatedAt(challenge.getCreatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
         challengeDetails.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
 
+        try {
+            challengeDetails.setTcInputFormat(new TestcaseFormat(RegexUtils.resolveRegex(challenge.getTestcaseInputFormat())));
+            challengeDetails.setTcOutputFormat(new TestcaseFormat(RegexUtils.resolveRegex(challenge.getTestcaseOutputFormat())));
+        } catch (RegexTemplateNotFoundException e) {
+            log.error("Cannot resolve testcase format");
+        }
+
         List<ChallengeConfigEntity> challengeConfigs = challengeConfigRepository.findAllByChallenge(challenge);
 
         for (ChallengeConfigEntity challengeConfig : challengeConfigs) {
@@ -261,6 +268,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             }
 
             challengeDetails.getContents().add(content);
+            challengeDetails.getLanguages().add(challengeConfig.getLanguage().getText().name());
         }
 
         List<TestcaseEntity> testcases = testcaseRepository.findAllByChallenge(challenge);
@@ -277,6 +285,49 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Transactional(readOnly = true)
     public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
         Page<ChallengeEntity> challenges = challengeRepository.findAll(pageable);
+
+        PaginatedResponse<ChallengeSummary> response = new PaginatedResponse<>();
+
+        response.setPage(challenges.getNumber() + 1);
+        response.setSize(challenges.getSize());
+        response.setTotalElements(challenges.getTotalElements());
+        response.setTotalPages(challenges.getTotalPages());
+        response.setFirst(challenges.isFirst());
+        response.setLast(challenges.isLast());
+
+        List<ChallengeSummary> items = new ArrayList<>();
+
+        for (ChallengeEntity challenge : challenges) {
+            ChallengeSummary challengeSummary = new ChallengeSummary();
+            challengeSummary.setAuthor(challenge.getAuthor().getFullName());
+            challengeSummary.setBanner(challenge.getBanner());
+            challengeSummary.setChallengeId(challenge.getChallengeId());
+            challengeSummary.setCreatedAt(challenge.getCreatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
+            challengeSummary.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
+            challengeSummary.setLevel(challenge.getLevel().name());
+            challengeSummary.setCategories(challenge
+                .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
+            List<ChallengeLanguageDTO> languages = challengeConfigRepository.findLanguageListByChallenge(challenge);
+            challengeSummary.setLanguages(languages.stream().map(l -> l.getText().name()).collect(Collectors.toList()));
+            challengeSummary.setNumAttendees(submissionRepository.countAllByChallenge(challenge));
+            challengeSummary.setTitle(challenge.getTitle());
+            challengeSummary.setNumRates(10);
+            challengeSummary.setRate(4.5f);
+            challengeSummary.setPoint(challenge.getPoint());
+            challengeSummary.setNumComments(commentRepository.countAllByChallenge(challenge));
+
+            items.add(challengeSummary);
+        }
+
+        response.setItems(items);
+
+        return response;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, UserPrincipal currentUser) {
+        Page<ChallengeEntity> challenges = challengeRepository.findAllByAuthor(currentUser.getEntityRef(), pageable);
 
         PaginatedResponse<ChallengeSummary> response = new PaginatedResponse<>();
 
@@ -438,5 +489,48 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         return errors;
+    }
+
+    @Override
+    @Transactional
+    public void editChallenge(Long challengeId, EditChallengeRequest payload) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
+
+        if (challengeRepository.existsByTitle(payload.getTitle())) {
+            throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
+        }
+
+        challenge.setTitle(payload.getTitle());
+        challenge.setLevel(ChallengeLevel.valueOf(payload.getLevel()));
+        challenge.setDescription(payload.getDescription());
+
+        try {
+            challenge.setTestcaseInputFormat(RegexUtils.generateRegex(payload.getTcInputFormat()));
+            challenge.setTestcaseOutputFormat(RegexUtils.generateRegex(payload.getTcOutputFormat()));
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            throw new RegexTemplateNotFoundException(e.getMessage());
+        }
+
+        String bannerPath;
+        if (payload.getBanner() != null) {
+            try {
+                bannerPath = storageService.storeChallengeBanner(payload.getBanner(), challengeId);
+                challenge.setBanner(bannerPath);
+            } catch (IOException e) {
+                log.error("Cannot store challenge banner for challenge with {}. Message - {}", challengeId, e.getMessage());
+                throw new FileCannotStoreException(e.getMessage());
+            }
+        }
+
+        challengeRepository.save(challenge);
+    }
+
+    @Override
+    public void deleteChallenge(Long challengeId) {
+        if (challengeRepository.existsById(challengeId)) {
+            challengeRepository.deleteById(challengeId);
+        }
     }
 }

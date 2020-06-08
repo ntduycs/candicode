@@ -12,7 +12,10 @@ public enum FileType {
     RAR(List.of(
         "application/x-rar-compressed",
         "application/vnd.rar"
-    ));
+    )),
+    PNG(List.of("image/png")),
+    JPG(List.of("image/jpg")),
+    JPEG(List.of("image/jpg"));
 
     private final List<String> contentTypes;
 
