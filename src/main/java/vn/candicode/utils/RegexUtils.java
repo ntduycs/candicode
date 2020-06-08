@@ -1,6 +1,8 @@
 package vn.candicode.utils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RegexUtils {
     private static final String FLOAT = "[+-]?\\d+(.\\d+)?";
@@ -19,7 +21,7 @@ public class RegexUtils {
 
     private static final String BOOLEAN_LIST = "\\[[0-1]?(,[0-1])*\\]";
 
-    public static String generateRegex(List<String> types) {
+    public static String generateRegex(List<String> types) throws IllegalArgumentException {
         StringBuilder sb = new StringBuilder();
 
         sb.append("^");
@@ -36,6 +38,37 @@ public class RegexUtils {
         sb.append("$");
 
         return sb.toString();
+    }
+
+    public static List<String> resolveRegex(String regex) throws IllegalArgumentException {
+        String[] subRegexps = regex
+            .substring(1, regex.length() - 1)
+            .replace("\\|", "|")
+            .split("\\|");
+        return Arrays.stream(subRegexps).map(RegexUtils::resolveRegexTemplate).collect(Collectors.toList());
+    }
+
+    private static String resolveRegexTemplate(String regex) {
+        switch (regex) {
+            case INTEGER:
+                return "integer";
+            case INTEGER_LIST:
+                return "integer_list";
+            case FLOAT:
+                return "float";
+            case FLOAT_LIST:
+                return "float_list";
+            case STRING:
+                return "string";
+            case STRING_LIST:
+                return "string_list";
+            case BOOLEAN:
+                return "boolean";
+            case BOOLEAN_LIST:
+                return "boolean_list";
+            default:
+                throw new IllegalArgumentException("Given string does not match any regex template");
+        }
     }
 
     private static String generateRegexByType(String type) {
@@ -57,7 +90,7 @@ public class RegexUtils {
             case "boolean_list":
                 return BOOLEAN_LIST;
             default:
-                return null;
+                throw new IllegalArgumentException("Regex template not found");
         }
     }
 }

@@ -23,6 +23,8 @@ public class ChallengeDetails implements Serializable {
     private Long numAttendees;
     private Float rate;
     private Integer numRates;
+    private TestcaseFormat tcInputFormat;
+    private TestcaseFormat tcOutputFormat;
 
     private List<Challenge> contents = new ArrayList<>();
     private List<Testcase> testcases = new ArrayList<>();
