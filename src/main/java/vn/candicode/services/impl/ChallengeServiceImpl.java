@@ -299,42 +299,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
         Page<ChallengeEntity> challenges = challengeRepository.findAll(pageable);
 
-        PaginatedResponse<ChallengeSummary> response = new PaginatedResponse<>();
-
-        response.setPage(challenges.getNumber() + 1);
-        response.setSize(challenges.getSize());
-        response.setTotalElements(challenges.getTotalElements());
-        response.setTotalPages(challenges.getTotalPages());
-        response.setFirst(challenges.isFirst());
-        response.setLast(challenges.isLast());
-
-        List<ChallengeSummary> items = new ArrayList<>();
-
-        for (ChallengeEntity challenge : challenges) {
-            ChallengeSummary challengeSummary = new ChallengeSummary();
-            challengeSummary.setAuthor(challenge.getAuthor().getFullName());
-            challengeSummary.setBanner(challenge.getBanner());
-            challengeSummary.setChallengeId(challenge.getChallengeId());
-            challengeSummary.setCreatedAt(challenge.getCreatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
-            challengeSummary.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
-            challengeSummary.setLevel(challenge.getLevel().name());
-            challengeSummary.setCategories(challenge
-                .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
-            List<ChallengeLanguageDTO> languages = challengeConfigRepository.findLanguageListByChallenge(challenge);
-            challengeSummary.setLanguages(languages.stream().map(l -> l.getText().name()).collect(Collectors.toList()));
-            challengeSummary.setNumAttendees(submissionRepository.countAllByChallenge(challenge));
-            challengeSummary.setTitle(challenge.getTitle());
-            challengeSummary.setNumRates(10);
-            challengeSummary.setRate(4.5f);
-            challengeSummary.setPoint(challenge.getPoint());
-            challengeSummary.setNumComments(commentRepository.countAllByChallenge(challenge));
-
-            items.add(challengeSummary);
-        }
-
-        response.setItems(items);
-
-        return response;
+        return getChallengeSummaryPaginatedResponse(challenges);
     }
 
     @Override
@@ -342,6 +307,10 @@ public class ChallengeServiceImpl implements ChallengeService {
     public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, UserPrincipal currentUser) {
         Page<ChallengeEntity> challenges = challengeRepository.findAllByAuthor(currentUser.getEntityRef(), pageable);
 
+        return getChallengeSummaryPaginatedResponse(challenges);
+    }
+
+    private PaginatedResponse<ChallengeSummary> getChallengeSummaryPaginatedResponse(Page<ChallengeEntity> challenges) {
         PaginatedResponse<ChallengeSummary> response = new PaginatedResponse<>();
 
         response.setPage(challenges.getNumber() + 1);
@@ -517,14 +486,6 @@ public class ChallengeServiceImpl implements ChallengeService {
         challenge.setTitle(payload.getTitle());
         challenge.setLevel(ChallengeLevel.valueOf(payload.getLevel()));
         challenge.setDescription(payload.getDescription());
-
-        try {
-            challenge.setTestcaseInputFormat(RegexUtils.generateRegex(payload.getTcInputFormat()));
-            challenge.setTestcaseOutputFormat(RegexUtils.generateRegex(payload.getTcOutputFormat()));
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-            throw new RegexTemplateNotFoundException(e.getMessage());
-        }
 
         String bannerPath;
         if (payload.getBanner() != null) {

@@ -11,9 +11,6 @@ import vn.candicode.payloads.validators.FileTypeAcceptable;
 import vn.candicode.payloads.validators.Unique;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.List;
 
 import static vn.candicode.common.filesystem.FileType.*;
 
@@ -33,12 +30,4 @@ public class EditChallengeRequest extends GenericRequest {
 
     @FileTypeAcceptable(value = {PNG, JPEG, JPG})
     private MultipartFile banner;
-
-    @NotNull(message = "Field 'tcInputFormat' is required but not be given")
-    @Size(min = 1, message = "Field 'tcInputFormat' must contain at least 1 element")
-    private List<String> tcInputFormat;
-
-    @NotNull(message = "Field 'tcOutputFormat' is required but not be given")
-    @Size(min = 1, message = "Field 'tcOutputFormat' must contain at least 1 element")
-    private List<String> tcOutputFormat;
 }
