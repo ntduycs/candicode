@@ -37,10 +37,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -216,18 +213,29 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         result.setValidFormat(true);
 
-        ChallengeConfigEntity config = challengeConfigRepository.findByChallengeAndLanguage(challengeId, preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage())))
-            .orElseThrow(() -> new EntityNotFoundException("Challenge Config", "challengeId and language", challengeId + " - " + payload.getLanguage()));
+        List<ChallengeConfigEntity> configs = challengeConfigRepository.findAllByChallenge(challenge);
 
-        String challengeDir = storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), config);
+        if (configs.isEmpty()) {
+            result.setOtherError("No language config found for this challenge");
+            return result;
+        }
 
-        SimpleVerdict verdict = new SimpleVerdict(payload.getLanguage(), payload.getInput(), challengeDir);
+        for (ChallengeConfigEntity config : configs) {
+            String challengeDir = storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), config);
 
-        Triple verifyResult = verdict.verify();
+            SimpleVerdict verdict = new SimpleVerdict(config.getLanguage().getText().name(), payload.getInput(), challengeDir);
 
-        result.setCompiled(verifyResult.isCompiled());
-        result.setCompileError(verifyResult.getCompileError());
-        result.setOutput(verifyResult.getOutput());
+            Triple verifyResult = verdict.verify();
+
+            result.getResult().add(new TestcaseVerificationByLanguage(
+                config.getLanguage().getText().name(),
+                verifyResult.getOutput(),
+                "Runtime Error",
+                verifyResult.isCompiled(),
+                verifyResult.getCompileError()
+            ));
+        }
+
 
         return result;
     }
@@ -236,8 +244,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         try {
             return StringUtils.collectionToCommaDelimitedString(RegexUtils.resolveRegex(challenge.getTestcaseInputFormat()));
         } catch (RegexTemplateNotFoundException ignored) {
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -506,5 +514,155 @@ public class ChallengeServiceImpl implements ChallengeService {
         if (challengeRepository.existsById(challengeId)) {
             challengeRepository.deleteById(challengeId);
         }
+    }
+
+    @Override
+    @Transactional
+    public RemoveTestcasesResult removeTestcases(Long challengeId, List<Long> testcaseIds) {
+        RemoveTestcasesResult result = new RemoveTestcasesResult();
+
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
+
+        int oldNumTestcases = challenge.getTestcases().size();
+
+        List<TestcaseEntity> removedTestcase = challenge.getTestcases().stream()
+            .filter(testcase -> testcaseIds.contains(testcase.getTestcaseId()))
+            .collect(Collectors.toList());
+
+        challenge.getTestcases().removeAll(removedTestcase);
+
+        for (TestcaseEntity testcase : removedTestcase) {
+            testcase.setChallenge(null);
+        }
+
+        challengeRepository.save(challenge);
+
+        result.setRemovedTestcase(testcaseIds.size());
+        result.setRemainingTestcases(oldNumTestcases - testcaseIds.size());
+
+        return result;
+    }
+
+    @Override
+    public int updateTestcases(Long challengeId, UpdateTestcasesRequest payload) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
+
+//        Pattern testcaseInputValidator = Pattern.compile(challenge.getTestcaseInputFormat());
+//        Pattern testcaseOutputValidator = Pattern.compile(challenge.getTestcaseOutputFormat());
+//
+//        for (TestcaseRequest testcaseDto : payload.getTestcases()) {
+//            if (testcaseInputValidator.matcher(testcaseDto.getInput()).matches() &&
+//                testcaseOutputValidator.matcher(testcaseDto.getOutput()).matches()) {
+//                challenge.addTestcase(new TestcaseEntity(testcaseDto.getInput(), testcaseDto.getOutput(), testcaseDto.getHidden()));
+//            }
+//        }
+
+        return 0;
+    }
+
+    // TODO: remove config directory
+    @Override
+    public boolean removeLanguage(Long challengeId, String language) {
+        try {
+            Optional<ChallengeConfigEntity> config = challengeConfigRepository.findByChallengeAndLanguage(challengeId, preloadEntities.getLanguageEntities().get(LanguageName.valueOf(language)));
+
+            if (config.isEmpty()) {
+                return true;
+            }
+
+            challengeConfigRepository.delete(config.get());
+
+            return false;
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return true;
+        }
+    }
+
+    @Override
+    public boolean addLanguage(Long challengeId, NewLanguageRequest payload, UserPrincipal currentUser) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
+
+//        List<TestcaseEntity> testcases = challenge.getTestcases();
+//
+//        File challengeDir = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), challengeConfig));
+//        File submissionDir = new File(storageService.getSubmissionDirPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+//
+//        File originTestcaseInputFile = new File(storageService.getTestcaseInputPathByChallenge(challengeId));
+//        File copiedTestcaseInputFile = new File(storageService.getSubmissionDirPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig) + File.separator + FileUtils.INPUT_TESTCASE_FILE);
+//
+//        File originImplementedFile = new File(storageService.getImplementedPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+//
+//        try {
+//            FileUtils.copyFile2File(originTestcaseInputFile, copiedTestcaseInputFile);
+//            FileUtils.overwriteFile(originImplementedFile, payload.getCode());
+//        } catch (IOException e) {
+//            log.error(e.getMessage());
+//            throw new FileCannotReadException("Some challenge contents cannot be read");
+//        }
+//
+//        CountDownLatch latch = new CountDownLatch(1);
+//
+//        new Verdict(LanguageName.valueOf(payload.getLanguage()), submissionDir.getAbsolutePath(), latch).start();
+//
+//        try {
+//            latch.await(3000, TimeUnit.MILLISECONDS);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//            throw new CodeExecutionException("Cannot wait until get submission response. Message - " + e.getMessage());
+//        }
+//
+//        File errorFile = new File(storageService.getErrorPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+//        File outputFile = new File(storageService.getTestcaseOutputPathBySubmitterAndConfig(currentUser.getUserId(), challengeConfig));
+//
+//        SubmissionResult result = new SubmissionResult();
+//        result.setTotal(testcases.size());
+//
+//        try {
+//            if (!outputFile.exists() || outputFile.length() == 0) { // Compile error
+//                result.setPassed(0);
+//                result.setCompiled("Failed");
+//                result.setError(retrieveCompileError(errorFile));
+//            } else {
+//                List<String> actualOutputs = retrieveSubmissionResults(outputFile);
+//                Map<Long, String> runtimeErrors = retrieveRuntimeError(errorFile);
+//                int passed = 0;
+//                for (int i = 0, actualOutputsSize = actualOutputs.size(); i < actualOutputsSize; i++) {
+//                    TestcaseEntity testcase = testcases.get(i);
+//                    String actualOutput = actualOutputs.get(i);
+//                    String expectedOutput = testcase.getExpectedOutput();
+//                    if (expectedOutput.equals("Error")) {
+//                        result.getDetails().add(new TestcaseResult(
+//                            testcase.getHidden(),
+//                            testcase.getInput(),
+//                            testcase.getExpectedOutput(),
+//                            runtimeErrors.get(testcase.getTestcaseId())
+//                        ));
+//                    } else {
+//                        result.getDetails().add(new TestcaseResult(
+//                            testcase.getHidden(),
+//                            testcase.getInput(),
+//                            expectedOutput,
+//                            actualOutput
+//                        ));
+//                        if (expectedOutput.equals(actualOutput)) {
+//                            passed++;
+//                        }
+//                    }
+//                }
+//                result.setCompiled("Success");
+//                result.setPassed(passed);
+//            }
+//        } catch (IOException e) {
+//            log.error("I/O error happened when constructing the submission response. Message - {}", e.getMessage());
+//            throw new FileCannotReadException(e.getMessage());
+//        }
+//
+//        return result;
+
+        return true;
     }
 }

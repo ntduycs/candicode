@@ -16,6 +16,7 @@ public interface ChallengeConfigRepository extends JpaRepository<ChallengeConfig
     @Query("select c from ChallengeConfigEntity c where c.challenge.challengeId = ?1 and c.language = ?2")
     Optional<ChallengeConfigEntity> findByChallengeAndLanguage(Long challengeId, LanguageEntity language);
 
+    @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
     @Query("select new vn.candicode.models.dtos.ChallengeLanguageDTO(c.challengeConfigId, c.language.text) from ChallengeConfigEntity c where c.challenge = ?1")
     List<ChallengeLanguageDTO> findLanguageListByChallenge(ChallengeEntity challenge);
 }

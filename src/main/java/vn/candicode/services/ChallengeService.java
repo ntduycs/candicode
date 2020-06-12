@@ -6,6 +6,8 @@ import vn.candicode.payloads.requests.*;
 import vn.candicode.payloads.responses.*;
 import vn.candicode.security.UserPrincipal;
 
+import java.util.List;
+
 public interface ChallengeService {
 
     /**
@@ -31,4 +33,12 @@ public interface ChallengeService {
     void editChallenge(Long challengeId, EditChallengeRequest payload);
 
     void deleteChallenge(Long challengeId);
+
+    RemoveTestcasesResult removeTestcases(Long challengeId, List<Long> testcaseIds);
+
+    int updateTestcases(Long challengeId, UpdateTestcasesRequest payload);
+
+    boolean removeLanguage(Long challengeId, String language);
+
+    boolean addLanguage(Long challengeId, NewLanguageRequest payload, UserPrincipal currentUser);
 }

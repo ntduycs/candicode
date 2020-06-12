@@ -33,7 +33,7 @@ public class WebTokenProvider {
     public String generateWebToken(UserDetails userDetails) {
         long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
-        Date expiredAt = new Date(now + 3600 * 1000 * 24);
+        Date expiredAt = new Date(now + 3600 * 1000 * 24 * 10); // ten days
 
         return Jwts.builder()
             .setSubject(userDetails.getUsername())

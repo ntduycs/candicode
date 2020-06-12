@@ -29,7 +29,11 @@ public class Java extends Executor {
             Process process = terminal.exec("chmod +x " + submissionDir + File.separator + "run.sh");
             process.waitFor();
             process = terminal.exec(submissionDir + File.separator + "run.sh");
-
+//            try (Writer w = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8)) {
+//                w.write("1|2");
+//                w.write("\n");
+//                w.write("2|5");
+//            }
             if (allowedTime > -0) {
                 new Timer(this, process, allowedTime).start();
             }
@@ -52,6 +56,11 @@ public class Java extends Executor {
             Process process = terminal.exec("chmod +x " + submissionDir + File.separator + "compile.sh");
             process.waitFor();
             process = terminal.exec(submissionDir + File.separator + "compile.sh");
+//            String line;
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//            while (( line = reader.readLine()) != null) {
+//                System.out.println(line);
+//            }
             int status = process.waitFor();
 
             // No need to worry about what error happened when compiling here

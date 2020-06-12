@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 public class TestcaseVerificationResult implements Serializable {
     private boolean validFormat;
     private String validFormatError;
-    private boolean compiled;
-    private String compileError;
-    private String output;
+    private String otherError;
+    private List<TestcaseVerificationByLanguage> result = new ArrayList<>();
 }

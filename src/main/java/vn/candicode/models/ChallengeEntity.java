@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 import vn.candicode.models.enums.ChallengeLevel;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class ChallengeEntity extends GenericEntity {
 
     @Column(nullable = false)
     @Lob
+    @Type(type = "text")
     @Basic(fetch = FetchType.LAZY)
     private String description;
 

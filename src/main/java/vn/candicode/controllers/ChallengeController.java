@@ -15,6 +15,7 @@ import vn.candicode.security.UserPrincipal;
 import vn.candicode.services.ChallengeService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Map;
 
 import static vn.candicode.common.filesystem.FileType.RAR;
@@ -127,6 +128,49 @@ public class ChallengeController extends GenericController {
         TestcaseVerificationResult result = challengeService.verifyTestcase(challengeId, payload);
 
         return ResponseEntity.ok(GenericResponse.from(result));
+    }
+
+    @DeleteMapping(path = "/challenges/{id}/testcases")
+    public ResponseEntity<?> removeTestcase(@PathVariable("id") Long challengeId,
+                                            @RequestBody @Valid RemoveTestcasesRequest payload) {
+        RemoveTestcasesResult result = challengeService.removeTestcases(challengeId, payload.getTestcaseIds());
+
+        return ResponseEntity.ok(GenericResponse.from(result));
+    }
+
+    @PutMapping(path = "/challenges/{id}/testcases")
+    public ResponseEntity<?> updateTestcases(@PathVariable("id") Long challengeId,
+                                             @RequestBody @Valid UpdateTestcasesRequest payload) {
+        int numUpdatedTestcases = challengeService.updateTestcases(challengeId, payload);
+
+        return ResponseEntity.ok(GenericResponse.from(
+            Map.of("message", "Updated " + numUpdatedTestcases + " testcases successfully")
+        ));
+    }
+
+    @PostMapping(path = "/challenges/{id}/languages")
+    public ResponseEntity<?> addLanguage(@PathVariable("id") Long challengeId,
+                                         @RequestBody @Valid NewLanguageRequest payload,
+                                         @CurrentUser UserPrincipal currentUser) {
+        boolean hasError = challengeService.addLanguage(challengeId, payload, currentUser);
+
+        String message = (hasError ? "Failed " : "Success ") + "to add " + payload.getLanguage() + " to challenge successfully";
+
+        return ResponseEntity.ok(GenericResponse.from(
+            Map.of("message", message)
+        ));
+    }
+
+    @DeleteMapping(path = "/challenges/{id}/languages")
+    public ResponseEntity<?> removeLanguage(@PathVariable("id") Long challengeId,
+                                            @RequestBody @NotBlank(message = "Field 'language' is required but not be given") String language) {
+        boolean hasError = challengeService.removeLanguage(challengeId, language);
+
+        String message = (hasError ? "Failed " : "Success ") + "to remove " + language + " from challenge successfully";
+
+        return ResponseEntity.ok(GenericResponse.from(
+            Map.of("message", message)
+        ));
     }
 
     @Override
