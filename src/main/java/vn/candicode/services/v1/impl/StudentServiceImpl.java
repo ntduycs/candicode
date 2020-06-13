@@ -1,4 +1,4 @@
-package vn.candicode.services.impl;
+package vn.candicode.services.v1.impl;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.models.StudentEntity;
 import vn.candicode.payloads.requests.StudentRequest;
 import vn.candicode.repositories.StudentRepository;
-import vn.candicode.services.StorageService;
-import vn.candicode.services.StudentService;
+import vn.candicode.services.v1.StorageService;
+import vn.candicode.services.v1.StudentService;
 import vn.candicode.utils.PreloadEntities;
 
 import java.util.Set;

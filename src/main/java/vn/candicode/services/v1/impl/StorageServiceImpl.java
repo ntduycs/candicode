@@ -1,4 +1,4 @@
-package vn.candicode.services.impl;
+package vn.candicode.services.v1.impl;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -7,7 +7,7 @@ import vn.candicode.common.structure.composite.Node;
 import vn.candicode.common.structure.composite.impl.CCDirectory;
 import vn.candicode.common.structure.composite.impl.CCFile;
 import vn.candicode.models.ChallengeConfigEntity;
-import vn.candicode.services.StorageService;
+import vn.candicode.services.v1.StorageService;
 import vn.candicode.utils.FileUtils;
 
 import java.io.File;

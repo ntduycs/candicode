@@ -1,4 +1,4 @@
-package vn.candicode.services;
+package vn.candicode.services.v1;
 
 import vn.candicode.payloads.requests.StudentRequest;
 

@@ -13,5 +13,5 @@ public class TestcaseVerificationResult implements Serializable {
     private boolean validFormat;
     private String validFormatError;
     private String otherError;
-    private List<TestcaseVerificationByLanguage> result = new ArrayList<>();
+    private List<TestcaseVerificationByLanguage> details = new ArrayList<>();
 }

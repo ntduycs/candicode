@@ -1,4 +1,4 @@
-package vn.candicode.services;
+package vn.candicode.services.v1;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

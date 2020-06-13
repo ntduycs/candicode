@@ -12,7 +12,7 @@ import vn.candicode.payloads.responses.*;
 import vn.candicode.payloads.validators.FileTypeAcceptable;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
-import vn.candicode.services.ChallengeService;
+import vn.candicode.services.v1.ChallengeService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

@@ -84,7 +84,7 @@ public class Java extends Executor {
             log.error("Compile shell script is not exist and cannot be created. Message - {}", e.getMessage());
             throw new CodeExecutionException(e.getMessage());
         } catch (IOException e) {
-            log.error("I/O error happenned. Message - {}", e.getMessage());
+            log.error("I/O error happened. Message - {}", e.getMessage());
             throw new CodeExecutionException(e.getMessage());
         }
     }

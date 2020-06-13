@@ -1,4 +1,4 @@
-package vn.candicode.services.impl;
+package vn.candicode.services.v1.impl;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,8 @@ import vn.candicode.payloads.requests.*;
 import vn.candicode.payloads.responses.*;
 import vn.candicode.repositories.*;
 import vn.candicode.security.UserPrincipal;
-import vn.candicode.services.ChallengeService;
-import vn.candicode.services.StorageService;
+import vn.candicode.services.v1.ChallengeService;
+import vn.candicode.services.v1.StorageService;
 import vn.candicode.utils.DatetimeUtils;
 import vn.candicode.utils.FileUtils;
 import vn.candicode.utils.PreloadEntities;
@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static vn.candicode.services.StorageService.Factor.CHALLENGE;
+import static vn.candicode.services.v1.StorageService.Factor.CHALLENGE;
 
 @Service
 @Log4j2
@@ -227,7 +227,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
             Triple verifyResult = verdict.verify();
 
-            result.getResult().add(new TestcaseVerificationByLanguage(
+            result.getDetails().add(new TestcaseVerificationByLanguage(
                 config.getLanguage().getText().name(),
                 verifyResult.getOutput(),
                 "Runtime Error",

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import vn.candicode.payloads.GenericResponse;
 import vn.candicode.payloads.requests.StudentRequest;
-import vn.candicode.services.StudentService;
+import vn.candicode.services.v1.StudentService;
 
 import javax.validation.Valid;
 import java.util.Map;
