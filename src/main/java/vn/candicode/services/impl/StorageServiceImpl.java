@@ -150,8 +150,8 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String getChallengeDirPathByChallengeAuthorAndConfig(Long authorId, ChallengeConfigEntity config) {
-        return getChallengeDirByUserId(authorId) + config.getChallengeDir();
+    public String getChallengeDirPathByChallengeAuthorAndConfig(Long authorId, String challengeDir) {
+        return getChallengeDirByUserId(authorId) + challengeDir;
     }
 
     @Override

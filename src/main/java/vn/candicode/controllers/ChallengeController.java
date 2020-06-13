@@ -152,13 +152,9 @@ public class ChallengeController extends GenericController {
     public ResponseEntity<?> addLanguage(@PathVariable("id") Long challengeId,
                                          @RequestBody @Valid NewLanguageRequest payload,
                                          @CurrentUser UserPrincipal currentUser) {
-        boolean hasError = challengeService.addLanguage(challengeId, payload, currentUser);
+        SubmissionResult result = challengeService.addLanguage(challengeId, payload, currentUser);
 
-        String message = (hasError ? "Failed " : "Success ") + "to add " + payload.getLanguage() + " to challenge successfully";
-
-        return ResponseEntity.ok(GenericResponse.from(
-            Map.of("message", message)
-        ));
+        return ResponseEntity.ok(GenericResponse.from(result));
     }
 
     @DeleteMapping(path = "/challenges/{id}/languages")

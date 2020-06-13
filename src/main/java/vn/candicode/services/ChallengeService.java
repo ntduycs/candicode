@@ -40,5 +40,5 @@ public interface ChallengeService {
 
     boolean removeLanguage(Long challengeId, String language);
 
-    boolean addLanguage(Long challengeId, NewLanguageRequest payload, UserPrincipal currentUser);
+    SubmissionResult addLanguage(Long challengeId, NewLanguageRequest payload, UserPrincipal currentUser);
 }

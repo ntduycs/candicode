@@ -33,7 +33,7 @@ public interface StorageService {
 
     String getErrorPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config);
 
-    String getChallengeDirPathByChallengeAuthorAndConfig(Long authorId, ChallengeConfigEntity config);
+    String getChallengeDirPathByChallengeAuthorAndConfig(Long authorId, String challengeDir);
 
     String getSubmissionDirPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config);
 }
