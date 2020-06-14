@@ -11,11 +11,18 @@ public class TestcaseResult implements Serializable {
     private String input;
     private String expectedOutput;
     private String actualOutput;
-
+    private String error;
 
     public TestcaseResult(boolean hidden, String input, String expectedOutput, String actualOutput) {
         this.input = input;
         this.expectedOutput = hidden ? "" : expectedOutput;
         this.actualOutput = actualOutput;
+    }
+
+    public TestcaseResult(boolean hidden, String input, String expectedOutput, String actualOutput, String error) {
+        this.input = input;
+        this.expectedOutput = hidden ? "" : expectedOutput;
+        this.actualOutput = actualOutput;
+        this.error = error;
     }
 }

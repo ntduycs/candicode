@@ -30,4 +30,5 @@ public class ChallengeDetails implements Serializable {
     private List<Testcase> testcases = new ArrayList<>();
     private List<String> languages = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
 }

@@ -21,6 +21,8 @@ public class ChallengeSummary implements Serializable {
 
     private List<String> languages = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
+
     private Long numComments;
     private Long numAttendees;
     private Float rate;

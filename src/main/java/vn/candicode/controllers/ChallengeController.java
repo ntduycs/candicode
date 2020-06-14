@@ -1,6 +1,7 @@
 package vn.candicode.controllers;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,11 @@ import static vn.candicode.common.filesystem.FileType.ZIP;
 @Log4j2
 public class ChallengeController extends GenericController {
     private final ChallengeService challengeService;
+    private final vn.candicode.services.v2.ChallengeService challengeServiceV2;
 
-    public ChallengeController(ChallengeService challengeService) {
+    public ChallengeController(@Qualifier("challengeServiceV1") ChallengeService challengeService, @Qualifier("challengeServiceV2") vn.candicode.services.v2.ChallengeService challengeServiceV2) {
         this.challengeService = challengeService;
+        this.challengeServiceV2 = challengeServiceV2;
     }
 
     @GetMapping(path = "/challenges/{id}")
@@ -117,15 +120,16 @@ public class ChallengeController extends GenericController {
     public ResponseEntity<?> submitCode(@PathVariable("id") Long challengeId,
                                         @RequestBody @Valid SubmissionRequest payload,
                                         @CurrentUser UserPrincipal currentUser) {
-        SubmissionResult result = challengeService.evaluateSubmission(challengeId, payload, currentUser);
+        SubmissionResult result = challengeServiceV2.evaluateSubmission(challengeId, payload, currentUser);
 
         return ResponseEntity.ok(GenericResponse.from(result));
     }
 
     @PostMapping(path = "challenges/{id}/testcases/verification")
     public ResponseEntity<?> verifyTestcase(@PathVariable("id") Long challengeId,
-                                            @RequestBody @Valid TestcaseVerificationRequest payload) {
-        TestcaseVerificationResult result = challengeService.verifyTestcase(challengeId, payload);
+                                            @RequestBody @Valid TestcaseVerificationRequest payload,
+                                            @CurrentUser UserPrincipal user) {
+        TestcaseVerificationResult result = challengeServiceV2.verifyTestcase(challengeId, payload, user);
 
         return ResponseEntity.ok(GenericResponse.from(result));
     }

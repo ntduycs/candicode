@@ -27,6 +27,8 @@ public interface StorageService {
 
     String getImplementedPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config);
 
+    String getImplementedPathFromSubmissionDir(String submissionDir, String implementedPath);
+
     String getTestcaseInputPathByChallenge(Long challengeId);
 
     String getTestcaseOutputPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config);
@@ -36,4 +38,6 @@ public interface StorageService {
     String getChallengeDirPathByChallengeAuthorAndConfig(Long authorId, String challengeDir);
 
     String getSubmissionDirPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config);
+
+    String getSubmissionDir(Long submitter, String challengeTitle);
 }

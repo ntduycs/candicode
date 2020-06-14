@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
+import vn.candicode.models.converters.TagConverter;
 import vn.candicode.models.enums.ChallengeLevel;
 
 import javax.persistence.*;
@@ -91,4 +92,9 @@ public class ChallengeEntity extends GenericEntity {
         this.categories.remove(challengeCategory);
         challengeCategory.setChallenge(null);
     }
+
+    @Convert(converter = TagConverter.class)
+    private List<String> tags = new ArrayList<>();
+
+    private Boolean belongsToContest;
 }

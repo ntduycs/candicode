@@ -34,11 +34,7 @@ public class JavaV2 extends Executor {
             Process process = terminal.exec("chmod +x " + challengeDir + File.separator + "compile.sh");
             process.waitFor();
             process = terminal.exec(challengeDir + File.separator + "compile.sh");
-//            String line;
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-//            while ((line = reader.readLine()) != null) {
-//                System.out.println(line);
-//            }
+
             int status = process.waitFor();
 
             if (status == 0) {

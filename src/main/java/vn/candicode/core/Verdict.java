@@ -11,26 +11,33 @@ public class Verdict extends Thread {
 
     private final LanguageName language;
     private final String submissionDir;
+    private final String compilePath;
+    private final String runPath;
     private final CountDownLatch latch;
+    private final boolean hasCompiled;
 
-    public Verdict(LanguageName language, String submissionDir, CountDownLatch latch) {
+    public Verdict(LanguageName language, String submissionDir, String compilePath, String runPath, CountDownLatch latch, boolean hasCompiled) {
         this.language = language;
         this.submissionDir = submissionDir;
+        this.compilePath = compilePath;
+        this.runPath = runPath;
         this.latch = latch;
+        this.hasCompiled = hasCompiled;
     }
 
     @Override
     public void run() {
         Executor executor = getCodeExecutor(language);
 
-        Pair compileResult = executor.compile();
+        if (!hasCompiled) {
+            Pair compileResult = executor.compile();
 
-        if (!compileResult.isCompiled()) {
-            log.error("Compile failed");
-            return;
+            if (!compileResult.isCompiled()) {
+                log.error("Compile failed");
+                return;
+            }
         }
 
-        log.info("Compile success");
         executor.run();
 
         latch.countDown();
@@ -41,7 +48,7 @@ public class Verdict extends Thread {
             case C:
                 return new C();
             case Java:
-                return new Java(submissionDir);
+                return new Java(submissionDir, compilePath, runPath);
             default:
                 return null;
         }

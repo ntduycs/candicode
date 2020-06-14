@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import static vn.candicode.services.v1.StorageService.Factor.CHALLENGE;
 
-@Service
+@Service("challengeServiceV1")
 @Log4j2
 public class ChallengeServiceImpl implements ChallengeService {
     private final StorageService storageService;
@@ -102,6 +102,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.setPoint(calculateChallengePoint(challenge.getLevel()));
             challenge.setAuthor(currentUser.getEntityRef());
             challenge.setBanner(bannerPath);
+            challenge.setTags(payload.getTags());
 
             entityManager.persist(challenge);
 
@@ -180,17 +181,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         entityManager.persist(challenge);
 
-        try {
-            FileUtils.appendToFile(
-                new File(storageService.getTestcaseInputPathByChallenge(challenge.getChallengeId())),
-                challenge.getTestcases().stream()
-                    .map(TestcaseEntity::getInput)
-                    .collect(Collectors.toList())
-            );
-        } catch (IOException e) {
-            log.error("I/O Exception. Message - {}", e.getLocalizedMessage());
-            throw new FileCannotStoreException(e.getLocalizedMessage());
-        }
+//        try {
+//            FileUtils.appendToFile(
+//                new File(storageService.getTestcaseInputPathByChallenge(challenge.getChallengeId())),
+//                challenge.getTestcases().stream()
+//                    .map(TestcaseEntity::getInput)
+//                    .collect(Collectors.toList())
+//            );
+//        } catch (IOException e) {
+//            log.error("I/O Exception. Message - {}", e.getLocalizedMessage());
+//            throw new FileCannotStoreException(e.getLocalizedMessage());
+//        }
 
         return challenge.getTestcases().size() - previousNumTestcases;
     }
@@ -265,6 +266,9 @@ public class ChallengeServiceImpl implements ChallengeService {
         challengeDetails.setBanner(challenge.getBanner());
         challengeDetails.setCreatedAt(challenge.getCreatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
         challengeDetails.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
+        challengeDetails.setTags(challenge.getTags());
+        challengeDetails.setCategories(challenge
+            .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
 
         try {
             challengeDetails.setTcInputFormat(new TestcaseFormat(RegexUtils.resolveRegex(challenge.getTestcaseInputFormat())));
@@ -348,6 +352,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             challengeSummary.setRate(4.5f);
             challengeSummary.setPoint(challenge.getPoint());
             challengeSummary.setNumComments(commentRepository.countAllByChallenge(challenge));
+            challengeSummary.setTags(challenge.getTags());
 
             items.add(challengeSummary);
         }
@@ -364,7 +369,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
 
         ChallengeConfigEntity challengeConfig = challengeConfigRepository
-            .findByChallengeAndLanguage(challenge.getChallengeId(), preloadEntities.getLanguageEntities().get(LanguageName.valueOf(payload.getLanguage())))
+            .findByChallengeAndLanguage(challenge.getChallengeId(), LanguageName.valueOf(payload.getLanguage()))
             .orElseThrow(() -> new EntityNotFoundException("Challenge config", "challengeId and language", challengeId + " and " + payload.getLanguage()));
 
         List<TestcaseEntity> testcases = challenge.getTestcases();
@@ -388,7 +393,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        new Verdict(LanguageName.valueOf(payload.getLanguage()), submissionDir.getAbsolutePath(), latch).start();
+        new Verdict(LanguageName.valueOf(payload.getLanguage()), submissionDir.getAbsolutePath(), challengeConfig.getCompilePath(), challengeConfig.getRunPath(), latch, false).start();
 
         try {
             latch.await(3000, TimeUnit.MILLISECONDS);
@@ -446,19 +451,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         return result;
     }
 
-    private List<String> retrieveSubmissionResults(File outputFile) throws IOException {
-        List<String> results = new ArrayList<>();
+    private List<String> retrieveSubmissionResults(File outputDir) throws IOException {
+        Map<Long, String> results = new LinkedHashMap<>();
 
-        String line;
-        BufferedReader reader = new BufferedReader(new FileReader(outputFile));
-
-        while (StringUtils.hasText(line = reader.readLine())) {
-            results.add(line);
-        }
-
-        reader.close();
-
-        return results;
+        return null;
     }
 
     private String retrieveCompileError(File errorFile) throws IOException {
@@ -580,7 +576,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public boolean removeLanguage(Long challengeId, String language) {
         try {
-            Optional<ChallengeConfigEntity> config = challengeConfigRepository.findByChallengeAndLanguage(challengeId, preloadEntities.getLanguageEntities().get(LanguageName.valueOf(language)));
+            Optional<ChallengeConfigEntity> config = challengeConfigRepository.findByChallengeAndLanguage(challengeId, LanguageName.valueOf(language));
 
             if (config.isEmpty()) {
                 return true;
@@ -617,7 +613,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        new Verdict(LanguageName.valueOf(payload.getLanguage()), challengeDir.getAbsolutePath(), latch).start();
+        new Verdict(LanguageName.valueOf(payload.getLanguage()), challengeDir.getAbsolutePath(), payload.getCompilePath(), payload.getRunPath(), latch, true).start();
 
         try {
             latch.await(3000, TimeUnit.MILLISECONDS);

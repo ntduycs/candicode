@@ -135,6 +135,11 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public String getImplementedPathFromSubmissionDir(String submissionDir, String implementedPath) {
+        return submissionDir + implementedPath;
+    }
+
+    @Override
     public String getTestcaseInputPathByChallenge(Long challengeId) {
         return getTestcaseRootDir() + File.separator + FileUtils.getInputTestcaseFileName(challengeId);
     }
@@ -157,6 +162,11 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String getSubmissionDirPathBySubmitterAndConfig(Long submitterId, ChallengeConfigEntity config) {
         return getSubmissionDirByUserId(submitterId) + config.getChallengeDir();
+    }
+
+    @Override
+    public String getSubmissionDir(Long submitter, String challengeId) {
+        return getSubmissionDirByUserId(submitter) + File.separator + FileUtils.generateDirectoryName(challengeId, submitter);
     }
 
     private String getTempDir() {

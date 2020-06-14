@@ -58,4 +58,6 @@ public class NewChallengeRequest extends GenericRequest {
 
     @NotBlank(message = "Field 'challengeDir' is required but not be given")
     private String challengeDir;
+
+    private List<String> tags;
 }
