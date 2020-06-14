@@ -599,6 +599,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public SubmissionResult addLanguage(Long challengeId, NewLanguageRequest payload, UserPrincipal currentUser) {
+        SubmissionResult submissionResult = new SubmissionResult();
+        LanguageName language = LanguageName.valueOf(payload.getLanguage());
+
         ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
 
@@ -606,75 +609,67 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         File challengeDir = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(challenge.getAuthor().getUserId(), payload.getChallengeDir()));
 
-        File originTestcaseInputFile = new File(storageService.getTestcaseInputPathByChallenge(challengeId));
-        File copiedTestcaseInputFile = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(currentUser.getUserId(), payload.getChallengeDir()) + File.separator + FileUtils.INPUT_TESTCASE_FILE);
+        submissionResult.setTotal(testcases.size());
 
-        try {
-            FileUtils.copyFile2File(originTestcaseInputFile, copiedTestcaseInputFile);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new FileCannotReadException("Some challenge contents cannot be read");
-        }
+        int passedTestcases = 0;
+        boolean hasCompiled = false;
+        String root = challengeDir.getAbsolutePath() + payload.getCompilePath().substring(0, payload.getCompilePath().lastIndexOf(File.separator));
 
-        CountDownLatch latch = new CountDownLatch(1);
+        for (TestcaseEntity testcase : testcases) {
+            try {
+                File inputFile = new File(root, FileUtils.INPUT_TESTCASE_FILE);
+                FileUtils.overwriteFile(inputFile, testcase.getInput());
+                CountDownLatch timer = new CountDownLatch(1);
+                new Verdict(language, challengeDir.getAbsolutePath(), payload.getCompilePath(), payload.getRunPath(), timer, hasCompiled).start();
+                timer.await(3000, TimeUnit.MILLISECONDS);
 
-        new Verdict(LanguageName.valueOf(payload.getLanguage()), challengeDir.getAbsolutePath(), payload.getCompilePath(), payload.getRunPath(), latch, true).start();
-
-        try {
-            latch.await(3000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw new CodeExecutionException("Cannot wait until get submission response. Message - " + e.getMessage());
-        }
-
-        File errorFile = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(currentUser.getUserId(), payload.getChallengeDir()) + File.separator + FileUtils.ERROR_FILE);
-        File outputFile = new File(storageService.getChallengeDirPathByChallengeAuthorAndConfig(currentUser.getUserId(), payload.getChallengeDir()) + File.separator + FileUtils.OUTPUT_TESTCASE_FILE);
-
-        SubmissionResult result = new SubmissionResult();
-        result.setTotal(testcases.size());
-
-        try {
-            if (!outputFile.exists() || outputFile.length() == 0) { // Compile error
-                result.setPassed(0);
-                result.setCompiled("Failed");
-                result.setError(retrieveCompileError(errorFile));
-            } else {
-                List<String> actualOutputs = retrieveSubmissionResults(outputFile);
-                Map<Long, String> runtimeErrors = retrieveRuntimeError(errorFile);
-                int passed = 0;
-                for (int i = 0, actualOutputsSize = actualOutputs.size(); i < actualOutputsSize; i++) {
-                    TestcaseEntity testcase = testcases.get(i);
-                    String actualOutput = actualOutputs.get(i);
-                    String expectedOutput = testcase.getExpectedOutput();
-                    if (expectedOutput.equals("Error")) {
-                        result.getDetails().add(new TestcaseResult(
-                            testcase.getHidden(),
-                            testcase.getInput(),
-                            testcase.getExpectedOutput(),
-                            runtimeErrors.get(testcase.getTestcaseId()),
-                            false
-                        ));
+                if (!hasCompiled) {
+                    File errorFile = new File(root, FileUtils.ERROR_FILE);
+                    if (errorFile.exists()) {
+                        String compileError = FileUtils.readFileToString(errorFile);
+                        submissionResult.setCompiled("Failed");
+                        submissionResult.setError(compileError);
+                        submissionResult.setDetails(new ArrayList<>());
+                        submissionResult.setPassed(0);
+                        org.apache.commons.io.FileUtils.deleteQuietly(errorFile);
+                        return submissionResult;
                     } else {
-                        result.getDetails().add(new TestcaseResult(
-                            testcase.getHidden(),
-                            testcase.getInput(),
-                            expectedOutput,
-                            actualOutput,
-                            false
-                        ));
-                        if (expectedOutput.equals(actualOutput)) {
-                            passed++;
-                        }
+                        hasCompiled = true;
+                        submissionResult.setCompiled("Success");
                     }
                 }
-                result.setCompiled("Success");
-                result.setPassed(passed);
+
+                File outputFile = new File(root, "out.txt");
+
+                if (outputFile.exists()) {
+                    String output = FileUtils.readFileToString(outputFile);
+                    if (StringUtils.hasText(output)) {
+                        TestcaseResult testcaseResult = new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, false);
+                        submissionResult.getDetails().add(testcaseResult);
+                        if (testcase.getExpectedOutput().equals(output)) {
+                            passedTestcases++;
+                            testcaseResult.setPassed(true);
+                        }
+                        org.apache.commons.io.FileUtils.deleteQuietly(outputFile);
+                    } else {
+                        File errorFile = new File(root, "err.txt");
+                        String error = FileUtils.readFileToString(errorFile);
+                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error, false));
+                        org.apache.commons.io.FileUtils.deleteQuietly(errorFile);
+                    }
+                }
+
+            } catch (IOException e) {
+                log.error("Testcase [{}]: {}", testcase.getTestcaseId(), e.getLocalizedMessage());
+                throw new FileCannotStoreException(e.getLocalizedMessage());
+            } catch (InterruptedException e) {
+                log.error("Testcase [{}]: {}", testcase.getTestcaseId(), e.getLocalizedMessage());
+                submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage(), false));
             }
-        } catch (IOException e) {
-            log.error("I/O error happened when constructing the submission response. Message - {}", e.getMessage());
-            throw new FileCannotReadException(e.getMessage());
         }
 
-        return result;
+        submissionResult.setPassed(passedTestcases);
+
+        return submissionResult;
     }
 }
