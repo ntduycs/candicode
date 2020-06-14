@@ -23,7 +23,7 @@ public class JavaV2 extends Executor {
     @Override
     public Pair compile() {
         try {
-            File inputFile = new File(challengeDir + File.separator + "in.txt");
+            File inputFile = new File(challengeDir, "in.txt");
 
             if (!inputFile.exists()) {
                 Files.createFile(Paths.get(inputFile.getAbsolutePath()));
@@ -41,7 +41,7 @@ public class JavaV2 extends Executor {
             if (status == 0) {
                 return new Pair(true, null);
             } else {
-                String compileError = FileUtils.readFileToString(new File(challengeDir + File.separator + "err.txt"));
+                String compileError = FileUtils.readFileToString(new File(challengeDir, "err.txt"));
                 return new Pair(false, compileError);
             }
         } catch (IOException e) {

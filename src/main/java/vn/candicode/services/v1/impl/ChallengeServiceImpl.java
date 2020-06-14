@@ -613,14 +613,19 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         int passedTestcases = 0;
         boolean hasCompiled = false;
-        String root = challengeDir.getAbsolutePath() + payload.getCompilePath().substring(0, payload.getCompilePath().lastIndexOf(File.separator));
+        String root = payload.getCompilePath().substring(0, payload.getCompilePath().lastIndexOf(File.separator));
+
+        String compilePath = storageService.cleanPath(payload.getCompilePath(), CHALLENGE, currentUser.getUserId(), payload.getChallengeDir());
+        String runPath = storageService.cleanPath(payload.getRunPath(), CHALLENGE, currentUser.getUserId(), payload.getChallengeDir());
+        String implementedPath = storageService.cleanPath(payload.getImplementedPath(), CHALLENGE, currentUser.getUserId(), payload.getChallengeDir());
+        String nonImplementedPath = storageService.cleanPath(payload.getNonImplementedPath(), CHALLENGE, currentUser.getUserId(), payload.getChallengeDir());
 
         for (TestcaseEntity testcase : testcases) {
             try {
                 File inputFile = new File(root, FileUtils.INPUT_TESTCASE_FILE);
                 FileUtils.overwriteFile(inputFile, testcase.getInput());
                 CountDownLatch timer = new CountDownLatch(1);
-                new Verdict(language, challengeDir.getAbsolutePath(), payload.getCompilePath(), payload.getRunPath(), timer, hasCompiled).start();
+                new Verdict(language, challengeDir.getAbsolutePath(), compilePath, runPath, timer, hasCompiled).start();
                 timer.await(3000, TimeUnit.MILLISECONDS);
 
                 if (!hasCompiled) {
@@ -669,6 +674,19 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         submissionResult.setPassed(passedTestcases);
+
+        if (passedTestcases == testcases.size()) {
+            ChallengeConfigEntity config = new ChallengeConfigEntity();
+            config.setCompilePath(compilePath);
+            config.setRunPath(runPath);
+            config.setNonImplementedPath(nonImplementedPath);
+            config.setImplementedPath(implementedPath);
+            config.setChallengeDir(payload.getChallengeDir());
+            config.setLanguage(preloadEntities.getLanguageEntities().get(language));
+            config.setChallenge(challenge);
+            config.setCompatible(true);
+            challengeConfigRepository.save(config);
+        }
 
         return submissionResult;
     }
