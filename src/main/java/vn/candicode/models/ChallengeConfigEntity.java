@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -23,10 +25,12 @@ public class ChallengeConfigEntity extends GenericEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "challenge_id", referencedColumnName = "challengeId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private ChallengeEntity challenge;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "language_id", referencedColumnName = "languageId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private LanguageEntity language;
 
     @Column

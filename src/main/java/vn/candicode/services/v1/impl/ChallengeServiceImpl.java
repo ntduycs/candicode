@@ -487,7 +487,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
         }
 
-        if (challenge.getTitle().equals(payload.getTitle())) {
+        if (!challenge.getTitle().equals(payload.getTitle())) {
             challenge.setTitle(payload.getTitle());
         }
 
