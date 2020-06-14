@@ -13,6 +13,9 @@ import java.util.List;
 public class TagConverter implements AttributeConverter<List<String>, String> {
     @Override
     public String convertToDatabaseColumn(List<String> strings) {
+        if (strings == null || strings.isEmpty()) {
+            return null;
+        }
         return Joiner.on(",").join(strings);
     }
 
