@@ -12,36 +12,24 @@ import java.nio.charset.StandardCharsets;
 
 @Log4j2
 public class Java extends Executor {
-    private final String submissionDir;
-    private final String compilePath;
-    private final String runPath;
-    private final long allowedTime;
 
     public Java(String submissionDir, String compilePath, String runPath, long allowedTime) {
-        this.submissionDir = submissionDir;
-        this.compilePath = compilePath;
-        this.runPath = runPath;
-        this.allowedTime = allowedTime;
+        super(submissionDir, compilePath, runPath, allowedTime);
     }
 
     public Java(String submissionDir, String compilePath, String runPath) {
-        this.submissionDir = submissionDir;
-        this.compilePath = compilePath;
-        this.runPath = runPath;
-        this.allowedTime = -1;
+        super(submissionDir, compilePath, runPath, -1);
     }
 
     @Override
     public void run() {
-        String root = submissionDir + compilePath.substring(0, compilePath.lastIndexOf(File.separator));
-
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("chmod", "+x", submissionDir + runPath);
             processBuilder.directory(new File(root));
             Process process = processBuilder.start();
             process.waitFor();
             process = processBuilder.command(submissionDir + runPath).start();
-            if (allowedTime > -0) {
+            if (allowedTime > 0) {
                 new Timer(this, process, allowedTime).start();
             }
 
@@ -57,7 +45,6 @@ public class Java extends Executor {
 
     @Override
     public Pair compile() {
-        String root = submissionDir + compilePath.substring(0, compilePath.lastIndexOf(File.separator));
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("chmod", "+x", submissionDir + compilePath);
             processBuilder.directory(new File(root));

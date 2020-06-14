@@ -15,6 +15,7 @@ public class JavaV2 extends Executor {
     private final String challengeDir;
 
     public JavaV2(String input, String challengeDir) {
+        super(null, "", null, -1);
         this.input = input;
         this.challengeDir = challengeDir;
     }

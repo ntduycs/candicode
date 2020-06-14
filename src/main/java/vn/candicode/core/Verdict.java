@@ -46,11 +46,10 @@ public class Verdict extends Thread {
     protected Executor getCodeExecutor(LanguageName language) {
         switch (language) {
             case C:
-                return new C();
+                return new C(submissionDir, compilePath, runPath);
             case Java:
-                return new Java(submissionDir, compilePath, runPath);
             default:
-                return null;
+                return new Java(submissionDir, compilePath, runPath);
         }
     }
 }
