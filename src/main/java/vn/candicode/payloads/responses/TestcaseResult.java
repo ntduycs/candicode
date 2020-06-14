@@ -12,17 +12,20 @@ public class TestcaseResult implements Serializable {
     private String expectedOutput;
     private String actualOutput;
     private String error;
+    private Boolean passed;
 
-    public TestcaseResult(boolean hidden, String input, String expectedOutput, String actualOutput) {
+    public TestcaseResult(boolean hidden, String input, String expectedOutput, String actualOutput, Boolean passed) {
         this.input = input;
         this.expectedOutput = hidden ? "" : expectedOutput;
         this.actualOutput = actualOutput;
+        this.passed = passed;
     }
 
-    public TestcaseResult(boolean hidden, String input, String expectedOutput, String actualOutput, String error) {
+    public TestcaseResult(boolean hidden, String input, String expectedOutput, String actualOutput, String error, Boolean passed) {
         this.input = input;
         this.expectedOutput = hidden ? "" : expectedOutput;
         this.actualOutput = actualOutput;
         this.error = error;
+        this.passed = passed;
     }
 }

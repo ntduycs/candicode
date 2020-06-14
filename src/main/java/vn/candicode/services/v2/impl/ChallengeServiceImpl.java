@@ -118,13 +118,13 @@ public class ChallengeServiceImpl implements ChallengeService {
                 if (outputFile.exists()) {
                     String output = FileUtils.readFileToString(outputFile);
                     if (StringUtils.hasText(output)) {
-                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output));
+                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, true));
                         if (testcase.getExpectedOutput().equals(output)) passedTestcases++;
                         org.apache.commons.io.FileUtils.deleteQuietly(outputFile);
                     } else {
                         File errorFile = new File(root, "err.txt");
                         String error = FileUtils.readFileToString(errorFile);
-                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error));
+                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error, false));
                         org.apache.commons.io.FileUtils.deleteQuietly(errorFile);
                     }
                 }
@@ -134,7 +134,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 throw new FileCannotStoreException(e.getLocalizedMessage());
             } catch (InterruptedException e) {
                 log.error("Testcase [{}]: {}", testcase.getTestcaseId(), e.getLocalizedMessage());
-                submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage()));
+                submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage(), false));
             }
         }
 

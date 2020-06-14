@@ -426,14 +426,16 @@ public class ChallengeServiceImpl implements ChallengeService {
                             testcase.getHidden(),
                             testcase.getInput(),
                             testcase.getExpectedOutput(),
-                            runtimeErrors.get(testcase.getTestcaseId())
+                            runtimeErrors.get(testcase.getTestcaseId()),
+                            false
                         ));
                     } else {
                         result.getDetails().add(new TestcaseResult(
                             testcase.getHidden(),
                             testcase.getInput(),
                             expectedOutput,
-                            actualOutput
+                            actualOutput,
+                            false
                         ));
                         if (expectedOutput.equals(actualOutput)) {
                             passed++;
@@ -649,14 +651,16 @@ public class ChallengeServiceImpl implements ChallengeService {
                             testcase.getHidden(),
                             testcase.getInput(),
                             testcase.getExpectedOutput(),
-                            runtimeErrors.get(testcase.getTestcaseId())
+                            runtimeErrors.get(testcase.getTestcaseId()),
+                            false
                         ));
                     } else {
                         result.getDetails().add(new TestcaseResult(
                             testcase.getHidden(),
                             testcase.getInput(),
                             expectedOutput,
-                            actualOutput
+                            actualOutput,
+                            false
                         ));
                         if (expectedOutput.equals(actualOutput)) {
                             passed++;
