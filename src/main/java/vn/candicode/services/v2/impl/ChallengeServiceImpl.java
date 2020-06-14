@@ -9,9 +9,7 @@ import vn.candicode.exceptions.EntityNotFoundException;
 import vn.candicode.exceptions.FileCannotReadException;
 import vn.candicode.exceptions.FileCannotStoreException;
 import vn.candicode.exceptions.RegexTemplateNotFoundException;
-import vn.candicode.models.ChallengeConfigEntity;
-import vn.candicode.models.ChallengeEntity;
-import vn.candicode.models.TestcaseEntity;
+import vn.candicode.models.*;
 import vn.candicode.models.enums.LanguageName;
 import vn.candicode.payloads.requests.SubmissionRequest;
 import vn.candicode.payloads.requests.TestcaseVerificationRequest;
@@ -21,6 +19,7 @@ import vn.candicode.payloads.responses.TestcaseVerificationByLanguage;
 import vn.candicode.payloads.responses.TestcaseVerificationResult;
 import vn.candicode.repositories.ChallengeConfigRepository;
 import vn.candicode.repositories.ChallengeRepository;
+import vn.candicode.repositories.SubmissionRepository;
 import vn.candicode.repositories.TestcaseRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.services.v1.StorageService;
@@ -32,9 +31,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service("challengeServiceV2")
 @Log4j2
@@ -42,13 +43,15 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeConfigRepository challengeConfigRepository;
     private final TestcaseRepository testcaseRepository;
+    private final SubmissionRepository submissionRepository;
 
     private final StorageService storageService;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigRepository challengeConfigRepository, TestcaseRepository testcaseRepository, StorageService storageService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigRepository challengeConfigRepository, TestcaseRepository testcaseRepository, SubmissionRepository submissionRepository, StorageService storageService) {
         this.challengeRepository = challengeRepository;
         this.challengeConfigRepository = challengeConfigRepository;
         this.testcaseRepository = testcaseRepository;
+        this.submissionRepository = submissionRepository;
         this.storageService = storageService;
     }
 
@@ -118,7 +121,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 if (outputFile.exists()) {
                     String output = FileUtils.readFileToString(outputFile);
                     if (StringUtils.hasText(output)) {
-                        TestcaseResult testcaseResult = new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, false);
+                        TestcaseResult testcaseResult = new TestcaseResult(testcase.getTestcaseId(), testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, false);
                         submissionResult.getDetails().add(testcaseResult);
                         if (testcase.getExpectedOutput().equals(output)) {
                             passedTestcases++;
@@ -128,7 +131,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                     } else {
                         File errorFile = new File(root, "err.txt");
                         String error = FileUtils.readFileToString(errorFile);
-                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error, false));
+                        submissionResult.getDetails().add(new TestcaseResult(testcase.getTestcaseId(), testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error, false));
                         org.apache.commons.io.FileUtils.deleteQuietly(errorFile);
                     }
                 }
@@ -138,11 +141,32 @@ public class ChallengeServiceImpl implements ChallengeService {
                 throw new FileCannotStoreException(e.getLocalizedMessage());
             } catch (InterruptedException e) {
                 log.error("Testcase [{}]: {}", testcase.getTestcaseId(), e.getLocalizedMessage());
-                submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage(), false));
+                submissionResult.getDetails().add(new TestcaseResult(testcase.getTestcaseId(), testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage(), false));
             }
         }
 
         submissionResult.setPassed(passedTestcases);
+
+        SubmissionEntity submission = new SubmissionEntity();
+        submission.setAuthor((StudentEntity) user.getEntityRef());
+        submission.setChallenge(challenge);
+        submission.setCompileSuccess(submissionResult.getCompiled().equals("Success"));
+        submission.setCompletionTime(0.0);
+        submission.setExecutionTime(0.0);
+        submission.setUsedMemory(0.0);
+        submission.setResults(new ArrayList<>());
+
+        Map<Long, TestcaseResult> resultMap = submissionResult.getDetails().stream()
+            .collect(Collectors.toMap(TestcaseResult::getTestcaseId, testcaseResult -> testcaseResult, (a, b) -> b));
+
+        for (TestcaseEntity testcase : challengeTestcases) {
+            ResultEntity resultEntity = new ResultEntity();
+            resultEntity.setTestcase(testcase);
+            resultEntity.setPass(resultMap.get(testcase.getTestcaseId()).getPassed());
+            submission.addResult(resultEntity);
+        }
+
+        submissionRepository.save(submission);
 
         return submissionResult;
     }

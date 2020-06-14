@@ -19,4 +19,17 @@ public class Testcase implements Serializable {
         this.hidden = hidden;
         this.output = hidden ? "" : output;
     }
+
+    public Testcase(Long testcaseId, String input, String output, Boolean hidden, Boolean isOwner) {
+        this.testcaseId = testcaseId;
+        this.input = input;
+        this.hidden = hidden;
+        if (isOwner) {
+            this.output = output;
+        } else if (hidden) {
+            this.output = null;
+        } else {
+            this.output = output;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -298,9 +299,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<TestcaseEntity> testcases = testcaseRepository.findAllByChallenge(challenge);
 
+        UserPrincipal currentUser = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean isOwner = currentUser.getEntityRef().getUserId().equals(challenge.getAuthor().getUserId());
+
         for (TestcaseEntity testcase : testcases) {
             challengeDetails.getTestcases().add(new Testcase(
-                testcase.getTestcaseId(), testcase.getInput(), testcase.getExpectedOutput(), testcase.getHidden()));
+                testcase.getTestcaseId(), testcase.getInput(), testcase.getExpectedOutput(), testcase.getHidden(), isOwner));
         }
 
         return challengeDetails;
@@ -423,6 +427,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                     String expectedOutput = testcase.getExpectedOutput();
                     if (expectedOutput.equals("Error")) {
                         result.getDetails().add(new TestcaseResult(
+                            testcase.getTestcaseId(),
                             testcase.getHidden(),
                             testcase.getInput(),
                             testcase.getExpectedOutput(),
@@ -431,6 +436,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                         ));
                     } else {
                         result.getDetails().add(new TestcaseResult(
+                            testcase.getTestcaseId(),
                             testcase.getHidden(),
                             testcase.getInput(),
                             expectedOutput,
@@ -649,7 +655,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 if (outputFile.exists()) {
                     String output = FileUtils.readFileToString(outputFile);
                     if (StringUtils.hasText(output)) {
-                        TestcaseResult testcaseResult = new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, false);
+                        TestcaseResult testcaseResult = new TestcaseResult(testcase.getTestcaseId(), testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, false);
                         submissionResult.getDetails().add(testcaseResult);
                         if (testcase.getExpectedOutput().equals(output)) {
                             passedTestcases++;
@@ -659,7 +665,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                     } else {
                         File errorFile = new File(root, "err.txt");
                         String error = FileUtils.readFileToString(errorFile);
-                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error, false));
+                        submissionResult.getDetails().add(new TestcaseResult(testcase.getTestcaseId(), testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), null, error, false));
                         org.apache.commons.io.FileUtils.deleteQuietly(errorFile);
                     }
                 }
@@ -669,7 +675,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 throw new FileCannotStoreException(e.getLocalizedMessage());
             } catch (InterruptedException e) {
                 log.error("Testcase [{}]: {}", testcase.getTestcaseId(), e.getLocalizedMessage());
-                submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage(), false));
+                submissionResult.getDetails().add(new TestcaseResult(testcase.getTestcaseId(), testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), e.getMessage(), false));
             }
         }
 
