@@ -300,7 +300,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         for (TestcaseEntity testcase : testcases) {
             challengeDetails.getTestcases().add(new Testcase(
-                testcase.getInput(), testcase.getExpectedOutput(), testcase.getHidden()));
+                testcase.getTestcaseId(), testcase.getInput(), testcase.getExpectedOutput(), testcase.getHidden()));
         }
 
         return challengeDetails;

@@ -118,8 +118,12 @@ public class ChallengeServiceImpl implements ChallengeService {
                 if (outputFile.exists()) {
                     String output = FileUtils.readFileToString(outputFile);
                     if (StringUtils.hasText(output)) {
-                        submissionResult.getDetails().add(new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, true));
-                        if (testcase.getExpectedOutput().equals(output)) passedTestcases++;
+                        TestcaseResult testcaseResult = new TestcaseResult(testcase.getHidden(), testcase.getInput(), testcase.getExpectedOutput(), output, false);
+                        submissionResult.getDetails().add(testcaseResult);
+                        if (testcase.getExpectedOutput().equals(output)) {
+                            passedTestcases++;
+                            testcaseResult.setPassed(true);
+                        }
                         org.apache.commons.io.FileUtils.deleteQuietly(outputFile);
                     } else {
                         File errorFile = new File(root, "err.txt");

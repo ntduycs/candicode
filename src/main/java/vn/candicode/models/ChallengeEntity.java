@@ -96,5 +96,5 @@ public class ChallengeEntity extends GenericEntity {
     @Convert(converter = TagConverter.class)
     private List<String> tags = new ArrayList<>();
 
-    private Boolean belongsToContest;
+//    private Boolean belongsToContest;
 }
