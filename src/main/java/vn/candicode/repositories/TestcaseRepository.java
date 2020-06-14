@@ -13,4 +13,7 @@ public interface TestcaseRepository extends JpaRepository<TestcaseEntity, Long> 
 
     @Query("select t from TestcaseEntity t where t.challenge.challengeId = :challengeId")
     List<TestcaseEntity> findAllByChallengeId(@Param("challengeId") Long challengeId);
+
+    @Query("select t from TestcaseEntity t where t.testcaseId in :ids")
+    List<TestcaseEntity> findAllByTestcaseIds(@Param("ids") List<Long> ids);
 }

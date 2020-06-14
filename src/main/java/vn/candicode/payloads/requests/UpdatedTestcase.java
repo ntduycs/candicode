@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class UpdatedTestcase {
     @NotNull(message = "Field 'testcaseId' is required but not be given")
-    private Long testcasesId;
+    private Long testcaseId;
 
     @NotBlank(message = "Field 'input' is required but not be given")
     private String input;

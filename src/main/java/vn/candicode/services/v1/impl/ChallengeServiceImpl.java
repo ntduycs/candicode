@@ -554,25 +554,25 @@ public class ChallengeServiceImpl implements ChallengeService {
         Pattern testcaseInputValidator = Pattern.compile(challenge.getTestcaseInputFormat());
         Pattern testcaseOutputValidator = Pattern.compile(challenge.getTestcaseOutputFormat());
 
-        List<TestcaseEntity> testcases = challenge.getTestcases();
-
-        List<Long> updatedTestcaseIds = new ArrayList<>();
+        Map<Long, UpdatedTestcase> updatedTestcases = new HashMap<>();
         int numUpdatedTestcases = 0;
 
         for (UpdatedTestcase testcase : payload.getTestcases()) {
             if (testcaseInputValidator.matcher(testcase.getInput()).matches() &&
                 testcaseOutputValidator.matcher(testcase.getOutput()).matches()) {
                 numUpdatedTestcases++;
-                updatedTestcaseIds.add(testcase.getTestcasesId());
-                challenge.addTestcase(new TestcaseEntity(testcase.getInput(), testcase.getOutput(), testcase.getHidden()));
+                updatedTestcases.put(testcase.getTestcaseId(), testcase);
             }
         }
 
-        for (TestcaseEntity testcase : testcases) {
-            if (updatedTestcaseIds.contains(testcase.getTestcaseId())) {
-                challenge.removeTestcase(testcase);
+        challenge.getTestcases().forEach(tc -> {
+            if (updatedTestcases.containsKey(tc.getTestcaseId())) {
+                UpdatedTestcase updatedData = updatedTestcases.get(tc.getTestcaseId());
+                tc.setInput(updatedData.getInput());
+                tc.setExpectedOutput(updatedData.getOutput());
+                tc.setHidden(updatedData.getHidden());
             }
-        }
+        });
 
         return numUpdatedTestcases;
     }
