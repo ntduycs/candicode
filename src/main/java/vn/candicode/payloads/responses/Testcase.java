@@ -14,6 +14,7 @@ public class Testcase implements Serializable {
     private Boolean hidden;
 
     public Testcase(Long testcaseId, String input, String output, Boolean hidden) {
+        this.testcaseId = testcaseId;
         this.input = input;
         this.hidden = hidden;
         this.output = hidden ? "" : output;
