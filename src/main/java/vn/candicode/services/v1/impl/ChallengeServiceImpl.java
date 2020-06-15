@@ -55,7 +55,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeConfigRepository challengeConfigRepository;
     private final TestcaseRepository testcaseRepository;
     private final SubmissionRepository submissionRepository;
-    private final CommentRepository commentRepository;
+    private final ChallengeCommentRepository challengeCommentRepository;
 
     @Autowired
     private PreloadEntities preloadEntities;
@@ -68,13 +68,13 @@ public class ChallengeServiceImpl implements ChallengeService {
                                 ChallengeConfigRepository challengeConfigRepository,
                                 TestcaseRepository testcaseRepository,
                                 SubmissionRepository submissionRepository,
-                                CommentRepository commentRepository) {
+                                ChallengeCommentRepository challengeCommentRepository) {
         this.storageService = storageService;
         this.challengeRepository = challengeRepository;
         this.challengeConfigRepository = challengeConfigRepository;
         this.testcaseRepository = testcaseRepository;
         this.submissionRepository = submissionRepository;
-        this.commentRepository = commentRepository;
+        this.challengeCommentRepository = challengeCommentRepository;
     }
 
     /**
@@ -355,7 +355,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             challengeSummary.setNumRates(10);
             challengeSummary.setRate(4.5f);
             challengeSummary.setPoint(challenge.getPoint());
-            challengeSummary.setNumComments(commentRepository.countAllByChallenge(challenge));
+            challengeSummary.setNumComments(challengeCommentRepository.countAllByChallenge(challenge));
             challengeSummary.setTags(challenge.getTags());
 
             items.add(challengeSummary);

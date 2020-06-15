@@ -17,6 +17,8 @@ public interface StorageService {
 
     String storeChallengeBanner(MultipartFile banner, Long id) throws IOException;
 
+    String storeTutorialBanner(MultipartFile banner, Long id) throws IOException;
+
     String storeChallengeSourceCode(MultipartFile zipFile, Long id) throws IOException;
 
     List<Node> getDirectoryTree(String dirPath);

@@ -605,9 +605,6 @@ ALTER TABLE ONLY candicode.partners
 ALTER TABLE ONLY candicode.challenge_configs
     ADD CONSTRAINT fkt8kjlom0hq4anj6ava62mfqer FOREIGN KEY (challenge_id) REFERENCES candicode.challenges (challenge_id) ON DELETE CASCADE;
 
-ALTER TABLE ONLY candicode.challenges
-    ADD COLUMN tags varchar;
-
 --
 -- PostgreSQL database dump complete
 --

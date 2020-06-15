@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import vn.candicode.models.ChallengeCommentEntity;
 import vn.candicode.models.ChallengeEntity;
 
-public interface CommentRepository extends JpaRepository<ChallengeCommentEntity, Long> {
+public interface ChallengeCommentRepository extends JpaRepository<ChallengeCommentEntity, Long> {
     Long countAllByChallenge(ChallengeEntity challenge);
 }

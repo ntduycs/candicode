@@ -11,6 +11,7 @@ import vn.candicode.models.enums.ChallengeLevel;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Getter
@@ -88,13 +89,19 @@ public class ChallengeEntity extends GenericEntity {
         this.categories.add(new ChallengeCategoryEntity(this, category));
     }
 
-    public void removeCategory(ChallengeCategoryEntity challengeCategory) {
-        this.categories.remove(challengeCategory);
-        challengeCategory.setChallenge(null);
+    public void removeCategory(CategoryEntity category) {
+        for (Iterator<ChallengeCategoryEntity> iterator = categories.iterator(); iterator.hasNext(); ) {
+            ChallengeCategoryEntity entity = iterator.next();
+            if (entity.getChallenge().equals(this) && entity.getCategory().equals(category)) {
+                iterator.remove();
+                entity.setChallenge(null);
+                entity.setCategory(null);
+            }
+        }
     }
 
     @Convert(converter = TagConverter.class)
     private List<String> tags = new ArrayList<>();
 
-//    private Boolean belongsToContest;
+    private boolean contestChallenge = false;
 }

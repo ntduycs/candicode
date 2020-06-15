@@ -48,6 +48,14 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public String storeTutorialBanner(MultipartFile banner, Long id) throws IOException {
+        String bannerPath = getBannerRootDir() + File.separator + FileUtils.generateFileName(banner.getOriginalFilename(), id);
+        banner.transferTo(new File(bannerPath));
+
+        return bannerPath;
+    }
+
+    @Override
     @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
     public String storeChallengeSourceCode(MultipartFile zipFile, Long id) throws IOException {
         String filenameWoExtension = FileUtils.getFilenameWoExtension(zipFile.getOriginalFilename());
