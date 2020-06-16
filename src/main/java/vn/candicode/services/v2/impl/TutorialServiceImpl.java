@@ -113,7 +113,7 @@ public class TutorialServiceImpl implements TutorialService {
         }
 
         response.setCategories(tutorial.getCategories().stream()
-            .map(cate -> cate.getCategory().getText().name())
+            .map(cate -> cate.getCategory().getText())
             .collect(Collectors.toList()));
 
         return response;
@@ -187,7 +187,7 @@ public class TutorialServiceImpl implements TutorialService {
             tutorialsummary.setCreatedAt(tutorial.getCreatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
             tutorialsummary.setUpdatedAt(tutorial.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
             tutorialsummary.setCategories(tutorial
-                .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
+                .getCategories().stream().map(c -> c.getCategory().getText()).collect(Collectors.toList()));
             tutorialsummary.setTitle(tutorial.getTitle());
             tutorialsummary.setNumComments(tutorialCommentRepository.countAllByTutorial(tutorial));
             tutorialsummary.setTags(tutorial.getTags());

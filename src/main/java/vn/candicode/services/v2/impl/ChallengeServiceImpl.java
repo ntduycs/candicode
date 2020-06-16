@@ -79,8 +79,8 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new FileCannotReadException("Cannot copy challenge dir to submission dir");
         }
 
+        File implementedFile = new File(storageService.getImplementedPathFromSubmissionDir(submissionDir.getAbsolutePath(), challengeConfig.getImplementedPath()));
         try {
-            File implementedFile = new File(storageService.getImplementedPathFromSubmissionDir(submissionDir.getAbsolutePath(), challengeConfig.getImplementedPath()));
             FileUtils.overwriteFile(implementedFile, payload.getCode());
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
@@ -155,15 +155,16 @@ public class ChallengeServiceImpl implements ChallengeService {
         submission.setExecutionTime(0.0);
         submission.setUsedMemory(0.0);
         submission.setResults(new ArrayList<>());
+        submission.setSubmittedCode(implementedFile.getAbsolutePath());
 
         Map<Long, TestcaseResult> resultMap = submissionResult.getDetails().stream()
             .collect(Collectors.toMap(TestcaseResult::getTestcaseId, testcaseResult -> testcaseResult, (a, b) -> b));
 
         for (TestcaseEntity testcase : challengeTestcases) {
-            ResultEntity resultEntity = new ResultEntity();
-            resultEntity.setTestcase(testcase);
-            resultEntity.setPass(resultMap.get(testcase.getTestcaseId()).getPassed());
-            submission.addResult(resultEntity);
+            SubmissionResultEntity submissionResultEntity = new SubmissionResultEntity();
+            submissionResultEntity.setTestcase(testcase);
+            submissionResultEntity.setPass(resultMap.get(testcase.getTestcaseId()).getPassed());
+            submission.addResult(submissionResultEntity);
         }
 
         submissionRepository.save(submission);

@@ -14,4 +14,6 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     Page<ChallengeEntity> findAllByAuthor(UserEntity id, Pageable pageable);
 
     boolean existsByTitle(String title);
+
+    int countAllByTitle(String title);
 }

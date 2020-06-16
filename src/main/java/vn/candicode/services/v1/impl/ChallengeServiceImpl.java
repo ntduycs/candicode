@@ -269,7 +269,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         challengeDetails.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
         challengeDetails.setTags(challenge.getTags());
         challengeDetails.setCategories(challenge
-            .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
+            .getCategories().stream().map(c -> c.getCategory().getText()).collect(Collectors.toList()));
 
         try {
             challengeDetails.setTcInputFormat(new TestcaseFormat(RegexUtils.resolveRegex(challenge.getTestcaseInputFormat())));
@@ -347,7 +347,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             challengeSummary.setUpdatedAt(challenge.getUpdatedAt().format(DatetimeUtils.DEFAULT_DATETIME_FORMAT));
             challengeSummary.setLevel(challenge.getLevel().name());
             challengeSummary.setCategories(challenge
-                .getCategories().stream().map(c -> c.getCategory().getText().name()).collect(Collectors.toList()));
+                .getCategories().stream().map(c -> c.getCategory().getText()).collect(Collectors.toList()));
             List<ChallengeLanguageDTO> languages = challengeConfigRepository.findLanguageListByChallenge(challenge);
             challengeSummary.setLanguages(languages.stream().map(l -> l.getText().name()).collect(Collectors.toList()));
             challengeSummary.setNumAttendees(submissionRepository.countAllByChallenge(challenge));
@@ -491,11 +491,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new EntityNotFoundException("Challenge", "challengeId", challengeId));
 
-        if (challengeRepository.existsByTitle(payload.getTitle())) {
-            throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
-        }
-
         if (!challenge.getTitle().equals(payload.getTitle())) {
+            if (challengeRepository.existsByTitle(payload.getTitle())) {
+                throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
+            }
             challenge.setTitle(payload.getTitle());
         }
 

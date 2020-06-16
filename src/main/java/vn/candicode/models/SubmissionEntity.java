@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,6 +36,11 @@ public class SubmissionEntity extends GenericEntity {
     @Column
     private Double usedMemory;
 
+    @Lob
+    @Type(type = "text")
+    @Basic(fetch = FetchType.LAZY)
+    private String submittedCode;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     private StudentEntity author;
@@ -45,9 +51,9 @@ public class SubmissionEntity extends GenericEntity {
     private ChallengeEntity challenge;
 
     @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ResultEntity> results = new ArrayList<>();
+    private List<SubmissionResultEntity> results = new ArrayList<>();
 
-    public void addResult(ResultEntity result) {
+    public void addResult(SubmissionResultEntity result) {
         results.add(result);
         result.setSubmission(this);
     }

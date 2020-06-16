@@ -1,11 +1,13 @@
 package vn.candicode.common.structure.composite;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 public abstract class CompositeNode implements Node {
     protected List<Node> children = new ArrayList<>();
 

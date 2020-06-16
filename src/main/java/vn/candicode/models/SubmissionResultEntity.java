@@ -12,8 +12,8 @@ import javax.persistence.*;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false, of = {"resultId"})
 @Entity
-@Table(name = "results", uniqueConstraints = {@UniqueConstraint(columnNames = {"submission_id", "testcase_id"})})
-public class ResultEntity extends GenericEntity {
+@Table(name = "submission_results", uniqueConstraints = {@UniqueConstraint(columnNames = {"submission_id", "testcase_id"})})
+public class SubmissionResultEntity extends GenericEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, updatable = false)
