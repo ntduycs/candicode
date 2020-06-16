@@ -79,6 +79,16 @@ public class TutorialController extends GenericController {
         ));
     }
 
+    @PostMapping(path = "/tutorials/{id}")
+    public ResponseEntity<?> editTutorial(@PathVariable("id") Long tutorialId,
+                                          @ModelAttribute @Valid TutorialRequest payload) {
+        tutorialService.editTutorial(tutorialId, payload);
+
+        return ResponseEntity.ok(GenericResponse.from(
+            Map.of("message", "Edited tutorial successfully"), HttpStatus.OK
+        ));
+    }
+
     @Override
     protected String getResourceBasePath() {
         return "tutorials";

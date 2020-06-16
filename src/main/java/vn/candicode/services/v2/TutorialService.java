@@ -19,4 +19,6 @@ public interface TutorialService {
     PaginatedResponse<TutorialSummary> getMyTutorialList(Pageable pageable, UserPrincipal user);
 
     void deleteTutorial(Long tutorialId);
+
+    void editTutorial(Long tutorialId, TutorialRequest payload);
 }

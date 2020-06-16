@@ -127,6 +127,30 @@ public class TutorialServiceImpl implements TutorialService {
     }
 
     @Override
+    public void editTutorial(Long tutorialId, TutorialRequest payload) {
+        TutorialEntity tutorial = tutorialRepository.findByTutorialId(tutorialId)
+            .orElseThrow(() -> new EntityNotFoundException("Tutorial", "tutorialId", tutorialId));
+
+        tutorial.setTitle(payload.getTitle());
+        tutorial.setTags(payload.getTags());
+        tutorial.setContent(payload.getContent());
+        tutorial.setDescription(payload.getDescription());
+
+        String bannerPath;
+        if (payload.getBanner() != null) {
+            try {
+                bannerPath = storageService.storeTutorialBanner(payload.getBanner(), tutorialId);
+                tutorial.setBanner(bannerPath);
+            } catch (IOException e) {
+                log.error("Cannot store banner for tutorial with id {}. Message - {}", tutorialId, e.getLocalizedMessage());
+                throw new FileCannotStoreException(e.getLocalizedMessage());
+            }
+        }
+
+        tutorialRepository.save(tutorial);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public PaginatedResponse<TutorialSummary> getTutorialList(Pageable pageable) {
         Page<TutorialEntity> tutorials = tutorialRepository.findAll(pageable);

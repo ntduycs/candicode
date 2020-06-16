@@ -508,8 +508,8 @@ public class ChallengeServiceImpl implements ChallengeService {
                 bannerPath = storageService.storeChallengeBanner(payload.getBanner(), challengeId);
                 challenge.setBanner(bannerPath);
             } catch (IOException e) {
-                log.error("Cannot store challenge banner for challenge with {}. Message - {}", challengeId, e.getMessage());
-                throw new FileCannotStoreException(e.getMessage());
+                log.error("Cannot store challenge banner for challenge with id {}. Message - {}", challengeId, e.getMessage());
+                throw new FileCannotStoreException(e.getLocalizedMessage());
             }
         }
 
