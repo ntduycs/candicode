@@ -29,7 +29,7 @@
                         "login"
                     ]
                 }
-			},
+            },
 			"response": []
 		},
 		{
@@ -60,9 +60,9 @@
 			},
 			"response": []
 		},
-		{
-			"name": "Student: Create",
-			"request": {
+        {
+            "name": "Student: Create",
+            "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
@@ -84,8 +84,8 @@
                     ]
                 }
             },
-			"response": []
-		},
+            "response": []
+        },
 		{
 			"name": "Challenge: Upload",
 			"request": {
@@ -204,7 +204,7 @@
                             "type": "text"
                         }
                     ]
-				},
+                },
                 "url": {
                     "raw": "{{host}}/challenges",
                     "host": [
@@ -225,7 +225,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4MDQ0NjcsImV4cCI6MTU5MTg5MDg2N30.squTJvFZ1Y9y7Fhp1s1bZKVsUqL7UrwrMQRtiofSR-bD27f2nB9DnewbVWBuRpwLuGwyBSlzInqlBIc8gIpr7Q",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
                             "type": "string"
                         }
                     ]
@@ -233,13 +233,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/challenges/41",
+                    "raw": "{{host}}/challenges/57",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "41"
+                        "57"
                     ]
                 }
             },
@@ -253,7 +253,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
                             "type": "string"
                         }
                     ]
@@ -308,7 +308,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTIzMDY2MzUsImV4cCI6MTU5MzE3MDYzNX0.PmtAXRIy1UY1yYH4gmH2MT23gTBKEbrNzlgHyMjHvaPDpARmU1mxs93TzlCIs2nDSGyCyywD4qa4Ihluif167w",
                             "type": "string"
                         }
                     ]
@@ -320,7 +320,7 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "Edited Challenge 3",
+                            "value": "Edited Challenge abc",
                             "type": "text"
                         },
                         {
@@ -334,20 +334,25 @@
                             "type": "text"
                         },
                         {
-                            "key": "banner",
-                            "type": "file",
-                            "src": []
+                            "key": "tags",
+                            "value": "a",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tags",
+                            "value": "b",
+                            "type": "text"
                         }
                     ]
                 },
                 "url": {
-                    "raw": "{{host}}/challenges/48",
+                    "raw": "{{host}}/challenges/75",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "48"
+                        "75"
                     ]
                 }
             },
@@ -559,7 +564,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE2MjAxMjUsImV4cCI6MTU5MTcwNjUyNX0.arIwCtVVGY4ga09HI3QGOX4qV-76GIMSqnDYI2wM1k68Gif-5VwHS_w3XVkXfyVUsIX9Yl9uCktuv6MTlaXh-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
                             "type": "string"
                         }
                     ]
@@ -568,7 +573,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 1,\n\t\t\t\"input\": \"input1|input2\",\n\t\t\t\"output\": \"output\",\n\t\t\t\"hidden\": false\n\t\t}\t\n\t]\n}",
+                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 77,\n\t\t\t\"input\": \"[10,2]\",\n\t\t\t\"output\": \"[5]\",\n\t\t\t\"hidden\": false\n\t\t}\t\n\t]\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -576,13 +581,13 @@
                     }
                 },
                 "url": {
-                    "raw": "{{host}}/challenges/50/testcases",
+                    "raw": "{{host}}/challenges/75/testcases",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "50",
+                        "75",
                         "testcases"
                     ]
                 }
@@ -648,7 +653,7 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "Title",
+                            "value": "Title 2",
                             "type": "text"
                         },
                         {
@@ -664,7 +669,7 @@
                         {
                             "key": "banner",
                             "type": "file",
-                            "src": []
+                            "src": "/Users/ntduycs/Desktop/Duy-Nguyen-Thanh.pdf"
                         },
                         {
                             "key": "content",
@@ -741,19 +746,20 @@
                     ]
                 },
                 "url": {
-                    "raw": "{{host}}/tutorials",
+                    "raw": "{{host}}/tutorials/1",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
-                        "tutorials"
+                        "tutorials",
+                        "1"
                     ]
                 }
             },
             "response": []
         },
         {
-            "name": "Tutorial: Update Copy",
+            "name": "Tutorial: Delete",
             "request": {
                 "auth": {
                     "type": "bearer",
@@ -768,13 +774,13 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/tutorials/1",
+                    "raw": "{{host}}/tutorials/87",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "tutorials",
-                        "1"
+                        "87"
                     ]
                 }
             },
@@ -796,13 +802,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/tutorials/1",
+                    "raw": "{{host}}/tutorials/87",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "tutorials",
-                        "1"
+                        "87"
                     ]
                 }
             },
@@ -979,6 +985,69 @@
                     ],
                     "path": [
                         "contests"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Category: Create",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"categories\": [\n        {\n            \"text\": \"Category 1\",\n            \"children\": [\n                {\n                    \"text\": \"Sub Category 1\",\n                    \"children\": [\n                        {\n                            \"text\": \"Sub Sub Category 1\"\n                        }\n                    ]\n                },\n                {\n                    \"text\": \"Sub Category 2\",\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Category 2\"\n        }\n    ]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/categories",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "categories"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Category: Create Copy",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/categories",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "categories"
                     ]
                 }
             },
