@@ -12,12 +12,10 @@ values (1, 'Java'),
        (6, 'SQL');
 
 insert into candicode.categories
-values (1, 'Algorithm'),
-       (2, 'Complexity'),
-       (3, 'Database'),
-       (4, 'DataStructure');
-
-select nextval('candicode.hibernate_sequence');
+values (1, 'Algorithm', null, 0),
+       (2, 'Complexity', null, 0),
+       (3, 'Database', null, 0),
+       (4, 'DataStructure', null, 0);
 
 insert into candicode.users
 values (1, '2020-06-06 16:35:44.866245', '2020-06-06 16:35:44.866245', 'admin@gmail.com', 't', 'Super', 'Admin',
