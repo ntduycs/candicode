@@ -27,5 +27,7 @@ insert into candicode.user_roles (user_id, role)
 values (1, 'Admin'),
        (1, 'SuperAdmin');
 
+select nextval('candicode.hibernate_sequence');
+
 insert into candicode.admins (user_id)
 values (1);
