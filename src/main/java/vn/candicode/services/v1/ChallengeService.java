@@ -38,6 +38,7 @@ public interface ChallengeService {
 
     int updateTestcases(Long challengeId, UpdateTestcasesRequest payload);
 
+    // FIXME: cannot remove
     boolean removeLanguage(Long challengeId, String language);
 
     SubmissionResult addLanguage(Long challengeId, NewLanguageRequest payload, UserPrincipal currentUser);
