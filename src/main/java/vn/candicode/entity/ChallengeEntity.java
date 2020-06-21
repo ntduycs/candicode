@@ -77,7 +77,7 @@ public class ChallengeEntity extends Auditable {
     @Column(nullable = false)
     private Integer dislikes = 0;
 
-    @Transient
+//    @Transient
     public boolean isContestChallenge() {
         return contestChallenge;
     }

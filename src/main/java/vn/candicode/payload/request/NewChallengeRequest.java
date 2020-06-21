@@ -54,4 +54,6 @@ public class NewChallengeRequest extends Request {
     private String challengeDir;
 
     private Set<String> tags;
+
+    private Boolean contestChallenge = false;
 }

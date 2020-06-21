@@ -8,10 +8,16 @@ public interface StudentService {
     /**
      * Create new student account and init required student directories
      *
-     * @see vn.candicode.payload.request.NewStudentRequest
-     *
      * @param payload
      * @return id of new student
+     * @see vn.candicode.payload.request.NewStudentRequest
      */
     Long createAccount(NewStudentRequest payload) throws IOException;
+
+    /**
+     * Update roles for student when he has just upgrade/downgrade his package (plan)
+     *
+     * @param payload
+     */
+    void updateRole(UpdateStudentRoleRequest payload);
 }

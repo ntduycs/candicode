@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static vn.candicode.common.FileAuthor.*;
+import static vn.candicode.common.FileAuthor.STUDENT;
 
 @Service
 @Log4j2
@@ -140,13 +140,15 @@ public class StorageServiceImpl implements StorageService {
                 FileUtils.delete(challengeZipFile.toFile());
                 break;
             case AVATAR:
+                path = avatarDirFor(owner).resolve(FileUtils.genFilename(owner, type, file.getOriginalFilename()));
+                file.transferTo(path);
                 break;
             case CONTEST:
                 break;
             case TUTORIAL:
                 break;
             case BANNER:
-                path = bannerDirOf(owner).resolve(FileUtils.genFilename(owner, type));
+                path = bannerDirOf(owner).resolve(FileUtils.genFilename(owner, type, file.getOriginalFilename()));
                 file.transferTo(path);
                 break;
             default:

@@ -1,6 +1,8 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.core.StorageService;
@@ -10,7 +12,11 @@ import vn.candicode.entity.LanguageEntity;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.StorageException;
 import vn.candicode.payload.request.NewChallengeRequest;
+import vn.candicode.payload.request.UpdateChallengeRequest;
+import vn.candicode.payload.response.ChallengeDetails;
+import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
+import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
@@ -35,7 +41,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private final StorageService storageService;
 
-    private Map<String, LanguageEntity> availableLanguages;
+    private final Map<String, LanguageEntity> availableLanguages;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -75,6 +81,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.setAuthor(author.getEntityRef());
             challenge.setBanner(bannerPath);
             challenge.setTags(payload.getTags());
+            challenge.setContestChallenge(payload.getContestChallenge());
 
             entityManager.persist(challenge);
 
@@ -124,5 +131,63 @@ public class ChallengeServiceImpl implements ChallengeService {
             log.error("I/O error. Message - {}", e.getLocalizedMessage());
             throw new StorageException(e.getLocalizedMessage());
         }
+    }
+
+    /**
+     * TODO: Implement it
+     *
+     * @param pageable
+     * @return paginated list of challenges
+     */
+    @Override
+    public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
+        Page<ChallengeEntity> items = challengeRepository.findAll(pageable);
+
+        return null;
+    }
+
+    /**
+     * @param pageable
+     * @param myId
+     * @return paginated list of my challenges
+     */
+    @Override
+    public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId) {
+        return null;
+    }
+
+    /**
+     * @param challengeId
+     * @return details of challenge with given id
+     */
+    @Override
+    public ChallengeDetails getChallengeDetails(Long challengeId) {
+        return null;
+    }
+
+    /**
+     * Only author can edit challenge
+     *
+     * @param challengeId
+     * @param payload
+     * @param currentUser
+     */
+    @Override
+    public void updateChallenge(Long challengeId, UpdateChallengeRequest payload, UserPrincipal currentUser) {
+
+    }
+
+    /**
+     * <ul>
+     *     <li>Only author can delete his challenge</li>
+     *     <li>Call this method will delete both DB records and related filesystem directories</li>
+     * </ul>
+     *  @param challengeId
+     *
+     * @param currentUser
+     */
+    @Override
+    public void deleteChallenge(Long challengeId, UserPrincipal currentUser) {
+
     }
 }

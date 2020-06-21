@@ -20,6 +20,7 @@
         <guava.version>29.0-jre</guava.version>
         <hibernate-module.version>2.11.0</hibernate-module.version>
         <commons-fileupload.version>1.4</commons-fileupload.version>
+        <slugify.version>2.4</slugify.version>
     </properties>
 
     <dependencies>
@@ -94,6 +95,12 @@
             <artifactId>commons-fileupload</artifactId>
             <version>${commons-fileupload.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.slugify</groupId>
+            <artifactId>slugify</artifactId>
+            <version>${slugify.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

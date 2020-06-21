@@ -1,10 +1,16 @@
 package vn.candicode.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.*;
 import vn.candicode.converter.TagConverter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Table;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -12,12 +18,21 @@ import java.util.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "contests")
+@Table(name = "contests", uniqueConstraints = {
+    @UniqueConstraint(name = "title_idx", columnNames = {"title"})
+})
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@NaturalIdCache
+@EqualsAndHashCode(of = {"title"}, callSuper = false)
 public class ContestEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, updatable = false)
     private Long contestId;
+
+    @NaturalId(mutable = true)
+    @Column(nullable = false)
+    private String title;
 
     @Convert(converter = TagConverter.class)
     private Set<String> tags = new HashSet<>();
@@ -29,6 +44,9 @@ public class ContestEntity extends Auditable {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Type(type = "text")
+    private String content;
+
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)

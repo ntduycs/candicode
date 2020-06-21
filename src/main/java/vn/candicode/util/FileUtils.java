@@ -327,10 +327,10 @@ public class FileUtils {
      * @param type
      * @return generate filename
      */
-    public static String genFilename(@NotBlank Long authorId, @NotBlank FileStorageType type) {
+    public static String genFilename(@NotBlank Long authorId, @NotBlank FileStorageType type, @NotBlank String originalFilename) {
         final String timestamp = LocalDateTime.now().format(DatetimeUtils.FILESYSTEM_DATETIME_FORMAT);
 
-        return timestamp + "-" + type.code + "-" + authorId;
+        return timestamp + "-" + type.code + "-" + authorId + "." + getFileExtension(originalFilename);
     }
 
     /**

@@ -1,18 +1,20 @@
 package vn.candicode.controller;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewChallengeRequest;
+import vn.candicode.payload.request.PaginatedRequest;
+import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
+import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ChallengeService;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -45,6 +47,15 @@ public class ChallengeController extends Controller {
                 "challengeId", challengeId
             )
         ));
+    }
+
+    @GetMapping(path = "challenges", produces = {"application/json"})
+    public ResponseEntity<?> getChallengeList(@RequestBody @Valid PaginatedRequest payload) {
+        Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
+
+        PaginatedResponse<ChallengeSummary> items = challengeService.getChallengeList(pageable);
+
+        return ResponseEntity.ok(ResponseFactory.build(items));
     }
 
 }
