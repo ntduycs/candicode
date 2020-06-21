@@ -22,7 +22,7 @@ public class UserRoleEntity implements Serializable {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "user_fk"))
     private UserEntity user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "role_id", nullable = false, foreignKey = @ForeignKey(name = "role_fk"))
     private RoleEntity role;
 

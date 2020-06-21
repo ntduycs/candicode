@@ -118,4 +118,20 @@ public class ChallengeEntity extends Auditable {
             }
         }
     }
+
+    public void setMaxPoint(String level) {
+        switch (level) {
+            case "easy":
+                this.maxPoint = 100;
+                break;
+            case "moderate":
+                this.maxPoint = 200;
+                break;
+            case "hard":
+                this.maxPoint = 300;
+                break;
+            default:
+                this.maxPoint = -1;
+        }
+    }
 }
