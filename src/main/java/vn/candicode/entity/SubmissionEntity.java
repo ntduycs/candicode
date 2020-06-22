@@ -27,9 +27,6 @@ public class SubmissionEntity extends Auditable {
     @Column
     private Double execTime; // in millis
 
-    @Column
-    private Double memory; // in bytes
-
     @Column(nullable = false)
     private Integer point;
 

@@ -1,6 +1,7 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import vn.candicode.core.StorageService;
@@ -13,6 +14,8 @@ import vn.candicode.exception.StorageException;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.NewContestRoundRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
+import vn.candicode.payload.response.ContestSummary;
+import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.ContestRepository;
 import vn.candicode.repository.ContestRoundRepository;
@@ -166,5 +169,24 @@ public class ContestServiceImpl implements ContestService {
             log.error("I/O error - cannot store contest banner. Message - {}", e.getLocalizedMessage());
             throw new StorageException(e.getLocalizedMessage());
         }
+    }
+
+    /**
+     * @param pageable
+     * @return paginated list of contests
+     */
+    @Override
+    public PaginatedResponse<ContestSummary> getContestList(Pageable pageable) {
+        return null;
+    }
+
+    /**
+     * @param pageable
+     * @param myId
+     * @return paginated list of my contests
+     */
+    @Override
+    public PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId) {
+        return null;
     }
 }

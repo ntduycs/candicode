@@ -2,11 +2,11 @@ package vn.candicode.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.candicode.common.FileAuthor;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.RoleEntity;
 import vn.candicode.entity.StudentEntity;
 import vn.candicode.payload.request.NewStudentRequest;
+import vn.candicode.payload.request.UpdateStudentRoleRequest;
 import vn.candicode.repository.RoleRepository;
 import vn.candicode.repository.StudentRepository;
 
@@ -63,5 +63,15 @@ public class StudentServiceImpl implements StudentService {
         storageService.initDirectoriesForUser(studentId, STUDENT);
 
         return studentId;
+    }
+
+    /**
+     * Update roles for student when he has just upgrade/downgrade his package (plan)
+     *
+     * @param payload
+     */
+    @Override
+    public void updateRole(UpdateStudentRoleRequest payload) {
+
     }
 }

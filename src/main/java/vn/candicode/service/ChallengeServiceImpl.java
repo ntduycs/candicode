@@ -28,6 +28,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -90,10 +91,15 @@ public class ChallengeServiceImpl implements ChallengeService {
             challengeConfig.setChallenge(challenge);
             challengeConfig.setLanguage(availableLanguages.get(payload.getLanguage()));
             challengeConfig.setDirectory(payload.getChallengeDir());
-            challengeConfig.setRoot(payload.getRootDir());
             challengeConfig.setPreImplementedFile(payload.getImplementedPath());
             challengeConfig.setNonImplementedFile(payload.getNonImplementedPath());
             challengeConfig.setRunScript(payload.getRunPath());
+
+            /*
+             * Root dir is the folder that the run script is placed in
+             * */
+            String rootDir = Paths.get(payload.getRunPath()).getParent().toString();
+            challengeConfig.setRoot(rootDir);
 
             if (payload.getCompilePath() != null) {
                 challengeConfig.setCompileScript(payload.getCompilePath());

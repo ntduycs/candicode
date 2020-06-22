@@ -1,8 +1,7 @@
-package vn.candicode.service;
+package vn.candicode.payload.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import vn.candicode.payload.request.Request;
 
 @Getter
 @Setter

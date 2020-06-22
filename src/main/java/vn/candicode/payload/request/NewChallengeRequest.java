@@ -47,9 +47,6 @@ public class NewChallengeRequest extends Request {
     @Size(min = 1, message = "Field 'tcOutputFormat' must contain at least 1 element")
     private List<String> tcOutputFormat;
 
-    @NotBlank(message = "Filed 'rootDir' is required but not be given")
-    private String rootDir;
-
     @NotBlank(message = "Field 'challengeDir' is required but not be given")
     private String challengeDir;
 
