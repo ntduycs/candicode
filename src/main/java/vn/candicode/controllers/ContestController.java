@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payloads.GenericResponse;
 import vn.candicode.payloads.requests.NewContestRequest;
+import vn.candicode.payloads.requests.NewRoundsRequest;
 import vn.candicode.payloads.requests.UpdateContestRequest;
 import vn.candicode.payloads.responses.ContestDetails;
 import vn.candicode.payloads.responses.ContestSummary;
@@ -14,6 +15,7 @@ import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.services.v2.ContestService;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -106,5 +108,15 @@ public class ContestController extends GenericController {
         LeaderBoard leaderBoard;
 
         return null;
+    }
+
+    @PostMapping(path = "contest/{id}/rounds")
+    public ResponseEntity<?> createRound(@PathVariable("id") Long contestId, @RequestBody @Valid NewRoundsRequest payload, @CurrentUser UserPrincipal me) {
+        contestService.createRound(contestId, payload, me);
+
+
+        return ResponseEntity.created(getResourcePath(contestId)).body(GenericResponse.from(
+            Map.of("message", "Create rounds for contest successfully")
+        ));
     }
 }

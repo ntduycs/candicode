@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import vn.candicode.models.ChallengeEntity;
 import vn.candicode.models.UserEntity;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long> {
     Optional<ChallengeEntity> findByChallengeId(Long id);
@@ -16,4 +18,6 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     boolean existsByTitle(String title);
 
     int countAllByTitle(String title);
+
+    List<ChallengeEntity> findAllByChallengeIdIn(Set<Long> ids);
 }

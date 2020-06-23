@@ -2,6 +2,7 @@ package vn.candicode.services.v2;
 
 import org.springframework.data.domain.Pageable;
 import vn.candicode.payloads.requests.NewContestRequest;
+import vn.candicode.payloads.requests.NewRoundsRequest;
 import vn.candicode.payloads.requests.UpdateContestRequest;
 import vn.candicode.payloads.responses.ContestDetails;
 import vn.candicode.payloads.responses.ContestSummary;
@@ -40,4 +41,6 @@ public interface ContestService {
     ContestDetails getContestDetails(Long contestId, UserPrincipal me);
 
     LeaderBoard getLeaderBoard(Long contestId);
+
+    void createRound(Long contestId, NewRoundsRequest payload, UserPrincipal me);
 }

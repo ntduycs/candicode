@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.exceptions.EntityNotFoundException;
 import vn.candicode.exceptions.PersistenceException;
+import vn.candicode.models.ChallengeEntity;
 import vn.candicode.models.ContestEntity;
 import vn.candicode.models.ContestRoundEntity;
+import vn.candicode.payloads.requests.ContestRound;
 import vn.candicode.payloads.requests.NewContestRequest;
+import vn.candicode.payloads.requests.NewRoundsRequest;
 import vn.candicode.payloads.requests.UpdateContestRequest;
 import vn.candicode.payloads.responses.*;
 import vn.candicode.repositories.ChallengeRepository;
@@ -20,10 +23,13 @@ import vn.candicode.services.v2.ContestService;
 import vn.candicode.utils.DatetimeUtils;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -222,5 +228,30 @@ public class ContestServiceImpl implements ContestService {
         LeaderBoard leaderBoard = new LeaderBoard();
 
         return null;
+    }
+
+    @Override
+    public void createRound(Long contestId, NewRoundsRequest payload, UserPrincipal me) {
+        ContestEntity contest = contestRepository.findByContestId(contestId)
+            .orElseThrow(() -> new EntityNotFoundException("Contest", "id", contestId));
+
+        Set<Long> challengeIds = new HashSet<>();
+        payload.getRounds().stream().map(ContestRound::getChallengeIds).forEach(challengeIds::addAll);
+
+        List<ChallengeEntity> challenges = challengeRepository.findAllByChallengeIdIn(challengeIds);
+
+        List<ContestRound> rounds = payload.getRounds();
+        for (int i = 0, roundsSize = rounds.size(); i < roundsSize; i++) {
+            ContestRound round = rounds.get(i);
+            ContestRoundEntity entity = new ContestRoundEntity();
+            entity.setName("Round " + i + "-" + contest);
+            entity.setStartsAt(LocalDateTime.parse(round.getStartsAt(), DatetimeUtils.DEFAULT_DATETIME_FORMAT));
+            entity.setDuration(Duration.between(LocalDateTime.parse(round.getEndsAt(), DatetimeUtils.DEFAULT_DATETIME_FORMAT), entity.getStartsAt()).toMinutes());
+            entity.setChallenges(null);
+
+            contest.addRound(entity);
+        }
+
+        contestRepository.save(contest);
     }
 }
