@@ -99,15 +99,19 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         }
 
         Stopwatch stopwatch;
-        Timewatch timewatch = new Timewatch(p, timeout);
         try {
             // Start time counter
             stopwatch = Stopwatch.createStarted();
             p = pp.command("./run.sh").directory(root).start();
-            timewatch.start();
-            p.waitFor();
+            boolean noTimedout = p.waitFor(timeout, TimeUnit.MILLISECONDS);
             // Stop time counter
             stopwatch.stop();
+
+            // Check process exceeds given time threshold
+            if (!noTimedout) {
+                if (p.isAlive()) p.destroy();
+                return new ExecutionResult(language, null, "Exceeds the allowed time", clock, null);
+            }
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
             return new ExecutionResult(language, e.getMessage(), null, 0, null);

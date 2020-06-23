@@ -35,4 +35,13 @@ public class TestcaseEntity extends Auditable {
     public boolean isPublicTestcase() {
         return !hidden;
     }
+
+    public TestcaseEntity() {
+    }
+
+    public TestcaseEntity(String input, String expectedOutput, Boolean hidden) {
+        this.input = input;
+        this.expectedOutput = expectedOutput;
+        this.hidden = hidden;
+    }
 }

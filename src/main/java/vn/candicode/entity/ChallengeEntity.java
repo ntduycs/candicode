@@ -80,7 +80,6 @@ public class ChallengeEntity extends Auditable {
     @Column(columnDefinition = "boolean default false")
     private Boolean available = false;
 
-    //    @Transient
     public boolean isContestChallenge() {
         return contestChallenge;
     }

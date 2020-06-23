@@ -2,14 +2,17 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.TestcaseEntity;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewTestcaseListRequest;
+import vn.candicode.payload.request.TestcaseRequest;
 import vn.candicode.payload.request.UpdateTestcaseListRequest;
 import vn.candicode.payload.request.VerificationRequest;
 import vn.candicode.payload.response.VerificationDetails;
@@ -58,11 +61,30 @@ public class TestcaseServiceImpl implements TestcaseService {
      * @return number of successfully added testcases
      */
     @Override
+    @Transactional
     public Integer createTestcases(Long challengeId, NewTestcaseListRequest payload, UserPrincipal currentUser) {
-        return null;
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        Pattern inputFormat = Pattern.compile(challenge.getInputFormat());
+        Pattern outputFormat = Pattern.compile(challenge.getOutputFormat());
+
+        int addedTestcases = 0;
+
+        List<TestcaseRequest> testcases = payload.getTestcases();
+        for (TestcaseRequest testcase : testcases) {
+            if (inputFormat.matcher(testcase.getInput()).matches() && outputFormat.matcher(testcase.getOutput()).matches()) {
+                challenge.addTestcase(new TestcaseEntity(testcase.getInput(), testcase.getOutput(), testcase.getHidden()));
+                addedTestcases = addedTestcases + 1;
+            }
+        }
+
+        return addedTestcases;
     }
 
     /**
+     * IMPROVEMENTS: Clean verification folders after executing
+     *
      * @param challengeId
      * @param payload
      * @param currentUser Only challenge's owner can call to verify testcase on his challenge
@@ -70,7 +92,7 @@ public class TestcaseServiceImpl implements TestcaseService {
      */
     @Override
     public VerificationSummary verifyTestcase(Long challengeId, VerificationRequest payload, UserPrincipal currentUser) {
-        List<ChallengeConfigurationEntity> configurations = challengeConfigurationRepository.findAllByChallengeId(challengeId);
+        List<ChallengeConfigurationEntity> configurations = challengeConfigurationRepository.findAllByChallengeIdFetchLanguage(challengeId);
 
         ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
@@ -101,7 +123,10 @@ public class TestcaseServiceImpl implements TestcaseService {
             String srcDir = storageService.resolvePath(configuration.getDirectory(), CHALLENGE, userId);
             String destDir = storageService.resolvePath(configuration.getDirectory(), SUBMISSION, userId);
             String language = configuration.getLanguage().getName();
-            String rootDir = storageService.resolvePath(configuration.getRoot(), CHALLENGE, userId);
+
+            // We have copied the source to submission folder, so we need to adjust the root dir to reflect it correctly
+            String rootDir = storageService.resolvePath(configuration.getRoot(), CHALLENGE, userId)
+                .replaceFirst("challenges", "submissions");
 
             languageRootMap.put(language, rootDir);
 
