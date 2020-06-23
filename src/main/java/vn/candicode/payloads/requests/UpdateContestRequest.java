@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class NewContestRequest extends GenericRequest {
+public class UpdateContestRequest extends GenericRequest {
     private String title;
     private Set<String> tags;
     private MultipartFile banner;
