@@ -56,6 +56,20 @@ public interface StorageService {
      */
     List<CCFile> parse(String dir);
 
+    /**
+     * @param fullPath the fully path
+     * @return the simplified path with excluding base root
+     */
+    String simplifyPath(String fullPath, FileStorageType type, Long owner);
+
+    /**
+     * @param path
+     * @param type
+     * @param owner
+     * @return
+     */
+    String resolvePath(String path, FileStorageType type, Long owner);
+
     // ==========================================================
     // = DEFAULT METHODS =
     // ==========================================================

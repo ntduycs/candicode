@@ -10,9 +10,9 @@ import java.io.File;
  * </ul>
  */
 public interface CodeRunnerService {
-    CompileResult compile(File root);
+    CompileResult compile(File root, String language);
 
-    ExecutionResult run(File root, long clock);
+    ExecutionResult run(File root, long clock, String language);
 
     void cleanGarbageFiles(File root, String lang);
 }

@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import vn.candicode.common.FileStorageType;
 import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
+import vn.candicode.core.StorageService;
 import vn.candicode.util.DatetimeUtils;
 import vn.candicode.util.FileUtils;
 
@@ -14,12 +16,18 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @SpringBootTest
 class CandicodeApplicationTests {
 
     @Autowired
     private CodeRunnerService codeRunner;
+
+    @Autowired
+    private StorageService storageService;
 
     @Test
     void contextLoads() {
@@ -57,16 +65,51 @@ class CandicodeApplicationTests {
 
         Assertions.assertTrue(root.exists() && root.isDirectory());
 
-        CompileResult compileResult = codeRunner.compile(root);
+        CompileResult compileResult = codeRunner.compile(root, "java");
 
         System.out.println(compileResult);
 
         if (compileResult.isCompiled()) {
-            ExecutionResult runtimeResult = codeRunner.run(root, 0);
+            ExecutionResult runtimeResult = codeRunner.run(root, 0, "java");
 
             System.out.println(runtimeResult);
         }
 
         codeRunner.cleanGarbageFiles(root, "java");
+    }
+
+    @Test
+    void testSimplifyPath() {
+        // Outside base dir
+        String outside = storageService.simplifyPath("/Users/ntduycs/Desktop/Candicode_v3", FileStorageType.CHALLENGE, 1L);
+
+        Assertions.assertEquals("../../../Candicode_v3", outside);
+
+        // Inside base dir
+        String inside = storageService.simplifyPath("/Users/ntduycs/Desktop/Candicode/challenges/1/out.txt", FileStorageType.CHALLENGE, 1L);
+
+        Assertions.assertEquals("out.txt", inside);
+    }
+
+    @Test
+    void testResolvePath() {
+        Assertions.assertEquals("/Users/ntduycs/Desktop/Candicode/challenges/1/out.txt", storageService.resolvePath("out.txt", FileStorageType.CHALLENGE, 1L));
+    }
+
+    @Test
+    void testCompletableFuture() {
+        List<CompletableFuture<Void>> tasks = new ArrayList<>();
+
+        List<String> strings = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            int finalI = i;
+            CompletableFuture<Void> task = CompletableFuture.supplyAsync(() -> "Hello " + finalI)
+                .thenAccept(strings::add);
+
+            tasks.add(task);
+        }
+
+        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).thenRun(() -> System.out.println(strings));
     }
 }

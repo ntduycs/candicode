@@ -15,8 +15,10 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class CodeRunnerServiceImpl implements CodeRunnerService {
+    private static final long DEFAULT_TIMEOUT = 3000; // 3s
+
     @Override
-    public CompileResult compile(File root) {
+    public CompileResult compile(File root, String language) {
         String error = null;
 
         ProcessBuilder pp = new ProcessBuilder();
@@ -29,7 +31,7 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
 
             p.waitFor();
         } catch (IOException | InterruptedException e) {
-            return new CompileResult(false, e.getMessage());
+            return new CompileResult(language, false, e.getMessage());
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
@@ -39,13 +41,13 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         }
 
         if (StringUtils.hasText(error)) {
-            return new CompileResult(false, error);
+            return new CompileResult(language, false, error);
         }
 
         try {
             p = pp.command("./compile.sh").directory(root).start();
         } catch (IOException e) {
-            return new CompileResult(false, e.getMessage());
+            return new CompileResult(language, false, e.getMessage());
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
@@ -59,16 +61,17 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         }
 
         if (StringUtils.hasText(error)) {
-            return new CompileResult(false, error);
+            return new CompileResult(language, false, error);
         } else {
-            return new CompileResult(true, null);
+            return new CompileResult(language, true, null);
         }
     }
 
     @Override
-    public ExecutionResult run(File root, long clock) {
+    public ExecutionResult run(File root, long clock, String language) {
         String error = null;
         String output;
+        long timeout = clock > 0 ? clock : DEFAULT_TIMEOUT;
 
         ProcessBuilder pp = new ProcessBuilder();
         Process p;
@@ -81,7 +84,7 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
             p.waitFor();
         } catch (IOException | InterruptedException e) {
             log.error(e.getLocalizedMessage());
-            return new ExecutionResult(e.getMessage(), null, 0, null);
+            return new ExecutionResult(language, e.getMessage(), null, 0, null);
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
@@ -92,25 +95,25 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         }
 
         if (StringUtils.hasText(error)) {
-            return new ExecutionResult(error, null, 0, null);
+            return new ExecutionResult(language, error, null, 0, null);
         }
 
         Stopwatch stopwatch;
-        Timewatch timewatch = new Timewatch(p, clock);
+        Timewatch timewatch = new Timewatch(p, timeout);
         try {
             // Start time counter
             stopwatch = Stopwatch.createStarted();
             p = pp.command("./run.sh").directory(root).start();
-            if (clock > 0) timewatch.start();
+            timewatch.start();
             p.waitFor();
             // Stop time counter
             stopwatch.stop();
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
-            return new ExecutionResult(e.getMessage(), null, 0, null);
+            return new ExecutionResult(language, e.getMessage(), null, 0, null);
         } catch (InterruptedException e) {
             log.error(e.getLocalizedMessage());
-            return new ExecutionResult(null, e.getMessage(), clock, null);
+            return new ExecutionResult(language, null, e.getMessage(), clock, null);
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
@@ -123,17 +126,17 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         long executionTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
         if (StringUtils.hasText(error)) {
-            return new ExecutionResult(error, null, executionTime, null);
+            return new ExecutionResult(language, error, null, executionTime, null);
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(root, "out.txt"))))) {
             output = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
-            return new ExecutionResult("No output found", null, executionTime, null);
+            return new ExecutionResult(language, "No output found", null, executionTime, null);
         }
 
-        return new ExecutionResult(null, null, executionTime, output);
+        return new ExecutionResult(language, null, null, executionTime, output);
     }
 
     @Override

@@ -58,17 +58,20 @@ public class ChallengeServiceImpl implements ChallengeService {
      * @param payload
      * @param author
      * @return id of new challenge
+     * @throws StorageException
+     * @throws PersistenceException
      */
     @Override
     @Transactional
     public Long createChallenge(NewChallengeRequest payload, UserPrincipal author) {
+        Long authorId = author.getUserId();
         try {
             String bannerPath;
 
             if (payload.getBanner() == null || payload.getBanner().isEmpty()) {
                 bannerPath = null;
             } else {
-                bannerPath = storageService.store(payload.getBanner(), BANNER, author.getUserId());
+                bannerPath = storageService.store(payload.getBanner(), BANNER, authorId);
             }
 
             ChallengeEntity challenge = new ChallengeEntity();
@@ -77,10 +80,10 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.setDescription(payload.getDescription());
             challenge.setInputFormat(RegexUtils.genRegex(payload.getTcInputFormat()));
             challenge.setOutputFormat(RegexUtils.genRegex(payload.getTcOutputFormat()));
-            challenge.setLevel(payload.getLevel());
+            challenge.setLevel(payload.getLevel().toLowerCase());
             challenge.setMaxPoint(challenge.getLevel());
             challenge.setAuthor(author.getEntityRef());
-            challenge.setBanner(bannerPath);
+            challenge.setBanner(storageService.simplifyPath(bannerPath, BANNER, authorId));
             challenge.setTags(payload.getTags());
             challenge.setContestChallenge(payload.getContestChallenge());
 
@@ -91,18 +94,18 @@ public class ChallengeServiceImpl implements ChallengeService {
             challengeConfig.setChallenge(challenge);
             challengeConfig.setLanguage(availableLanguages.get(payload.getLanguage()));
             challengeConfig.setDirectory(payload.getChallengeDir());
-            challengeConfig.setPreImplementedFile(payload.getImplementedPath());
-            challengeConfig.setNonImplementedFile(payload.getNonImplementedPath());
-            challengeConfig.setRunScript(payload.getRunPath());
+            challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, authorId));
+            challengeConfig.setNonImplementedFile(storageService.simplifyPath(payload.getNonImplementedPath(), CHALLENGE, authorId));
+            challengeConfig.setRunScript(storageService.simplifyPath(payload.getRunPath(), CHALLENGE, authorId));
 
             /*
              * Root dir is the folder that the run script is placed in
              * */
             String rootDir = Paths.get(payload.getRunPath()).getParent().toString();
-            challengeConfig.setRoot(rootDir);
+            challengeConfig.setRoot(storageService.simplifyPath(rootDir, CHALLENGE, authorId));
 
             if (payload.getCompilePath() != null) {
-                challengeConfig.setCompileScript(payload.getCompilePath());
+                challengeConfig.setCompileScript(storageService.simplifyPath(payload.getCompilePath(), CHALLENGE, authorId));
             }
 
             entityManager.persist(challengeConfig);
@@ -121,12 +124,13 @@ public class ChallengeServiceImpl implements ChallengeService {
      * @param file   must be a zip file
      * @param author
      * @return
+     * @throws StorageException
      */
     @Override
     public DirectoryTree storeChallengeSource(MultipartFile file, UserPrincipal author) {
         try {
             String challengeDir = storageService.store(file, CHALLENGE, author.getUserId());
-            String challengeDirname = challengeDir.substring(challengeDir.lastIndexOf(File.separator));
+            String challengeDirname = challengeDir.substring(challengeDir.lastIndexOf(File.separator) + 1);
 
             DirectoryTree tree = new DirectoryTree();
             tree.setChallengeDir(challengeDirname);

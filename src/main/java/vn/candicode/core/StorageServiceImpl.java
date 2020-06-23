@@ -206,4 +206,48 @@ public class StorageServiceImpl implements StorageService {
         // Continue to parse next sub-file of parentDir
         parse(files, ++index, parentDir);
     }
+
+    /**
+     * @param fullPath the fully path
+     * @return the simplified path with excluding base root
+     */
+    @Override
+    public String simplifyPath(String fullPath, FileStorageType type, Long owner) {
+        if (fullPath == null) return null;
+        switch (type) {
+            case BANNER:
+                return bannerDirOf(owner).relativize(Paths.get(fullPath).normalize()).toString();
+            case CHALLENGE:
+                return challengeDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
+            case SUBMISSION:
+                return submissionDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
+            case AVATAR:
+                return avatarDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
+            default:
+                throw new UnsupportedOperationException("Cannot simplify path of a " + type.name());
+        }
+    }
+
+    /**
+     * @param path
+     * @param type
+     * @param owner
+     * @return
+     */
+    @Override
+    public String resolvePath(String path, FileStorageType type, Long owner) {
+        if (path == null) return null;
+        switch (type) {
+            case BANNER:
+                return bannerDirOf(owner).resolve(path).toString();
+            case CHALLENGE:
+                return challengeDirFor(owner).resolve(path).toString();
+            case SUBMISSION:
+                return submissionDirFor(owner).resolve(path).toString();
+            case AVATAR:
+                return avatarDirFor(owner).resolve(path).toString();
+            default:
+                throw new UnsupportedOperationException("Cannot resolve path of a " + type.name());
+        }
+    }
 }

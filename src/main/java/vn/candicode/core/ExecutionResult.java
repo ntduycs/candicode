@@ -8,6 +8,7 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 public class ExecutionResult implements Serializable {
+    private final String language;
     private final String runtimeError;
     private final String timeoutError;
     private final long executionTime; // in millis
@@ -16,7 +17,8 @@ public class ExecutionResult implements Serializable {
     @Override
     public String toString() {
         return "ExecutionResult{" +
-            "runtimeError='" + runtimeError + '\'' +
+            "language='" + language + '\'' +
+            ", runtimeError='" + runtimeError + '\'' +
             ", timeoutError='" + timeoutError + '\'' +
             ", executionTime=" + executionTime +
             ", output='" + output + '\'' +
