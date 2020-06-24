@@ -10,4 +10,7 @@ import java.util.List;
 public interface ChallengeConfigurationRepository extends JpaRepository<ChallengeConfigurationEntity, Long> {
     @Query("SELECT c FROM ChallengeConfigurationEntity c JOIN FETCH c.language WHERE c.challenge.challengeId = :id")
     List<ChallengeConfigurationEntity> findAllByChallengeIdFetchLanguage(@Param("id") Long challengeId);
+
+    @Query("SELECT c FROM ChallengeConfigurationEntity c WHERE c.challenge.challengeId = :id")
+    List<ChallengeConfigurationEntity> findAllByChallengeId(@Param("id") Long challengeId);
 }

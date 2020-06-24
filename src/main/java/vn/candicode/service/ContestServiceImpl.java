@@ -3,16 +3,12 @@ package vn.candicode.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import vn.candicode.core.StorageService;
-import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.ContestEntity;
-import vn.candicode.entity.ContestRoundEntity;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
 import vn.candicode.payload.request.NewContestRequest;
-import vn.candicode.payload.request.NewContestRoundRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
 import vn.candicode.payload.response.ContestSummary;
 import vn.candicode.payload.response.PaginatedResponse;
@@ -28,9 +24,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 import static vn.candicode.common.FileStorageType.BANNER;
 
@@ -83,35 +76,35 @@ public class ContestServiceImpl implements ContestService {
 
             entityManager.persist(contest);
 
-            int roundNumber = 1;
-            List<ContestRoundEntity> contestRounds = new ArrayList<>();
-            for (NewContestRoundRequest roundConfig : payload.getRounds()) {
-                ContestRoundEntity round = new ContestRoundEntity();
-
-                if (StringUtils.hasText(roundConfig.getName())) {
-                    round.setName(roundConfig.getName());
-                } else {
-                    round.setName("Round " + roundNumber++);
-                }
-                round.setContest(contest);
-
-                LocalDateTime startsAt = LocalDateTime.parse(roundConfig.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-                LocalDateTime endsAt = LocalDateTime.parse(roundConfig.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-                round.setStartsAt(startsAt);
-                round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
-
-                List<ChallengeEntity> roundChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(roundConfig.getChallenges());
-
-                if (roundChallenges.size() != roundConfig.getChallenges().size()) { // Guarantee that all challenges is contest challenge and existing
-                    throw new PersistenceException("Contest challenge(s) not found or invalid");
-                } else {
-                    roundChallenges.forEach(round::addChallenge);
-                }
-
-                contestRounds.add(round);
-            }
-
-            contestRounds.forEach(contest::addRound);
+//            int roundNumber = 1;
+//            List<ContestRoundEntity> contestRounds = new ArrayList<>();
+//            for (NewContestRoundRequest roundConfig : payload.getRounds()) {
+//                ContestRoundEntity round = new ContestRoundEntity();
+//
+//                if (StringUtils.hasText(roundConfig.getName())) {
+//                    round.setName(roundConfig.getName());
+//                } else {
+//                    round.setName("Round " + roundNumber++);
+//                }
+//                round.setContest(contest);
+//
+//                LocalDateTime startsAt = LocalDateTime.parse(roundConfig.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
+//                LocalDateTime endsAt = LocalDateTime.parse(roundConfig.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
+//                round.setStartsAt(startsAt);
+//                round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
+//
+//                List<ChallengeEntity> roundChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(roundConfig.getChallenges());
+//
+//                if (roundChallenges.size() != roundConfig.getChallenges().size()) { // Guarantee that all challenges is contest challenge and existing
+//                    throw new PersistenceException("Contest challenge(s) not found or invalid");
+//                } else {
+//                    roundChallenges.forEach(round::addChallenge);
+//                }
+//
+//                contestRounds.add(round);
+//            }
+//
+//            contestRounds.forEach(contest::addRound);
 
             entityManager.persist(contest);
 

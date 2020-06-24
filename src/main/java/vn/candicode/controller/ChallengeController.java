@@ -67,4 +67,13 @@ public class ChallengeController extends Controller {
         )));
     }
 
+    @DeleteMapping(path = "challenges/{id}")
+    public ResponseEntity<?> deleteChallenge(@PathVariable("id") Long challengeId, @CurrentUser UserPrincipal me) {
+        challengeService.deleteChallenge(challengeId, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Deleted challenge successfully"
+        )));
+    }
+
 }

@@ -22,6 +22,7 @@ import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.CategoryRepository;
+import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.SummaryRepository;
 import vn.candicode.security.LanguageRepository;
@@ -48,6 +49,7 @@ import static vn.candicode.common.FileStorageType.CHALLENGE;
 public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final SummaryRepository summaryRepository;
+    private final ChallengeConfigurationRepository challengeConfigurationRepository;
 
     private final StorageService storageService;
 
@@ -57,9 +59,10 @@ public class ChallengeServiceImpl implements ChallengeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, StorageService storageService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, StorageService storageService) {
         this.challengeRepository = challengeRepository;
         this.summaryRepository = summaryRepository;
+        this.challengeConfigurationRepository = challengeConfigurationRepository;
         this.storageService = storageService;
 
         this.availableLanguages = languageRepository.findAll().stream().collect(Collectors.toMap(LanguageEntity::getName, lang -> lang));
@@ -170,8 +173,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
 
-        Object a = summaryRepository.findLanguagesByChallengeId(24L);
-
         return PaginatedResponse.<ChallengeSummary>builder()
             .first(items.isFirst())
             .last(items.isLast())
@@ -265,14 +266,18 @@ public class ChallengeServiceImpl implements ChallengeService {
     /**
      * <ul>
      *     <li>Only author can delete his challenge</li>
-     *     <li>Call this method will delete both DB records and related filesystem directories</li>
+     *     <li>Call this method will only delete the record softly</li>
      * </ul>
      *  @param challengeId
      *
-     * @param currentUser
+     * @param me
      */
     @Override
-    public void deleteChallenge(Long challengeId, UserPrincipal currentUser) {
+    @Transactional
+    public void deleteChallenge(Long challengeId, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
+        challenge.setDeleted(true);
     }
 }

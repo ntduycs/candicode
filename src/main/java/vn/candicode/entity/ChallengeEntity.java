@@ -80,6 +80,9 @@ public class ChallengeEntity extends Auditable {
     @Column(columnDefinition = "boolean default false")
     private Boolean available = false;
 
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
     public boolean isContestChallenge() {
         return contestChallenge;
     }
