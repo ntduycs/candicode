@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeConfigurationEntity;
@@ -20,15 +21,16 @@ import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
+import vn.candicode.util.ChallengeBeanUtils;
 import vn.candicode.util.RegexUtils;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -121,15 +123,15 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     /**
-     * @param file   must be a zip file
-     * @param author
+     * @param file must be a zip file
+     * @param me
      * @return
      * @throws StorageException
      */
     @Override
-    public DirectoryTree storeChallengeSource(MultipartFile file, UserPrincipal author) {
+    public DirectoryTree storeChallengeSource(MultipartFile file, UserPrincipal me) {
         try {
-            String challengeDir = storageService.store(file, CHALLENGE, author.getUserId());
+            String challengeDir = storageService.store(file, CHALLENGE, me.getUserId());
             String challengeDirname = challengeDir.substring(challengeDir.lastIndexOf(File.separator) + 1);
 
             DirectoryTree tree = new DirectoryTree();
@@ -150,10 +152,21 @@ public class ChallengeServiceImpl implements ChallengeService {
      * @return paginated list of challenges
      */
     @Override
+    @Transactional(readOnly = true)
     public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
         Page<ChallengeEntity> items = challengeRepository.findAll(pageable);
 
-        return null;
+        List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<ChallengeSummary>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 
     /**

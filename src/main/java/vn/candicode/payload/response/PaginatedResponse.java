@@ -1,5 +1,6 @@
 package vn.candicode.payload.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class PaginatedResponse<T> implements Serializable {
     private int page;
     private int size;

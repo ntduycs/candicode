@@ -14,7 +14,6 @@ import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ChallengeService;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -50,7 +49,7 @@ public class ChallengeController extends Controller {
     }
 
     @GetMapping(path = "challenges", produces = {"application/json"})
-    public ResponseEntity<?> getChallengeList(@RequestBody @Valid PaginatedRequest payload) {
+    public ResponseEntity<?> getChallengeList(@ModelAttribute PaginatedRequest payload) {
         Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
 
         PaginatedResponse<ChallengeSummary> items = challengeService.getChallengeList(pageable);
