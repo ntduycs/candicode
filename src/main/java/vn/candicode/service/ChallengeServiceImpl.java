@@ -6,11 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import vn.candicode.common.EntityConstants;
 import vn.candicode.core.StorageService;
+import vn.candicode.entity.CategoryEntity;
 import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.LanguageEntity;
 import vn.candicode.exception.PersistenceException;
+import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
 import vn.candicode.payload.request.NewChallengeRequest;
 import vn.candicode.payload.request.UpdateChallengeRequest;
@@ -18,7 +21,9 @@ import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.ChallengeRepository;
+import vn.candicode.repository.SummaryRepository;
 import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.ChallengeBeanUtils;
@@ -32,6 +37,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static vn.candicode.common.FileStorageType.BANNER;
@@ -41,19 +47,23 @@ import static vn.candicode.common.FileStorageType.CHALLENGE;
 @Log4j2
 public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
+    private final SummaryRepository summaryRepository;
 
     private final StorageService storageService;
 
     private final Map<String, LanguageEntity> availableLanguages;
+    private final Map<String, CategoryEntity> availableCategories;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, LanguageRepository languageRepository, StorageService storageService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, StorageService storageService) {
         this.challengeRepository = challengeRepository;
+        this.summaryRepository = summaryRepository;
         this.storageService = storageService;
 
         this.availableLanguages = languageRepository.findAll().stream().collect(Collectors.toMap(LanguageEntity::getName, lang -> lang));
+        this.availableCategories = categoryRepository.findAll().stream().collect(Collectors.toMap(CategoryEntity::getName, cate -> cate));
     }
 
     /**
@@ -88,6 +98,8 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.setBanner(storageService.simplifyPath(bannerPath, BANNER, authorId));
             challenge.setTags(payload.getTags());
             challenge.setContestChallenge(payload.getContestChallenge());
+
+            payload.getCategories().forEach(e -> challenge.addCategory(availableCategories.get(e)));
 
             entityManager.persist(challenge);
 
@@ -158,6 +170,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
 
+        Object a = summaryRepository.findLanguagesByChallengeId(24L);
+
         return PaginatedResponse.<ChallengeSummary>builder()
             .first(items.isFirst())
             .last(items.isLast())
@@ -193,11 +207,58 @@ public class ChallengeServiceImpl implements ChallengeService {
      *
      * @param challengeId
      * @param payload
-     * @param currentUser
+     * @param me
      */
     @Override
-    public void updateChallenge(Long challengeId, UpdateChallengeRequest payload, UserPrincipal currentUser) {
+    public void updateChallenge(Long challengeId, UpdateChallengeRequest payload, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchCategories(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
+        if (payload.getTitle() != null && !challenge.getTitle().equals(payload.getTitle())) {
+            if (challengeRepository.existsByTitle(payload.getTitle())) {
+                throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
+            }
+            challenge.setTitle(payload.getTitle());
+        }
+
+        if (payload.getLevel() != null && !challenge.getLevel().equals(payload.getLevel()) && EntityConstants.LEVELS.contains(payload.getLevel())) {
+            challenge.setLevel(payload.getLevel());
+            challenge.setMaxPoint(payload.getLevel());
+        }
+
+        if (payload.getDescription() != null) {
+            challenge.setDescription(payload.getDescription());
+        }
+
+        if (payload.getTags() != null) {
+            challenge.setTags(payload.getTags());
+        }
+
+        if (payload.getContestChallenge() != null) {
+            challenge.setContestChallenge(payload.getContestChallenge());
+        }
+
+        if (payload.getCategories() != null) {
+            Set<String> existingCategories = challenge.getCategories().stream().map(c -> c.getCategory().getName()).collect(Collectors.toSet());
+
+            Set<String> newCategories = payload.getCategories().stream().filter(c -> !existingCategories.contains(c)).collect(Collectors.toSet());
+
+            existingCategories.stream()
+                .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
+                .forEach(c -> challenge.removeCategory(availableCategories.get(c))); // Remove them
+
+            newCategories.forEach(c -> challenge.addCategory(availableCategories.get(c)));
+        }
+
+        if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
+            try {
+                String bannerPath = storageService.store(payload.getBanner(), BANNER, me.getUserId());
+                challenge.setBanner(bannerPath);
+            } catch (IOException ignored) {
+            }
+        }
+
+        challengeRepository.save(challenge);
     }
 
     /**

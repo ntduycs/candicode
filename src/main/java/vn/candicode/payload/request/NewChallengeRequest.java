@@ -52,5 +52,7 @@ public class NewChallengeRequest extends Request {
 
     private Set<String> tags;
 
-    private Boolean contestChallenge = false;
+    private Set<String> categories;
+
+    private Boolean contestChallenge;
 }

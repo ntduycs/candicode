@@ -17,4 +17,9 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
 
     @Query("SELECT c FROM ChallengeEntity c LEFT JOIN FETCH c.testcases WHERE c.challengeId = :challengeId")
     Optional<ChallengeEntity> findByChallengeIdFetchTestcases(@Param("challengeId") Long challengeId);
+
+    @Query("SELECT c FROM ChallengeEntity c LEFT JOIN FETCH c.categories b LEFT JOIN FETCH b.category WHERE c.challengeId = :challengeId")
+    Optional<ChallengeEntity> findByChallengeIdFetchCategories(@Param("challengeId") Long challengeId);
+
+    Boolean existsByTitle(String title);
 }

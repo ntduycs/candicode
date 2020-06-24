@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewChallengeRequest;
 import vn.candicode.payload.request.PaginatedRequest;
+import vn.candicode.payload.request.UpdateChallengeRequest;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
@@ -55,6 +56,15 @@ public class ChallengeController extends Controller {
         PaginatedResponse<ChallengeSummary> items = challengeService.getChallengeList(pageable);
 
         return ResponseEntity.ok(ResponseFactory.build(items));
+    }
+
+    @PostMapping(path = "challenges/{id}")
+    public ResponseEntity<?> updateChallenge(@PathVariable("id") Long challengeId, @ModelAttribute UpdateChallengeRequest payload, @CurrentUser UserPrincipal me) {
+        challengeService.updateChallenge(challengeId, payload, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Updated challenge successfully"
+        )));
     }
 
 }

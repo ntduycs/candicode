@@ -1,14 +1,10 @@
 package vn.candicode.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import vn.candicode.entity.ChallengeEntity;
-import vn.candicode.payload.response.ChallengeSummary;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import javax.persistence.Query;
 
 @Repository
 public class SummaryRepositoryImpl implements SummaryRepository {
@@ -22,14 +18,13 @@ public class SummaryRepositoryImpl implements SummaryRepository {
     }
 
     @Override
-    public List<ChallengeSummary> getChallengeSummaryList(Pageable pageable) {
-        Page<ChallengeEntity> challenges = getChallengeList(pageable);
-        StringBuilder hql = new StringBuilder();
+    public Object findLanguagesByChallengeId(Long challengeId) {
+        Query query = entityManager.createQuery(
+            "SELECT c.challenge.challengeId, l.name FROM ChallengeConfigurationEntity c, LanguageEntity l WHERE c.challenge.challengeId = :id AND c.language = l GROUP BY c.challenge.challengeId, l.name"
+        );
 
-        return null;
-    }
+        query.setParameter("id", challengeId);
 
-    private Page<ChallengeEntity> getChallengeList(Pageable pageable) {
-        return challengeRepository.findAll(pageable);
+        return query.getResultList();
     }
 }
