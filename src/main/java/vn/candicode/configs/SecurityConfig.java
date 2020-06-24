@@ -55,6 +55,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(entryPoint).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
+            .antMatchers("/favicon.ico",
+                "/**/*.png",
+                "/**/*.gif",
+                "/**/*.svg",
+                "/**/*.jpg",
+                "/**/*.html",
+                "/**/*.css",
+                "/**/*.js").permitAll()
             .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
             .antMatchers(HttpMethod.POST, "/students").permitAll()
             .antMatchers("/test/**").permitAll()
