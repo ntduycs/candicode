@@ -253,7 +253,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
             try {
                 String bannerPath = storageService.store(payload.getBanner(), BANNER, me.getUserId());
-                challenge.setBanner(bannerPath);
+                storageService.delete(challenge.getBanner(), BANNER, me.getUserId());
+                challenge.setBanner(storageService.simplifyPath(bannerPath, BANNER, me.getUserId()));
             } catch (IOException ignored) {
             }
         }

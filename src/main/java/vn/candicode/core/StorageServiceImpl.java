@@ -158,6 +158,13 @@ public class StorageServiceImpl implements StorageService {
         return path == null ? null : path.toString();
     }
 
+    @Override
+    public void delete(String path, FileStorageType type, Long owner) {
+        String fullQualifiedPath = resolvePath(path, type, owner);
+
+        FileUtils.delete(new File(fullQualifiedPath));
+    }
+
     /**
      * @param path path to target directory
      * @return lists all contained files and directories inside <code>dir</code> as tree and

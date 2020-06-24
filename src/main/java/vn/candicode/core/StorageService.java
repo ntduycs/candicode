@@ -50,6 +50,8 @@ public interface StorageService {
      */
     String store(MultipartFile file, FileStorageType type, Long owner) throws IOException;
 
+    void delete(String path, FileStorageType type, Long owner);
+
     /**
      * @param dir path to target directory
      * @return lists all contained files and directories inside <code>dir</code> as tree
