@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static vn.candicode.common.FileStorageType.CHALLENGE;
 import static vn.candicode.common.FileStorageType.SUBMISSION;
@@ -198,18 +199,48 @@ public class TestcaseServiceImpl implements TestcaseService {
     /**
      * @param challengeId
      * @param payload
-     * @param currentUser Only challenge's owner can update testcases of his challenge
+     * @param me          Only challenge's owner can update testcases of his challenge
      * @return number of successfully updated testcases
      */
     @Override
-    public Integer updateTestcases(Long challengeId, UpdateTestcaseListRequest payload, UserPrincipal currentUser) {
-        return null;
+    @Transactional
+    public Integer updateTestcases(Long challengeId, UpdateTestcaseListRequest payload, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        Pattern inputFormat = Pattern.compile(challenge.getInputFormat());
+        Pattern outputFormat = Pattern.compile(challenge.getOutputFormat());
+
+        Map<Long, TestcaseRequest> validTestcases = new HashMap<>();
+
+        for (TestcaseRequest req : payload.getTestcases()) {
+            if (inputFormat.matcher(req.getInput()).matches() && outputFormat.matcher(req.getOutput()).matches()) {
+                validTestcases.put(req.getTestcaseId(), req);
+            }
+        }
+
+        int updatedTestcases = 0;
+
+        List<TestcaseEntity> testcaseEntities = challenge.getTestcases();
+        for (TestcaseEntity testcaseEntity : testcaseEntities) {
+            if (validTestcases.containsKey(testcaseEntity.getTestcaseId())) {
+                TestcaseRequest req = validTestcases.get(testcaseEntity.getTestcaseId());
+                testcaseEntity.setInput(req.getInput());
+                testcaseEntity.setExpectedOutput(req.getOutput());
+                testcaseEntity.setHidden(req.getHidden());
+                updatedTestcases++;
+            }
+        }
+
+        testcaseRepository.saveAll(testcaseEntities);
+
+        return updatedTestcases;
     }
 
     /**
      * @param challengeId
      * @param testcaseIds
-     * @param currentUser Only challenge's owner can delete his challenge's testcases
+     * @param me          Only challenge's owner can delete his challenge's testcases
      * @return an array that contains:
      * <ul>
      *     <li>Number of deleted testcases</li>
@@ -217,7 +248,18 @@ public class TestcaseServiceImpl implements TestcaseService {
      * </ul>
      */
     @Override
-    public Integer[] deleteTestcases(Long challengeId, List<Long> testcaseIds, UserPrincipal currentUser) {
-        return new Integer[0];
+    @Transactional
+    public Integer[] deleteTestcases(Long challengeId, List<Long> testcaseIds, UserPrincipal me) {
+        List<TestcaseEntity> testcaseEntities = testcaseRepository.findAllByChallengeId(challengeId);
+
+        List<TestcaseEntity> removedTestcases = testcaseEntities.stream()
+            .filter(t -> testcaseIds.contains(t.getTestcaseId()))
+            .collect(Collectors.toList());
+
+        Integer[] testcaseState = new Integer[]{removedTestcases.size(), testcaseEntities.size() - removedTestcases.size()};
+
+        testcaseRepository.deleteAll(removedTestcases);
+
+        return testcaseState;
     }
 }

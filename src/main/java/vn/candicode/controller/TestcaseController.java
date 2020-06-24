@@ -1,12 +1,11 @@
 package vn.candicode.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewTestcaseListRequest;
+import vn.candicode.payload.request.RemoveTestcaseListRequest;
+import vn.candicode.payload.request.UpdateTestcaseListRequest;
 import vn.candicode.payload.request.VerificationRequest;
 import vn.candicode.payload.response.VerificationSummary;
 import vn.candicode.security.CurrentUser;
@@ -58,6 +57,25 @@ public class TestcaseController extends Controller {
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "Created " + numAddedTestcases + " testcases successfully"
+        )));
+    }
+
+    @PutMapping(path = "challenges/{id}/testcases")
+    public ResponseEntity<?> updateTestcases(@PathVariable("id") Long challengeId, @RequestBody @Valid UpdateTestcaseListRequest payload, @CurrentUser UserPrincipal me) {
+        Integer numUpdatedTestcases = testcaseService.updateTestcases(challengeId, payload, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Created " + numUpdatedTestcases + " testcases successfully"
+        )));
+    }
+
+    @DeleteMapping(path = "challenges/{id}/testcases")
+    public ResponseEntity<?> deleteTestcases(@PathVariable("id") Long challengeId, @RequestBody @Valid RemoveTestcaseListRequest payload, @CurrentUser UserPrincipal me) {
+        Integer[] testcaseState = testcaseService.deleteTestcases(challengeId, payload.getTestcaseIds(), me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "removedTestcase", testcaseState[0],
+            "remainingTestcase", testcaseState[1]
         )));
     }
 }
