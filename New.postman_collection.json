@@ -6,8 +6,8 @@
 	},
 	"item": [
 		{
-			"name": "Login",
-			"request": {
+            "name": "Login",
+            "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
@@ -30,19 +30,19 @@
                     ]
                 }
             },
-			"response": []
-		},
+            "response": []
+        },
 		{
 			"name": "Current User",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJudGR1eS5jc0BnbWFpbC5jb20iLCJpYXQiOjE1OTEzMzkyMzMsImV4cCI6MTU5MTQyNTYzM30.ohBuXMjry6I9Hl2Fwedlh7Al5YOOEW_AHJQHk0EuJIM2ooQksIA1oFtVMYPCtzuKIbgtqlCXx5lf7d6bqqF0zQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2ODA4NzksImV4cCI6MTU5MzU0NDg3OX0.ExS20gB2ZeXELogxJVmz3_T8jJNH5PsvawrR3_6WcZvZgtxnC4rCuGbZEzx03exXDOItr0OlTKVs0OkGNzAKvg",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "GET",
@@ -50,16 +50,16 @@
 				"url": {
 					"raw": "{{host}}/auth/current",
 					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"auth",
-						"current"
-					]
-				}
-			},
-			"response": []
-		},
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "current"
+                    ]
+                }
+            },
+            "response": []
+        },
         {
             "name": "Student: Create",
             "request": {
@@ -86,15 +86,15 @@
             },
             "response": []
         },
-		{
-			"name": "Challenge: Upload",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
+        {
+            "name": "Challenge: Upload",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
                             "type": "string"
                         }
                     ]
@@ -107,7 +107,7 @@
                         {
                             "key": "source",
                             "type": "file",
-                            "src": "/Users/ntduycs/Desktop/Candicode_v2.zip"
+                            "src": "/Users/ntduycs/Desktop/Candicode_v3.zip"
                         }
                     ]
 				},
@@ -132,19 +132,19 @@
 					"bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
                             "type": "string"
                         }
                     ]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
                         {
                             "key": "title",
-                            "value": "New API 4",
+                            "value": "New API 1",
                             "type": "text"
                         },
                         {
@@ -159,33 +159,32 @@
                         },
                         {
                             "key": "language",
-                            "value": "Java",
+                            "value": "java",
                             "type": "text"
                         },
                         {
                             "key": "banner",
                             "type": "file",
-                            "src": "/Users/ntduycs/Desktop/Screen Shot 2020-05-25 at 22.55.59.png",
-                            "disabled": true
+                            "src": "/Users/ntduycs/Pictures/me.JPG"
                         },
                         {
                             "key": "runPath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/2/20200614005259-2-Candicode_v2/Candicode_v2/run.sh",
+                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200622224159-1-1/Candicode_v3/run.sh",
                             "type": "text"
                         },
                         {
                             "key": "compilePath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/2/20200614005259-2-Candicode_v2/Candicode_v2/compile.sh",
+                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200622224159-1-1/Candicode_v3/compile.sh",
                             "type": "text"
                         },
                         {
                             "key": "implementedPath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/2/20200614005259-2-Candicode_v2/Candicode_v2/javacc/Foo.java",
+                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200622224159-1-1/Candicode_v3/vn/candicode/algorithm/QuickSort.java",
                             "type": "text"
                         },
                         {
                             "key": "nonImplementedPath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/2/20200614005259-2-Candicode_v2/Candicode_v2/javacc/Foo.java",
+                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200622224159-1-1/Candicode_v3/vn/candicode/algorithm/QuickSortChallenge.java",
                             "type": "text"
                         },
                         {
@@ -200,7 +199,7 @@
                         },
                         {
                             "key": "challengeDir",
-                            "value": "/20200614005259-2-Candicode_v2",
+                            "value": "200622224159-1-1",
                             "type": "text"
                         }
                     ]
@@ -233,13 +232,45 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/challenges/57",
+                    "raw": "{{host}}/challenges/57?page&size&sort&direction&key&value&type",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
                         "57"
+                    ],
+                    "query": [
+                        {
+                            "key": "page",
+                            "value": null
+                        },
+                        {
+                            "key": "size",
+                            "value": null
+                        },
+                        {
+                            "key": "sort",
+                            "value": null
+                        },
+                        {
+                            "key": "direction",
+                            "value": null
+                        },
+                        {
+                            "key": "key",
+                            "value": null,
+                            "description": "tag, author, title, likes"
+                        },
+                        {
+                            "key": "value",
+                            "value": null
+                        },
+                        {
+                            "key": "type",
+                            "value": null,
+                            "description": "challenge, tutorial, contest"
+                        }
                     ]
                 }
             },
@@ -488,7 +519,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
                             "type": "string"
                         }
                     ]
@@ -497,7 +528,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"[1,2,5]\",\n\t\t\t\"output\":\"[0,0]\",\n\t\t\t\"hidden\":false\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"[1,10,4]\",\n\t\t\t\"output\":\"[0,2]\"\n\t\t}\n\t]\n}",
+                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"[1,2,5]\",\n\t\t\t\"output\":\"[1,2,5]\",\n\t\t\t\"hidden\":true\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"[1,10,4]\",\n\t\t\t\"output\":\"[1,4,10]\"\n\t\t}\n\t]\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -505,13 +536,13 @@
                     }
                 },
                 "url": {
-                    "raw": "{{host}}/challenges/75/testcases",
+                    "raw": "{{host}}/challenges/16/testcases",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "75",
+                        "16",
                         "testcases"
                     ]
                 }
@@ -611,7 +642,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"input\":\"[1,1]\"\n}",
+                    "raw": "{\n\t\"input\":\"[1,2,4,3,4]\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -619,13 +650,13 @@
                     }
                 },
                 "url": {
-                    "raw": "{{host}}/challenges/75/testcases/verification",
+                    "raw": "{{host}}/challenges/16/testcases/verification",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "75",
+                        "16",
                         "testcases",
                         "verification"
                     ]
@@ -679,6 +710,11 @@
                         {
                             "key": "description",
                             "value": "description",
+                            "type": "text"
+                        },
+                        {
+                            "key": "maxRegister",
+                            "value": "100",
                             "type": "text"
                         }
                     ]
@@ -933,7 +969,7 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "title",
+                            "value": "New Contest 2",
                             "type": "text"
                         },
                         {
@@ -949,7 +985,7 @@
                         {
                             "key": "banner",
                             "type": "file",
-                            "src": []
+                            "src": "/Users/ntduycs/Pictures/intellij-bg.jpg"
                         },
                         {
                             "key": "description",
@@ -958,25 +994,30 @@
                         },
                         {
                             "key": "registrationDeadline",
-                            "value": "yyyy-MM-dd HH:mm:ss",
+                            "value": "2020-06-21 14:30:00.000",
                             "type": "text"
                         },
                         {
-                            "key": "startAt",
-                            "value": "yyyy-MM-dd",
-                            "type": "text"
-                        },
-                        {
-                            "key": "endAt",
-                            "value": "yyyy-MM-dd",
-                            "type": "text"
-                        },
-                        {
-                            "key": "maxAttendee",
+                            "key": "maxRegister",
                             "value": "10",
                             "type": "text"
+                        },
+                        {
+                            "key": "content",
+                            "value": "content",
+                            "type": "text"
+                        },
+                        {
+                            "key": "rounds",
+                            "value": "[]",
+                            "type": "text"
                         }
-                    ]
+                    ],
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
                 },
                 "url": {
                     "raw": "{{host}}/contests",
@@ -985,6 +1026,199 @@
                     ],
                     "path": [
                         "contests"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Contest: Update",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "title",
+                            "value": "New Contest 2 updated updated",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tags",
+                            "value": "tag1",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tags",
+                            "value": "tag2",
+                            "type": "text"
+                        },
+                        {
+                            "key": "banner",
+                            "type": "file",
+                            "src": "/Users/ntduycs/Pictures/intellij-bg.jpg",
+                            "disabled": true
+                        },
+                        {
+                            "key": "description",
+                            "value": "description",
+                            "type": "text"
+                        },
+                        {
+                            "key": "registrationDeadline",
+                            "value": "2020-06-21 14:30:00.000",
+                            "type": "text"
+                        },
+                        {
+                            "key": "maxRegister",
+                            "value": "10",
+                            "type": "text"
+                        },
+                        {
+                            "key": "content",
+                            "value": "content",
+                            "type": "text"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{host}}/contests/13",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "contests",
+                        "13"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Contest: All",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"items\": [\n        {\n            \"contestId\": 1,\n            \"title\": \"title\",\n            \"author\": \"fullname\",\n            \"createdAt\": \"datetime\",\n            \"numComments\": 10,\n            \"maxRegister\": 10,\n            \"currRegister\": 8,\n            \"tags\": [\"tag1\", \"tag2\"],\n            \"description\": \"\",\n            \"registrationDeadline\": \"datetime\",\n            \"banner\":\"\"\n        }\n    ]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/contests",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "contests"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Contest: Details",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"contestId\": 1,\n    \"title\": \"title\",\n    \"author\": \"fullname\",\n    \"createdAt\": \"datetime\",\n    \"numComments\": 10,\n    \"maxRegister\": 10,\n    \"currRegister\": 8,\n    \"tags\": [\"tag1\", \"tag2\"],\n    \"description\": \"\",\n    \"registrationDeadline\": \"datetime\",\n    \"banner\":\"\",\n    \"content\": \"\",\n    \"rounds\": [\n        {\n            \"startsAt\": \"yyyy-MM-dd HH:mm:ss.SSS\",\n            \"endsAt\": \"yyyy-MM-dd HH:mm:ss.SSS\",\n            \"contraints\": {\n                \"attendeePercent\": 50, // default 100\n                \"scorePercent\": 88, // default 0\n                \"maxAttempts\": 5 // consider to dev\n            },\n            \"challenges\": [\n                \"slug-challenge-title-1\"\n            ],\n            \"status\": false // false if not start or ended\n        }\n    ]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/contests/slug",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "contests",
+                        "slug"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Contest: Leader Board",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"leaders\": [\n        {\n            \"fullName\": \"\",\n            \"details\": [\n                {\n                    \"score\": 12,\n                    \"doneWithin\": 122 // in seconds\n                }\n            ],\n            \"avatar\": \"\",\n            \"slug\": \"\" // in form if \"fn-ln-hash\"\n        }\n    ] // default display 10\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/contests/slug",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "contests",
+                        "slug"
                     ]
                 }
             },
@@ -1007,7 +1241,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"categories\": [\n        {\n            \"text\": \"Category 1\",\n            \"children\": [\n                {\n                    \"text\": \"Sub Category 1\",\n                    \"children\": [\n                        {\n                            \"text\": \"Sub Sub Category 1\"\n                        }\n                    ]\n                },\n                {\n                    \"text\": \"Sub Category 2\",\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Category 2\"\n        }\n    ]\n}",
+                    "raw": "{\n    \"categories\": [\n        {\n            \"text\": \"Category 1\",\n            \"children\": [\n                {\n                    \"text\": \"Sub Category 1\",\n                    \"children\": [\n                        {\n                            \"text\": \"Sub Sub Category 1\"\n                        }\n                    ]\n                },\n                {\n                    \"text\": \"Sub Category 2\",\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Category 2\"\n        }\n    ]\n}\n\n// Lam notification feature",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -1027,7 +1261,7 @@
             "response": []
         },
         {
-            "name": "Category: Create Copy",
+            "name": "Category: All",
             "request": {
                 "auth": {
                     "type": "bearer",
@@ -1049,6 +1283,58 @@
                     "path": [
                         "categories"
                     ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Comment: All",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"comments\": [\n        {\n            \"author\": \"\", // fullname,\n            \"avatar\": \"\",\n            \"createdAt\": \"\",\n            \"content\":\"\",\n            \"me\": true\n        }\n    ]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/challenges/id/comments?size=10&page=1",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "id",
+                        "comments"
+                    ],
+                    "query": [
+                        {
+                            "key": "size",
+                            "value": "10"
+                        },
+                        {
+                            "key": "page",
+                            "value": "1"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Search",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": ""
                 }
             },
             "response": []
