@@ -21,6 +21,7 @@ import java.util.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @NaturalIdCache
 @EqualsAndHashCode(of = {"title"}, callSuper = false)
+@Where(clause = "deleted = false")
 public class ChallengeEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
