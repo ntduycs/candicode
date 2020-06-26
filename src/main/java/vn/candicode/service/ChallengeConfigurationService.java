@@ -1,6 +1,6 @@
 package vn.candicode.service;
 
-import vn.candicode.payload.request.NewChallengeRequest;
+import vn.candicode.payload.request.NewChallengeConfigurationRequest;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.security.UserPrincipal;
 
@@ -17,7 +17,7 @@ public interface ChallengeConfigurationService {
      * @param currentUser
      * @return
      */
-    SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeRequest payload, UserPrincipal currentUser);
+    SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeConfigurationRequest payload, UserPrincipal currentUser);
 
     /**
      * Delete configuration of challenge by <code>language</code> and all related files

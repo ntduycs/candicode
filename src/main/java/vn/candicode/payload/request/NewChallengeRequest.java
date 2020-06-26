@@ -55,4 +55,8 @@ public class NewChallengeRequest extends Request {
     private Set<String> categories;
 
     private Boolean contestChallenge;
+
+    public Boolean getContestChallenge() {
+        return contestChallenge == null ? false : contestChallenge;
+    }
 }

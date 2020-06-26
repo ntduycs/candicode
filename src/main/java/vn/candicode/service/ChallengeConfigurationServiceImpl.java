@@ -2,22 +2,53 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import vn.candicode.core.CodeRunnerService;
+import vn.candicode.core.CompileResult;
+import vn.candicode.core.ExecutionResult;
 import vn.candicode.core.StorageService;
-import vn.candicode.payload.request.NewChallengeRequest;
+import vn.candicode.entity.ChallengeConfigurationEntity;
+import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.LanguageEntity;
+import vn.candicode.entity.TestcaseEntity;
+import vn.candicode.exception.ResourceNotFoundException;
+import vn.candicode.payload.request.NewChallengeConfigurationRequest;
+import vn.candicode.payload.response.SubmissionDetails;
 import vn.candicode.payload.response.SubmissionSummary;
+import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.ChallengeRepository;
+import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
+import vn.candicode.util.FileUtils;
+import vn.candicode.util.LanguageUtils;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static vn.candicode.common.FileStorageType.CHALLENGE;
+import static vn.candicode.common.FileStorageType.SUBMISSION;
 
 @Service
 @Log4j2
 public class ChallengeConfigurationServiceImpl implements ChallengeConfigurationService {
     private final ChallengeRepository challengeRepository;
+    private final ChallengeConfigurationRepository challengeConfigurationRepository;
 
     private final StorageService storageService;
+    private final CodeRunnerService codeRunnerService;
 
-    public ChallengeConfigurationServiceImpl(ChallengeRepository challengeRepository, StorageService storageService) {
+    private final Map<String, LanguageEntity> availableLanguages;
+
+    public ChallengeConfigurationServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
         this.challengeRepository = challengeRepository;
+        this.challengeConfigurationRepository = challengeConfigurationRepository;
         this.storageService = storageService;
+        this.codeRunnerService = codeRunnerService;
+
+        this.availableLanguages = languageRepository.findAll().stream().collect(Collectors.toMap(LanguageEntity::getName, lang -> lang));
     }
 
     /**
@@ -29,12 +60,89 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
      *
      * @param challengeId
      * @param payload
-     * @param currentUser
+     * @param me
      * @return
      */
     @Override
-    public SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeRequest payload, UserPrincipal currentUser) {
-        return null;
+    public SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeConfigurationRequest payload, UserPrincipal me) {
+        Long myId = me.getUserId();
+        String language = payload.getLanguage().toLowerCase();
+
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        List<TestcaseEntity> testcases = challenge.getTestcases();
+        long totalTestcases = testcases.size();
+
+        String srcDir = storageService.resolvePath(payload.getChallengeDir(), CHALLENGE, myId);
+        String destDir = storageService.resolvePath(payload.getChallengeDir(), SUBMISSION, myId);
+
+        // We will do copy the source to submission folder, so we need to adjust the root dir to reflect it correctly
+        String rootDir = Paths.get(payload.getRunPath()).getParent().toString().replaceFirst("challenges", "submissions");
+
+        CompileResult compileResult;
+
+        List<SubmissionDetails> submissionDetails = new ArrayList<>();
+
+        FileUtils.copyDirectory(new File(srcDir), new File(destDir));
+
+        if (LanguageUtils.requireCompile(language)) {
+            compileResult = codeRunnerService.compile(new File(rootDir), language);
+        } else {
+            compileResult = CompileResult.success(language);
+        }
+
+        if (!compileResult.isCompiled()) {
+            return SubmissionSummary.builder()
+                .compiled("failed")
+                .error(compileResult.getCompileError())
+                .passed(0L)
+                .total((long) testcases.size())
+                .details(new ArrayList<>()).build();
+        }
+
+        // Run each test case sequentially
+        for (TestcaseEntity testcase : testcases) {
+            FileUtils.writeStringToFile(new File(rootDir, "in.txt"), testcase.getInput());
+            ExecutionResult executionResult = codeRunnerService.run(new File(rootDir), testcase.getTimeout(), language);
+            String error = executionResult.getTimeoutError() != null ? executionResult.getTimeoutError() : executionResult.getRuntimeError();
+            submissionDetails.add(SubmissionDetails.builder()
+                .testcaseId(testcase.getTestcaseId())
+                .input(testcase.getInput())
+                .expectedOutput(testcase.getExpectedOutput())
+                .actualOutput(executionResult.getOutput())
+                .executionTime(executionResult.getExecutionTime())
+                .passed(testcase.getExpectedOutput().equals(executionResult.getOutput()))
+                .error(error)
+                .build()
+            );
+        }
+
+        long passedTestcases = submissionDetails.stream().filter(SubmissionDetails::getPassed).count();
+
+        if (passedTestcases == totalTestcases) {
+            ChallengeConfigurationEntity challengeConfig = new ChallengeConfigurationEntity();
+
+            challengeConfig.setChallenge(challenge);
+            challengeConfig.setLanguage(availableLanguages.get(language));
+            challengeConfig.setDirectory(payload.getChallengeDir());
+            challengeConfig.setRoot(rootDir);
+            challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, myId));
+            challengeConfig.setNonImplementedFile(storageService.simplifyPath(payload.getNonImplementedPath(), CHALLENGE, myId));
+            challengeConfig.setRunScript(storageService.simplifyPath(payload.getRunPath(), CHALLENGE, myId));
+            challengeConfig.setCompileScript(storageService.simplifyPath(payload.getCompilePath(), CHALLENGE, myId));
+            challengeConfig.setAuthorId(myId);
+
+            challengeConfigurationRepository.save(challengeConfig);
+        }
+
+        return SubmissionSummary.builder()
+            .compiled("success")
+            .error(null)
+            .total(totalTestcases)
+            .passed(passedTestcases)
+            .details(submissionDetails)
+            .build();
     }
 
     /**

@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 public class SubmissionSummary implements Serializable {
-    private Integer total; // number of testcases
+    private Long total; // number of testcases
     private Long passed; // number of passed testcases
     private String compiled; // compile status, 'success' or 'failed'
     private String error; // compile error in detail

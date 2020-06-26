@@ -62,6 +62,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", payload.getLanguage()));
 
         List<TestcaseEntity> testcases = testcaseRepository.findAllByChallengeId(challengeId);
+        long totalTestcases = testcases.size();
 
         String srcDir = storageService.resolvePath(configuration.getDirectory(), CHALLENGE, configuration.getAuthorId());
         String destDir = storageService.resolvePath(configuration.getDirectory(), SUBMISSION, myId);
@@ -87,7 +88,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .compiled("failed")
                 .error(compileResult.getCompileError())
                 .passed(0L)
-                .total(testcases.size())
+                .total(totalTestcases)
                 .details(new ArrayList<>()).build();
         }
 
@@ -111,7 +112,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         return SubmissionSummary.builder()
             .compiled("success")
             .error(null)
-            .total(testcases.size())
+            .total(totalTestcases)
             .passed(submissionDetails.stream().filter(SubmissionDetails::getPassed).count())
             .details(submissionDetails)
             .build();

@@ -225,7 +225,7 @@ public class StorageServiceImpl implements StorageService {
             case BANNER:
                 return bannerDirOf(owner).relativize(Paths.get(fullPath).normalize()).toString();
             case CHALLENGE:
-                return challengeDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
+                return challengeDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case SUBMISSION:
                 return submissionDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
             case AVATAR:

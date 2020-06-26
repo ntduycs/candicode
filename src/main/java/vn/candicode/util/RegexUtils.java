@@ -7,19 +7,19 @@ import java.util.stream.Collectors;
 public class RegexUtils {
     private static final String FLOAT = "[+-]?\\d+(.\\d+)?";
 
-    private static final String FLOAT_LIST = "\\[([+-]?\\d+(.\\d+)?)?(,\\s?[+-]?\\d+(.\\d+)?)*\\]";
+    private static final String FLOAT_LIST = "\\[\\s?([+-]?\\d+(.\\d+)?)?(,\\s?[+-]?\\d+(.\\d+)?)*\\s?\\]";
 
     private static final String INTEGER = "[+-]?\\d+";
 
-    private static final String INTEGER_LIST = "\\[(\\d+)?(,\\s?\\d+)*\\]";
+    private static final String INTEGER_LIST = "\\[\\s?(\\d+)?(,\\s?\\d+)*\\s?\\]";
 
-    private static final String STRING = "[\\w\\r\\n\\s\\0]+";
+    private static final String STRING = "[-a-z0-9~!$%^&*_=+}{?\\s\\r]+";
 
-    private static final String STRING_LIST = "\\[[\\w\\r\\n\\s.,?-]*(,\\s?[\\w\\r\\n\\s.,?-]*)*\\]";
+    private static final String STRING_LIST = "\\[\\s?[-a-z0-9~!$%^&*_=+}{?\\s\\r]*(,\\s?[-a-z0-9~!$%^&*_=+}{?\\s\\r])*\\s?\\]";
 
     private static final String BOOLEAN = "[0-1]";
 
-    private static final String BOOLEAN_LIST = "\\[[0-1]?(,\\s?[0-1])*\\]";
+    private static final String BOOLEAN_LIST = "\\[\\s?[0-1]?(,\\s?[0-1])*\\s?\\]";
 
     private RegexUtils() {
     }
