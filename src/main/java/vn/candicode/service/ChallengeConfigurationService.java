@@ -20,7 +20,7 @@ public interface ChallengeConfigurationService {
     SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeConfigurationRequest payload, UserPrincipal currentUser);
 
     /**
-     * Delete configuration of challenge by <code>language</code> and all related files
+     * Softly delete db record
      *
      * @param challengeId
      * @param language    which language that want/need to remove

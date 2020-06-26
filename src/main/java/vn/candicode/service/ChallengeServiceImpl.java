@@ -162,7 +162,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     /**
-     * TODO: Implement it
+     * TODO: Optimize SQL Query
      *
      * @param pageable
      * @return paginated list of challenges
@@ -173,6 +173,18 @@ public class ChallengeServiceImpl implements ChallengeService {
         Page<ChallengeEntity> items = challengeRepository.findAll(pageable);
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
+
+        Map<Long, ChallengeSummary> idSummaryMap = summaries.stream().collect(Collectors.toMap(ChallengeSummary::getChallengeId, item -> item));
+
+        List<Object[]> languagesByChallenge = summaryRepository.findLanguagesByChallengeIdIn(idSummaryMap.keySet());
+        for (Object[] item : languagesByChallenge) {
+            idSummaryMap.get(item[0]).getLanguages().add((String) item[1]);
+        }
+
+        List<Object[]> numAttendeesByChallenge = summaryRepository.countChallengeAttendees(idSummaryMap.keySet());
+        for (Object[] item : numAttendeesByChallenge) {
+            idSummaryMap.get(item[0]).setNumAttendees((Long) item[1]);
+        }
 
         return PaginatedResponse.<ChallengeSummary>builder()
             .first(items.isFirst())

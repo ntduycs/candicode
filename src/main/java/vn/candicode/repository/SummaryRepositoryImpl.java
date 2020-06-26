@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 public class SummaryRepositoryImpl implements SummaryRepository {
@@ -20,11 +22,25 @@ public class SummaryRepositoryImpl implements SummaryRepository {
     @Override
     public Object findLanguagesByChallengeId(Long challengeId) {
         Query query = entityManager.createQuery(
-            "SELECT c.challenge.challengeId, l.name FROM ChallengeConfigurationEntity c, LanguageEntity l WHERE c.challenge.challengeId = :id AND c.language = l GROUP BY c.challenge.challengeId, l.name"
+            "SELECT c.challenge.challengeId, l.name FROM ChallengeConfigurationEntity c, LanguageEntity l WHERE c.challenge.challengeId = :id AND c.language = l"
         );
 
         query.setParameter("id", challengeId);
 
         return query.getResultList();
+    }
+
+    @Override
+    public List<Object[]> findLanguagesByChallengeIdIn(Set<Long> challengeIds) {
+        return entityManager.createQuery(
+            "SELECT c.challenge.challengeId, l.name FROM ChallengeConfigurationEntity c, LanguageEntity l WHERE c.challenge.challengeId in (:ids) AND c.language.languageId = l.languageId"
+        ).setParameter("ids", challengeIds).getResultList();
+    }
+
+    @Override
+    public List<Object[]> countChallengeAttendees(Set<Long> challengeIds) {
+        return entityManager.createQuery(
+            "SELECT s.challenge.challengeId, count(s) from SubmissionEntity s WHERE s.challenge.challengeId IN (:ids) GROUP BY s.challenge.challengeId"
+        ).setParameter("ids", challengeIds).getResultList();
     }
 }

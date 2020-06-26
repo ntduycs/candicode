@@ -7,14 +7,14 @@ import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
 import vn.candicode.core.StorageService;
-import vn.candicode.entity.ChallengeConfigurationEntity;
-import vn.candicode.entity.TestcaseEntity;
+import vn.candicode.entity.*;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionDetails;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.repository.ChallengeConfigurationRepository;
+import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.SubmissionRepository;
 import vn.candicode.repository.TestcaseRepository;
 import vn.candicode.security.UserPrincipal;
@@ -34,14 +34,16 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final ChallengeConfigurationRepository challengeConfigurationRepository;
     private final TestcaseRepository testcaseRepository;
+    private final ChallengeRepository challengeRepository;
 
     private final StorageService storageService;
     private final CodeRunnerService codeRunnerService;
 
-    public SubmissionServiceImpl(SubmissionRepository submissionRepository, ChallengeConfigurationRepository challengeConfigurationRepository, TestcaseRepository testcaseRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
+    public SubmissionServiceImpl(SubmissionRepository submissionRepository, ChallengeConfigurationRepository challengeConfigurationRepository, TestcaseRepository testcaseRepository, ChallengeRepository challengeRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
         this.submissionRepository = submissionRepository;
         this.challengeConfigurationRepository = challengeConfigurationRepository;
         this.testcaseRepository = testcaseRepository;
+        this.challengeRepository = challengeRepository;
         this.storageService = storageService;
         this.codeRunnerService = codeRunnerService;
     }
@@ -61,8 +63,11 @@ public class SubmissionServiceImpl implements SubmissionService {
             .findByChallengeIdAndLanguageName(challengeId, language)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", payload.getLanguage()));
 
-        List<TestcaseEntity> testcases = testcaseRepository.findAllByChallengeId(challengeId);
-        long totalTestcases = testcases.size();
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        List<TestcaseEntity> testcases = challenge.getTestcases();
+        int totalTestcases = testcases.size();
 
         String srcDir = storageService.resolvePath(configuration.getDirectory(), CHALLENGE, configuration.getAuthorId());
         String destDir = storageService.resolvePath(configuration.getDirectory(), SUBMISSION, myId);
@@ -83,11 +88,23 @@ public class SubmissionServiceImpl implements SubmissionService {
             compileResult = CompileResult.success(language);
         }
 
+        SubmissionEntity submission = new SubmissionEntity();
+
         if (!compileResult.isCompiled()) {
+            submission.setCompiled(false);
+            submission.setDoneWithin(null);
+            submission.setExecTime(null);
+            submission.setPoint(0);
+            submission.setSubmittedCode(payload.getCode());
+            submission.setAuthor((StudentEntity) me.getEntityRef());
+            submission.setChallenge(challenge);
+
+            submissionRepository.save(submission);
+
             return SubmissionSummary.builder()
                 .compiled("failed")
                 .error(compileResult.getCompileError())
-                .passed(0L)
+                .passed(0)
                 .total(totalTestcases)
                 .details(new ArrayList<>()).build();
         }
@@ -109,11 +126,30 @@ public class SubmissionServiceImpl implements SubmissionService {
             );
         }
 
+        Double avgExecutionTime = submissionDetails.stream()
+            .filter(item -> item.getExecutionTime() != null)
+            .mapToLong(SubmissionDetails::getExecutionTime)
+            .average().orElse(Double.NaN);
+
+        int passedTestcases = submissionDetails.stream()
+            .filter(item -> Boolean.TRUE.equals(item.getPassed()))
+            .mapToInt(item -> 1).sum();
+
+        submission.setCompiled(true);
+        submission.setDoneWithin(null);
+        submission.setExecTime(avgExecutionTime);
+        submission.setPoint(passedTestcases / totalTestcases * challenge.getMaxPoint());
+        submission.setSubmittedCode(payload.getCode());
+        submission.setAuthor((StudentEntity) me.getEntityRef());
+        submission.setChallenge(challenge);
+
+        submissionRepository.save(submission);
+
         return SubmissionSummary.builder()
             .compiled("success")
             .error(null)
             .total(totalTestcases)
-            .passed(submissionDetails.stream().filter(SubmissionDetails::getPassed).count())
+            .passed(passedTestcases)
             .details(submissionDetails)
             .build();
     }

@@ -2,6 +2,7 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
@@ -72,7 +73,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
         List<TestcaseEntity> testcases = challenge.getTestcases();
-        long totalTestcases = testcases.size();
+        int totalTestcases = testcases.size();
 
         String srcDir = storageService.resolvePath(payload.getChallengeDir(), CHALLENGE, myId);
         String destDir = storageService.resolvePath(payload.getChallengeDir(), SUBMISSION, myId);
@@ -96,8 +97,8 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             return SubmissionSummary.builder()
                 .compiled("failed")
                 .error(compileResult.getCompileError())
-                .passed(0L)
-                .total((long) testcases.size())
+                .passed(0)
+                .total(totalTestcases)
                 .details(new ArrayList<>()).build();
         }
 
@@ -118,7 +119,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             );
         }
 
-        long passedTestcases = submissionDetails.stream().filter(SubmissionDetails::getPassed).count();
+        int passedTestcases = submissionDetails.stream().filter(SubmissionDetails::getPassed).mapToInt(item -> 1).sum();
 
         if (passedTestcases == totalTestcases) {
             ChallengeConfigurationEntity challengeConfig = new ChallengeConfigurationEntity();
@@ -146,14 +147,21 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
     }
 
     /**
-     * Delete configuration of challenge by <code>language</code> and all related files
+     * Softly delete db record
      *
      * @param challengeId
      * @param language    which language that want/need to remove
      * @return true if removed successfully
      */
     @Override
+    @Transactional
     public Boolean removeSupportedLanguage(Long challengeId, String language) {
-        return null;
+        ChallengeConfigurationEntity configuration = challengeConfigurationRepository
+            .findByChallengeIdAndLanguageName(challengeId, language.toLowerCase())
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", language));
+
+        configuration.setDeleted(true);
+
+        return true;
     }
 }

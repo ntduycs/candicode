@@ -31,4 +31,8 @@ public class ChallengeSummary implements Serializable {
     private Integer dislikes;
 
     private String slug;
+
+    public Long getNumAttendees() {
+        return numAttendees == null ? 0L : numAttendees;
+    }
 }

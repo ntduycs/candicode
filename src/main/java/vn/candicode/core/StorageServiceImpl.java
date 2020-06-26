@@ -1,6 +1,7 @@
 package vn.candicode.core;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.common.FileAuthor;
@@ -159,6 +160,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    @Async
     public void delete(String path, FileStorageType type, Long owner) {
         String fullQualifiedPath = resolvePath(path, type, owner);
 
@@ -223,13 +225,13 @@ public class StorageServiceImpl implements StorageService {
         if (fullPath == null) return null;
         switch (type) {
             case BANNER:
-                return bannerDirOf(owner).relativize(Paths.get(fullPath).normalize()).toString();
+                return bannerDirOf(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case CHALLENGE:
                 return challengeDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case SUBMISSION:
-                return submissionDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
+                return submissionDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case AVATAR:
-                return avatarDirFor(owner).relativize(Paths.get(fullPath).normalize()).toString();
+                return avatarDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             default:
                 throw new UnsupportedOperationException("Cannot simplify path of a " + type.name());
         }

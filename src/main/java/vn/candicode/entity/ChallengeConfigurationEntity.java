@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Table(name = "challenge_configurations", uniqueConstraints = {
     @UniqueConstraint(name = "challenge_language_idx", columnNames = {"challenge_id", "language_id"})
 })
+@Where(clause = "deleted = false")
 public class ChallengeConfigurationEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -55,6 +57,9 @@ public class ChallengeConfigurationEntity extends Auditable {
      */
     @Column(nullable = false)
     private Long authorId;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted = false;
 
     public ChallengeConfigurationEntity() {
     }
