@@ -40,9 +40,10 @@ public interface ChallengeService {
 
     /**
      * @param challengeId
+     * @param me          For determining if should render testcase output or not
      * @return details of challenge with given id
      */
-    ChallengeDetails getChallengeDetails(Long challengeId);
+    ChallengeDetails getChallengeDetails(Long challengeId, UserPrincipal me);
 
     /**
      * Only author can edit challenge

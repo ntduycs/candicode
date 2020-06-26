@@ -21,6 +21,8 @@ import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.sub.Challenge;
+import vn.candicode.payload.response.sub.Testcase;
 import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.ChallengeRepository;
@@ -28,6 +30,7 @@ import vn.candicode.repository.SummaryRepository;
 import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.ChallengeBeanUtils;
+import vn.candicode.util.FileUtils;
 import vn.candicode.util.RegexUtils;
 
 import javax.persistence.EntityExistsException;
@@ -202,9 +205,34 @@ public class ChallengeServiceImpl implements ChallengeService {
      * @param myId
      * @return paginated list of my challenges
      */
+    @Transactional(readOnly = true)
     @Override
     public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId) {
-        return null;
+        Page<ChallengeEntity> items = challengeRepository.findAllByAuthorId(myId, pageable);
+
+        List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
+
+        Map<Long, ChallengeSummary> idSummaryMap = summaries.stream().collect(Collectors.toMap(ChallengeSummary::getChallengeId, item -> item));
+
+        List<Object[]> languagesByChallenge = summaryRepository.findLanguagesByChallengeIdIn(idSummaryMap.keySet());
+        for (Object[] item : languagesByChallenge) {
+            idSummaryMap.get(item[0]).getLanguages().add((String) item[1]);
+        }
+
+        List<Object[]> numAttendeesByChallenge = summaryRepository.countChallengeAttendees(idSummaryMap.keySet());
+        for (Object[] item : numAttendeesByChallenge) {
+            idSummaryMap.get(item[0]).setNumAttendees((Long) item[1]);
+        }
+
+        return PaginatedResponse.<ChallengeSummary>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 
     /**
@@ -212,8 +240,31 @@ public class ChallengeServiceImpl implements ChallengeService {
      * @return details of challenge with given id
      */
     @Override
-    public ChallengeDetails getChallengeDetails(Long challengeId) {
-        return null;
+    @Transactional
+    public ChallengeDetails getChallengeDetails(Long challengeId, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        ChallengeDetails details = ChallengeBeanUtils.details(challenge);
+
+        List<Object[]> languagesByChallenge = summaryRepository.findLanguagesByChallengeId(challengeId);
+        for (Object[] item : languagesByChallenge) {
+            details.getLanguages().add((String) item[2]);
+            details.getContents().add(new Challenge((String) item[2], FileUtils.readFileToString(new File(storageService.resolvePath((String) item[1], CHALLENGE, challenge.getAuthor().getUserId())))));
+        }
+
+        List<Object[]> numAttendeesByChallenge = summaryRepository.countChallengeAttendees(challengeId);
+        for (Object[] item : numAttendeesByChallenge) {
+            details.setNumAttendees((Long) item[1]);
+        }
+
+        challenge.getTestcases().stream()
+            .map(item -> new Testcase(item.getTestcaseId(), item.getInput(), item.getExpectedOutput(), item.getHidden(), me.getUserId().equals(challenge.getAuthor().getUserId())))
+            .forEach(item -> details.getTestcases().add(item));
+
+        //language, testcase, content, attendee
+
+        return details;
     }
 
     /**

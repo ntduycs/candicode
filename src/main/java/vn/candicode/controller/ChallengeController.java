@@ -8,6 +8,7 @@ import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewChallengeRequest;
 import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.request.UpdateChallengeRequest;
+import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
@@ -56,6 +57,22 @@ public class ChallengeController extends Controller {
         PaginatedResponse<ChallengeSummary> items = challengeService.getChallengeList(pageable);
 
         return ResponseEntity.ok(ResponseFactory.build(items));
+    }
+
+    @GetMapping(path = "challenges/me")
+    public ResponseEntity<?> getMyChallengeList(@ModelAttribute PaginatedRequest payload, @CurrentUser UserPrincipal me) {
+        Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
+
+        PaginatedResponse<ChallengeSummary> items = challengeService.getMyChallengeList(pageable, me.getUserId());
+
+        return ResponseEntity.ok(ResponseFactory.build(items));
+    }
+
+    @GetMapping(path = "challenges/{id}")
+    public ResponseEntity<?> getChallengeDetails(@PathVariable("id") Long challengeId, @CurrentUser UserPrincipal me) {
+        ChallengeDetails challengeDetails = challengeService.getChallengeDetails(challengeId, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(challengeDetails));
     }
 
     @PostMapping(path = "challenges/{id}")

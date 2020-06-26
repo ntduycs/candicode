@@ -8,9 +8,11 @@ import java.util.Set;
  */
 public interface SummaryRepository {
 
-    Object findLanguagesByChallengeId(Long challengeId);
+    List<Object[]> findLanguagesByChallengeId(Long challengeId);
 
     List<Object[]> findLanguagesByChallengeIdIn(Set<Long> challengeIds);
 
     List<Object[]> countChallengeAttendees(Set<Long> challengeIds);
+
+    List<Object[]> countChallengeAttendees(Long challengeId);
 }
