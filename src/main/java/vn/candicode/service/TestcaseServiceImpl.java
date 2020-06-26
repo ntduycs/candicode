@@ -75,7 +75,7 @@ public class TestcaseServiceImpl implements TestcaseService {
         List<TestcaseRequest> testcases = payload.getTestcases();
         for (TestcaseRequest testcase : testcases) {
             if (inputFormat.matcher(testcase.getInput()).matches() && outputFormat.matcher(testcase.getOutput()).matches()) {
-                challenge.addTestcase(new TestcaseEntity(testcase.getInput(), testcase.getOutput(), testcase.getHidden()));
+                challenge.addTestcase(new TestcaseEntity(testcase.getInput(), testcase.getOutput(), testcase.getHidden(), testcase.getTimeout()));
                 addedTestcases = addedTestcases + 1;
             }
         }
@@ -126,8 +126,7 @@ public class TestcaseServiceImpl implements TestcaseService {
             String language = configuration.getLanguage().getName();
 
             // We have copied the source to submission folder, so we need to adjust the root dir to reflect it correctly
-            String rootDir = storageService.resolvePath(configuration.getRoot(), CHALLENGE, userId)
-                .replaceFirst("challenges", "submissions");
+            String rootDir = storageService.resolvePath(configuration.getRoot(), SUBMISSION, userId);
 
             languageRootMap.put(language, rootDir);
 

@@ -19,5 +19,24 @@ public class TestcaseRequest extends Request {
     @NotBlank(message = "Field 'output' is required but not be given")
     private String output;
 
-    private Boolean hidden = false;
+    private Boolean hidden;
+
+    private Long timeout;
+
+    public Boolean getHidden() {
+        return hidden == null ? false : hidden;
+    }
+
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden == null ? false : hidden;
+    }
+
+    public Long getTimeout() {
+        return timeout == null ? 0 : timeout;
+    }
+
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout == null ? 0L : timeout;
+    }
+
 }

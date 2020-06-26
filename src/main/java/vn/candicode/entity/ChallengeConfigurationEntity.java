@@ -49,6 +49,13 @@ public class ChallengeConfigurationEntity extends Auditable {
     @Column(nullable = false)
     private String nonImplementedFile;
 
+    /**
+     * This is an redundant field used to eliminate JOIN query in case of submission.
+     * This should be presented because submission is likely the most popular task in our system
+     */
+    @Column(nullable = false)
+    private Long authorId;
+
     public ChallengeConfigurationEntity() {
     }
 

@@ -3,30 +3,118 @@ package vn.candicode.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.candicode.core.CodeRunnerService;
+import vn.candicode.core.CompileResult;
+import vn.candicode.core.ExecutionResult;
+import vn.candicode.core.StorageService;
+import vn.candicode.entity.ChallengeConfigurationEntity;
+import vn.candicode.entity.TestcaseEntity;
+import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.SubmissionDetails;
 import vn.candicode.payload.response.SubmissionSummary;
+import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.SubmissionRepository;
+import vn.candicode.repository.TestcaseRepository;
 import vn.candicode.security.UserPrincipal;
+import vn.candicode.util.FileUtils;
+import vn.candicode.util.LanguageUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static vn.candicode.common.FileStorageType.CHALLENGE;
+import static vn.candicode.common.FileStorageType.SUBMISSION;
 
 @Service
 @Log4j2
 public class SubmissionServiceImpl implements SubmissionService {
     private final SubmissionRepository submissionRepository;
+    private final ChallengeConfigurationRepository challengeConfigurationRepository;
+    private final TestcaseRepository testcaseRepository;
 
-    public SubmissionServiceImpl(SubmissionRepository submissionRepository) {
+    private final StorageService storageService;
+    private final CodeRunnerService codeRunnerService;
+
+    public SubmissionServiceImpl(SubmissionRepository submissionRepository, ChallengeConfigurationRepository challengeConfigurationRepository, TestcaseRepository testcaseRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
         this.submissionRepository = submissionRepository;
+        this.challengeConfigurationRepository = challengeConfigurationRepository;
+        this.testcaseRepository = testcaseRepository;
+        this.storageService = storageService;
+        this.codeRunnerService = codeRunnerService;
     }
 
     /**
      * @param challengeId
      * @param payload
-     * @param author      Only student can do this operation
+     * @param me          Only student can do this operation
      * @return
      */
     @Override
-    public SubmissionSummary doScoreSubmission(Long challengeId, NewSubmissionRequest payload, UserPrincipal author) {
-        return null;
+    public SubmissionSummary doScoreSubmission(Long challengeId, NewSubmissionRequest payload, UserPrincipal me) {
+        Long myId = me.getUserId();
+        String language = payload.getLanguage().toLowerCase();
+
+        ChallengeConfigurationEntity configuration = challengeConfigurationRepository
+            .findByChallengeIdAndLanguageName(challengeId, language)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", payload.getLanguage()));
+
+        List<TestcaseEntity> testcases = testcaseRepository.findAllByChallengeId(challengeId);
+
+        String srcDir = storageService.resolvePath(configuration.getDirectory(), CHALLENGE, configuration.getAuthorId());
+        String destDir = storageService.resolvePath(configuration.getDirectory(), SUBMISSION, myId);
+
+        // We will do copy the source to submission folder, so we need to adjust the root dir to reflect it correctly
+        String rootDir = storageService.resolvePath(configuration.getRoot(), SUBMISSION, myId);
+
+        CompileResult compileResult;
+
+        List<SubmissionDetails> submissionDetails = new ArrayList<>();
+
+        FileUtils.copyDirectory(new File(srcDir), new File(destDir));
+        FileUtils.writeStringToFile(new File(storageService.resolvePath(configuration.getPreImplementedFile(), SUBMISSION, myId)), payload.getCode());
+
+        if (LanguageUtils.requireCompile(language)) {
+            compileResult = codeRunnerService.compile(new File(rootDir), language);
+        } else {
+            compileResult = CompileResult.success(language);
+        }
+
+        if (!compileResult.isCompiled()) {
+            return SubmissionSummary.builder()
+                .compiled("failed")
+                .error(compileResult.getCompileError())
+                .passed(0L)
+                .total(testcases.size())
+                .details(new ArrayList<>()).build();
+        }
+
+        // Run each test case sequentially
+        for (TestcaseEntity testcase : testcases) {
+            FileUtils.writeStringToFile(new File(rootDir, "in.txt"), testcase.getInput());
+            ExecutionResult executionResult = codeRunnerService.run(new File(rootDir), testcase.getTimeout(), language);
+            String error = executionResult.getTimeoutError() != null ? executionResult.getTimeoutError() : executionResult.getRuntimeError();
+            submissionDetails.add(SubmissionDetails.builder()
+                .testcaseId(testcase.getTestcaseId())
+                .input(testcase.getInput())
+                .expectedOutput(testcase.getExpectedOutput())
+                .actualOutput(executionResult.getOutput())
+                .executionTime(executionResult.getExecutionTime())
+                .passed(testcase.getExpectedOutput().equals(executionResult.getOutput()))
+                .error(error)
+                .build()
+            );
+        }
+
+        return SubmissionSummary.builder()
+            .compiled("success")
+            .error(null)
+            .total(testcases.size())
+            .passed(submissionDetails.stream().filter(SubmissionDetails::getPassed).count())
+            .details(submissionDetails)
+            .build();
     }
 
     /**
@@ -36,6 +124,8 @@ public class SubmissionServiceImpl implements SubmissionService {
      */
     @Override
     public PaginatedResponse<SubmissionSummary> getMySubmissionHistory(Pageable pageable, UserPrincipal me) {
+
+
         return null;
     }
 }

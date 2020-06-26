@@ -20,4 +20,12 @@ public class CompileResult implements Serializable {
             ", compileError='" + compileError + '\'' +
             '}';
     }
+
+    public static CompileResult success(String language) {
+        return new CompileResult(language, true, null);
+    }
+
+    public static CompileResult failure(String language) {
+        return new CompileResult(language, false, "Unknown error");
+    }
 }

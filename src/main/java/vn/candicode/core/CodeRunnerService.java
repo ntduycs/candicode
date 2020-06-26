@@ -12,6 +12,12 @@ import java.io.File;
 public interface CodeRunnerService {
     CompileResult compile(File root, String language);
 
+    /**
+     * @param root
+     * @param clock    set to 3s if 0 <= clock <= 3,000,000,000 (nanoseconds)
+     * @param language
+     * @return
+     */
     ExecutionResult run(File root, long clock, String language);
 
     void cleanGarbageFiles(File root, String lang);

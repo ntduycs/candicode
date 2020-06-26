@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class CodeRunnerServiceImpl implements CodeRunnerService {
-    private static final long DEFAULT_TIMEOUT = 3000; // 3s
+    private static final long DEFAULT_TIMEOUT = 3000000000L; // 3s
 
     @Override
     public CompileResult compile(File root, String language) {
@@ -67,11 +67,17 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         }
     }
 
+    /**
+     * @param root
+     * @param clock    set to 3s if 0 <= clock <= 3,000,000,000 (nanoseconds)
+     * @param language
+     * @return
+     */
     @Override
     public ExecutionResult run(File root, long clock, String language) {
         String error = null;
         String output;
-        long timeout = clock > 0 ? clock : DEFAULT_TIMEOUT;
+        long timeout = (clock > 0 && clock < DEFAULT_TIMEOUT) ? clock : DEFAULT_TIMEOUT;
 
         ProcessBuilder pp = new ProcessBuilder();
         Process p;
@@ -103,7 +109,7 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
             // Start time counter
             stopwatch = Stopwatch.createStarted();
             p = pp.command("./run.sh").directory(root).start();
-            boolean noTimedout = p.waitFor(timeout, TimeUnit.MILLISECONDS);
+            boolean noTimedout = p.waitFor(timeout, TimeUnit.NANOSECONDS);
             // Stop time counter
             stopwatch.stop();
 

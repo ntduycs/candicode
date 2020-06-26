@@ -114,6 +114,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, authorId));
             challengeConfig.setNonImplementedFile(storageService.simplifyPath(payload.getNonImplementedPath(), CHALLENGE, authorId));
             challengeConfig.setRunScript(storageService.simplifyPath(payload.getRunPath(), CHALLENGE, authorId));
+            challengeConfig.setAuthorId(authorId);
 
             /*
              * Root dir is the folder that the run script is placed in

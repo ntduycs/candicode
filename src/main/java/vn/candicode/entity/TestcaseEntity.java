@@ -26,6 +26,9 @@ public class TestcaseEntity extends Auditable {
     @Column(nullable = false)
     private Boolean hidden = false;
 
+    @Column(columnDefinition = "bigint default 0")
+    private Long timeout; // in nanoseconds
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "challenge_id", nullable = false, foreignKey = @ForeignKey(name = "challenge_fk"))
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -43,5 +46,13 @@ public class TestcaseEntity extends Auditable {
         this.input = input;
         this.expectedOutput = expectedOutput;
         this.hidden = hidden;
+        this.timeout = 0L;
+    }
+
+    public TestcaseEntity(String input, String expectedOutput, Boolean hidden, Long timeout) {
+        this.input = input;
+        this.expectedOutput = expectedOutput;
+        this.hidden = hidden;
+        this.timeout = timeout;
     }
 }

@@ -1,8 +1,8 @@
 package vn.candicode.util;
 
-import com.google.common.collect.Lists;
-
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RegexUtils {
     private static final String FLOAT = "[+-]?\\d+(.\\d+)?";
@@ -76,14 +76,41 @@ public class RegexUtils {
         }
     }
 
+    /**
+     * Transform a regex template to readable form
+     *
+     * @param regex
+     * @return
+     */
     public static List<String> resolveRegex(String regex) {
         String[] subRegexps = regex
             .substring(1, regex.length() - 1)
             .replace("\\|", "|")
             .split("\\|");
 
-        return Lists.newArrayList(subRegexps);
+        return Arrays.stream(subRegexps).map(RegexUtils::resolveRegexFromTemplate).collect(Collectors.toList());
     }
 
-    
+    private static String resolveRegexFromTemplate(String regex) {
+        switch (regex) {
+            case INTEGER:
+                return "integer";
+            case INTEGER_LIST:
+                return "integer_list";
+            case FLOAT:
+                return "float";
+            case FLOAT_LIST:
+                return "float_list";
+            case STRING:
+                return "string";
+            case STRING_LIST:
+                return "string_list";
+            case BOOLEAN:
+                return "boolean";
+            case BOOLEAN_LIST:
+                return "boolean_list";
+            default:
+                throw new IllegalArgumentException("Given string does not match any regex template");
+        }
+    }
 }
