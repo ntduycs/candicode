@@ -3,6 +3,7 @@ package vn.candicode.service;
 import org.springframework.data.domain.Pageable;
 import vn.candicode.common.CommentSubject;
 import vn.candicode.payload.request.NewCommentRequest;
+import vn.candicode.payload.request.UpdateCommentRequest;
 import vn.candicode.payload.response.CommentDetails;
 import vn.candicode.payload.response.CommentSummary;
 import vn.candicode.payload.response.PaginatedResponse;
@@ -23,18 +24,21 @@ public interface CommentService {
     CommentDetails addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author);
 
     /**
+     * @param subjectId   id of challenge or tutorial
+     * @param subjectType challenge or tutorial
      * @param commentId
      * @param payload
      * @param currentUser only comment's owner can update it
      * @return details of updated comment
      */
-    CommentDetails updateComment(Long commentId, NewCommentRequest payload, UserPrincipal currentUser);
+    CommentDetails updateComment(Long subjectId, CommentSubject subjectType, Long commentId, UpdateCommentRequest payload, UserPrincipal currentUser);
 
     /**
+     * @param subjectId   id of challenge or tutorial
      * @param commentId
      * @param currentUser only comment's owner can delete it
      */
-    void deleteComment(Long commentId, UserPrincipal currentUser);
+    void deleteComment(Long subjectId, Long commentId, UserPrincipal currentUser);
 
     /**
      * This service only get the comments that have no parent.

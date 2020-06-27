@@ -3,10 +3,12 @@ package vn.candicode.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.common.CommentSubject;
 import vn.candicode.entity.*;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewCommentRequest;
+import vn.candicode.payload.request.UpdateCommentRequest;
 import vn.candicode.payload.response.CommentDetails;
 import vn.candicode.payload.response.CommentSummary;
 import vn.candicode.payload.response.PaginatedResponse;
@@ -20,6 +22,8 @@ import vn.candicode.util.CommentBeanUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static vn.candicode.common.CommentSubject.CHALLENGE;
 
 @Service
 @Log4j2
@@ -47,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentDetails addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author) {
-        if (subject.equals(CommentSubject.CHALLENGE)) {
+        if (subject.equals(CHALLENGE)) {
             return addChallengeComment(subjectId, payload, author);
         } else {
             return addTutorialComment(subjectId, payload, author);
@@ -105,22 +109,40 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
+     * @param subjectId   id of challenge or tutorial
      * @param commentId
+     * @param subjectType challenge or tutorial
      * @param payload
      * @param currentUser only comment's owner can update it
      * @return details of updated comment
      */
     @Override
-    public CommentDetails updateComment(Long commentId, NewCommentRequest payload, UserPrincipal currentUser) {
-        return null;
+    @Transactional
+    public CommentDetails updateComment(Long subjectId, CommentSubject subjectType, Long commentId, UpdateCommentRequest payload, UserPrincipal currentUser) {
+        CommentEntity comment;
+
+        if (subjectType.equals(CHALLENGE)) {
+            comment = challengeCommentRepository.findByCommentIdAndChallengeId(commentId, subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "challengeId", subjectId));
+            comment.setContent(payload.getContent());
+            challengeCommentRepository.save((ChallengeCommentEntity) comment);
+        } else {
+            comment = tutorialCommentRepository.findByCommentIdAndTutorialId(commentId, subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "tutorialId", subjectId));
+            comment.setContent(payload.getContent());
+            tutorialCommentRepository.save((TutorialCommentEntity) comment);
+        }
+
+        return CommentBeanUtils.details(comment);
     }
 
     /**
+     * @param subjectId   id of challenge or tutorial
      * @param commentId
      * @param currentUser only comment's owner can delete it
      */
     @Override
-    public void deleteComment(Long commentId, UserPrincipal currentUser) {
+    public void deleteComment(Long subjectId, Long commentId, UserPrincipal currentUser) {
 
     }
 
