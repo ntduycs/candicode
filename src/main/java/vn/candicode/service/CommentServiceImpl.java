@@ -184,7 +184,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public PaginatedResponse<Comment> getCommentList(CommentSubject subject, Long subjectId, Pageable pageable, UserPrincipal me) {
         if (subject.equals(CHALLENGE)) {
-            Page<ChallengeCommentEntity> items = challengeCommentRepository.findAll(pageable);
+            Page<ChallengeCommentEntity> items = challengeCommentRepository.findAllByChallengeId(subjectId, pageable);
             List<Comment> details = items.map(item -> CommentBeanUtils.details(item, me)).getContent();
             return PaginatedResponse.<Comment>builder()
                 .first(items.isFirst())
@@ -196,7 +196,7 @@ public class CommentServiceImpl implements CommentService {
                 .items(details)
                 .build();
         } else {
-            Page<TutorialCommentEntity> items = tutorialCommentRepository.findAll(pageable);
+            Page<TutorialCommentEntity> items = tutorialCommentRepository.findAllByTutorialId(subjectId, pageable);
             List<Comment> details = items.map(item -> CommentBeanUtils.details(item, me)).getContent();
             return PaginatedResponse.<Comment>builder()
                 .first(items.isFirst())
