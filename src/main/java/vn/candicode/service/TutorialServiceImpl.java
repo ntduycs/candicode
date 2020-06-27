@@ -1,8 +1,10 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.CategoryEntity;
 import vn.candicode.entity.TutorialEntity;
@@ -16,19 +18,20 @@ import vn.candicode.payload.response.TutorialSummary;
 import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.TutorialRepository;
 import vn.candicode.security.UserPrincipal;
+import vn.candicode.util.TutorialBeanUtils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static vn.candicode.common.FileStorageType.TUTORIAL;
+import static vn.candicode.common.FileStorageType.BANNER;
 
 @Service
 @Log4j2
 public class TutorialServiceImpl implements TutorialService {
     private final TutorialRepository tutorialRepository;
-
     private final StorageService storageService;
 
     private final Map<String, CategoryEntity> availableCategories;
@@ -50,7 +53,7 @@ public class TutorialServiceImpl implements TutorialService {
         String bannerPath = null;
         try {
             if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
-                bannerPath = storageService.store(payload.getBanner(), TUTORIAL, me.getUserId());
+                bannerPath = storageService.store(payload.getBanner(), BANNER, me.getUserId());
             }
         } catch (IOException e) {
             log.error("Cannot store tutorial banner. Message - {}", e.getLocalizedMessage());
@@ -59,7 +62,7 @@ public class TutorialServiceImpl implements TutorialService {
         TutorialEntity tutorial = new TutorialEntity();
 
         tutorial.setAuthor(me.getEntityRef());
-        tutorial.setBanner(bannerPath);
+        tutorial.setBanner(storageService.simplifyPath(bannerPath, BANNER, me.getUserId()));
         tutorial.setBrieflyContent(payload.getDescription());
         tutorial.setContent(payload.getContent());
         tutorial.setDislikes(0);
@@ -79,8 +82,21 @@ public class TutorialServiceImpl implements TutorialService {
      * @return paginated list of tutorials
      */
     @Override
+    @Transactional(readOnly = true)
     public PaginatedResponse<TutorialSummary> getTutorialList(Pageable pageable) {
-        return null;
+        Page<TutorialEntity> items = tutorialRepository.findAll(pageable);
+
+        List<TutorialSummary> summaries = items.map(TutorialBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<TutorialSummary>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 
     /**
@@ -89,8 +105,21 @@ public class TutorialServiceImpl implements TutorialService {
      * @return paginated list of my tutorials
      */
     @Override
+    @Transactional(readOnly = true)
     public PaginatedResponse<TutorialSummary> getMyTutorialList(Pageable pageable, Long myId) {
-        return null;
+        Page<TutorialEntity> items = tutorialRepository.findAllByAuthorId(myId, pageable);
+
+        List<TutorialSummary> summaries = items.map(TutorialBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<TutorialSummary>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 
     /**
@@ -99,8 +128,12 @@ public class TutorialServiceImpl implements TutorialService {
      * @return details of tutorial with given id
      */
     @Override
+    @Transactional(readOnly = true)
     public TutorialDetails getTutorialDetails(Long tutorialId, UserPrincipal me) {
-        return null;
+        TutorialEntity tutorial = tutorialRepository.findByTutorialId(tutorialId)
+            .orElseThrow(() -> new ResourceNotFoundException(TutorialEntity.class, "id", tutorialId));
+
+        return TutorialBeanUtils.details(tutorial);
     }
 
     /**
@@ -131,8 +164,8 @@ public class TutorialServiceImpl implements TutorialService {
 
         try {
             if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
-                String bannerPath = storageService.store(payload.getBanner(), TUTORIAL, me.getUserId());
-                tutorial.setBanner(storageService.simplifyPath(bannerPath, TUTORIAL, me.getUserId()));
+                String bannerPath = storageService.store(payload.getBanner(), BANNER, me.getUserId());
+                tutorial.setBanner(storageService.simplifyPath(bannerPath, BANNER, me.getUserId()));
             }
         } catch (IOException e) {
             log.error("Cannot store tutorial banner. Message - {}", e.getLocalizedMessage());

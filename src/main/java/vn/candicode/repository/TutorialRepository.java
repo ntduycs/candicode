@@ -1,5 +1,7 @@
 package vn.candicode.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,4 +14,9 @@ public interface TutorialRepository extends JpaRepository<TutorialEntity, Long> 
     Optional<TutorialEntity> findByTutorialIdFetchCategories(@Param("id") Long id);
 
     boolean existsByTitle(String title);
+
+    @Query("SELECT t FROM TutorialEntity t WHERE t.author.userId = :id")
+    Page<TutorialEntity> findAllByAuthorId(@Param("id") Long authorId, Pageable pageable);
+
+    Optional<TutorialEntity> findByTutorialId(Long id);
 }

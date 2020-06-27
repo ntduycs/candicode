@@ -144,10 +144,6 @@ public class StorageServiceImpl implements StorageService {
                 path = avatarDirFor(owner).resolve(FileUtils.genFilename(owner, type, file.getOriginalFilename()));
                 file.transferTo(path);
                 break;
-            case CONTEST:
-                break;
-            case TUTORIAL:
-                break;
             case BANNER:
                 path = bannerDirOf(owner).resolve(FileUtils.genFilename(owner, type, file.getOriginalFilename()));
                 file.transferTo(path);
