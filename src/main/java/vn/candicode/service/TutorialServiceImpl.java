@@ -21,6 +21,7 @@ import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.TutorialBeanUtils;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -182,17 +183,26 @@ public class TutorialServiceImpl implements TutorialService {
         }
 
         if (payload.getCategories() != null) {
-            Set<String> existingCategories = tutorial.getCategories().stream()
-                .map(c -> c.getCategory().getName()).collect(Collectors.toSet());
+            Set<String> existingCategories = !tutorial.getCategories().isEmpty()
+                ? tutorial.getCategories().stream()
+                .map(c -> c.getCategory().getName()).collect(Collectors.toSet())
+                : new HashSet<>();
 
-            Set<String> newCategories = payload.getCategories().stream()
-                .filter(c -> !existingCategories.contains(c)).collect(Collectors.toSet());
+            Set<String> newCategories = payload.getCategories().stream().filter(c -> !existingCategories.contains(c)).collect(Collectors.toSet());
 
             existingCategories.stream()
                 .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
-                .forEach(c -> tutorial.removeCategory(availableCategories.get(c))); // Remove them
+                .forEach(c -> {
+                    if (availableCategories.containsKey(c)) {
+                        tutorial.removeCategory(availableCategories.get(c));
+                    }
+                }); // Remove them
 
-            newCategories.forEach(c -> tutorial.addCategory(availableCategories.get(c)));
+            newCategories.forEach(c -> {
+                if (availableCategories.containsKey(c)) {
+                    tutorial.addCategory(availableCategories.get(c));
+                }
+            });
         }
 
         tutorialRepository.save(tutorial);

@@ -39,6 +39,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,7 +106,13 @@ public class ChallengeServiceImpl implements ChallengeService {
             challenge.setTags(payload.getTags());
             challenge.setContestChallenge(payload.getContestChallenge());
 
-            payload.getCategories().forEach(e -> challenge.addCategory(availableCategories.get(e)));
+            if (payload.getCategories() != null) {
+                payload.getCategories().forEach(e -> {
+                    if (availableCategories.containsKey(e)) {
+                        challenge.addCategory(availableCategories.get(e));
+                    }
+                });
+            }
 
             entityManager.persist(challenge);
 
@@ -310,15 +317,26 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         if (payload.getCategories() != null) {
-            Set<String> existingCategories = challenge.getCategories().stream().map(c -> c.getCategory().getName()).collect(Collectors.toSet());
+            Set<String> existingCategories = !challenge.getCategories().isEmpty()
+                ? challenge.getCategories().stream()
+                .map(c -> c.getCategory().getName()).collect(Collectors.toSet())
+                : new HashSet<>();
 
             Set<String> newCategories = payload.getCategories().stream().filter(c -> !existingCategories.contains(c)).collect(Collectors.toSet());
 
             existingCategories.stream()
                 .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
-                .forEach(c -> challenge.removeCategory(availableCategories.get(c))); // Remove them
+                .forEach(c -> {
+                    if (availableCategories.containsKey(c)) {
+                        challenge.removeCategory(availableCategories.get(c));
+                    }
+                }); // Remove them
 
-            newCategories.forEach(c -> challenge.addCategory(availableCategories.get(c)));
+            newCategories.forEach(c -> {
+                if (availableCategories.containsKey(c)) {
+                    challenge.addCategory(availableCategories.get(c));
+                }
+            });
         }
 
         if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
