@@ -7,6 +7,8 @@ import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
+import vn.candicode.payload.response.ContestSummary;
+import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ContestService;
@@ -77,7 +79,8 @@ public class ContestController extends Controller {
     public ResponseEntity<?> getContestLists(@ModelAttribute PaginatedRequest payload) {
         Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
 
-//        PaginatedResponse<>
-        return null;
+        PaginatedResponse<ContestSummary> summaries = contestService.getContestList(pageable);
+
+        return ResponseEntity.ok(ResponseFactory.build(summaries));
     }
 }
