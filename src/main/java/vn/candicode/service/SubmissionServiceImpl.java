@@ -1,8 +1,10 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
@@ -12,6 +14,7 @@ import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionDetails;
+import vn.candicode.payload.response.SubmissionHistory;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.ChallengeRepository;
@@ -20,6 +23,7 @@ import vn.candicode.repository.TestcaseRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.FileUtils;
 import vn.candicode.util.LanguageUtils;
+import vn.candicode.util.SubmissionBeanUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,6 +102,9 @@ public class SubmissionServiceImpl implements SubmissionService {
             submission.setSubmittedCode(payload.getCode());
             submission.setAuthor((StudentEntity) me.getEntityRef());
             submission.setChallenge(challenge);
+            submission.setPassedTestcases(0);
+            submission.setTotalTestcases(totalTestcases);
+            submission.setDoneWithin(payload.getDoneWithin());
 
             submissionRepository.save(submission);
 
@@ -142,6 +149,9 @@ public class SubmissionServiceImpl implements SubmissionService {
         submission.setSubmittedCode(payload.getCode());
         submission.setAuthor((StudentEntity) me.getEntityRef());
         submission.setChallenge(challenge);
+        submission.setPassedTestcases(passedTestcases);
+        submission.setTotalTestcases(totalTestcases);
+        submission.setDoneWithin(payload.getDoneWithin());
 
         submissionRepository.save(submission);
 
@@ -160,9 +170,56 @@ public class SubmissionServiceImpl implements SubmissionService {
      * @return
      */
     @Override
-    public PaginatedResponse<SubmissionSummary> getMySubmissionHistory(Pageable pageable, UserPrincipal me) {
+    @Transactional(readOnly = true)
+    public PaginatedResponse<SubmissionHistory> getMySubmissionHistory(Pageable pageable, UserPrincipal me) {
+        Page<SubmissionEntity> items = submissionRepository.findAllMySubmissions(me.getUserId(), pageable);
 
+        List<SubmissionHistory> summaries = items.map(SubmissionBeanUtils::summarize).getContent();
 
-        return null;
+        return PaginatedResponse.<SubmissionHistory>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginatedResponse<SubmissionHistory> getSubmissionsByChallenge(Pageable pageable, Long challengeId) {
+        Page<SubmissionEntity> items = submissionRepository.findAllByChallengeId(challengeId, pageable);
+
+        List<SubmissionHistory> summaries = items.map(SubmissionBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<SubmissionHistory>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginatedResponse<SubmissionHistory> getSubmissionsByContestRound(Pageable pageable, Long roundId) {
+        Page<SubmissionEntity> items = submissionRepository.findAllByContestRoundId(roundId, pageable);
+
+        List<SubmissionHistory> summaries = items.map(SubmissionBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<SubmissionHistory>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 }

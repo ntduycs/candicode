@@ -133,7 +133,7 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
             e.printStackTrace();
         }
 
-        long executionTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        long executionTime = stopwatch.elapsed(TimeUnit.NANOSECONDS);
 
         if (StringUtils.hasText(error)) {
             return new ExecutionResult(language, error, null, executionTime, null);

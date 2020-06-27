@@ -3,6 +3,7 @@ package vn.candicode.service;
 import org.springframework.data.domain.Pageable;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.SubmissionHistory;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.security.UserPrincipal;
 
@@ -20,5 +21,9 @@ public interface SubmissionService {
      * @param me
      * @return
      */
-    PaginatedResponse<SubmissionSummary> getMySubmissionHistory(Pageable pageable, UserPrincipal me);
+    PaginatedResponse<SubmissionHistory> getMySubmissionHistory(Pageable pageable, UserPrincipal me);
+
+    PaginatedResponse<SubmissionHistory> getSubmissionsByChallenge(Pageable pageable, Long challengeId);
+
+    PaginatedResponse<SubmissionHistory> getSubmissionsByContestRound(Pageable pageable, Long roundId);
 }

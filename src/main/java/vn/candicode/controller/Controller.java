@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import vn.candicode.payload.request.PaginatedRequest;
 
 import java.net.URI;
 import java.util.Map;
@@ -31,5 +32,18 @@ public abstract class Controller {
             : Sort.unsorted();
 
         return PageRequest.of(page - 1, size, sortConfig);
+    }
+
+    protected Pageable getPaginationConfig(PaginatedRequest payload) {
+        if (payload.getPage() < 1) payload.setPage(1);
+        if (payload.getSize() < 1) payload.setSize(10);
+
+        Sort.Direction direction = StringUtils.hasText(payload.getDirection()) && payload.getDirection().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Sort sortConfig = StringUtils.hasText(payload.getSort())
+            ? Sort.by(direction, payload.getSort())
+            : Sort.unsorted();
+
+        return PageRequest.of(payload.getPage() - 1, payload.getSize(), sortConfig);
     }
 }

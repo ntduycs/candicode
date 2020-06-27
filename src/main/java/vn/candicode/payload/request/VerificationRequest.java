@@ -11,5 +11,5 @@ public class VerificationRequest extends Request {
     @NotBlank(message = "Field 'input' is required but not be given")
     private String input;
 
-    private long timeout; // in millis
+    private long timeout; // in nanoseconds
 }

@@ -11,7 +11,7 @@ public class ExecutionResult implements Serializable {
     private final String language;
     private final String runtimeError;
     private final String timeoutError;
-    private final long executionTime; // in millis
+    private final long executionTime; // in nanoseconds
     private final String output;
 
     @Override

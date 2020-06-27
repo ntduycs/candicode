@@ -25,7 +25,7 @@ public class SubmissionEntity extends Auditable {
     private Double doneWithin; // in minutes
 
     @Column
-    private Double execTime; // in millis
+    private Double execTime; // in nanoseconds
 
     @Column(nullable = false)
     private Integer point;
@@ -35,6 +35,13 @@ public class SubmissionEntity extends Auditable {
     @Basic(fetch = FetchType.LAZY)
     @Type(type = "text")
     private String submittedCode;
+
+    // The following 2 fields helps us to eliminate JOIN clause when constructing submission history
+    @Column(columnDefinition = "integer default 0")
+    private Integer passedTestcases = 0;
+
+    @Column(columnDefinition = "integer default 0")
+    private Integer totalTestcases = 0;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
