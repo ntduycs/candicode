@@ -9,6 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class ContestSummary implements Serializable {
+    private Long contestId;
     private String title;
     private String description;
     private Set<String> tags;
