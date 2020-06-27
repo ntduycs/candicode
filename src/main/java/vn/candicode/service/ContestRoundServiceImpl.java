@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.ContestChallengeEntity;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.entity.ContestRoundEntity;
 import vn.candicode.exception.PersistenceException;
@@ -16,9 +17,13 @@ import vn.candicode.repository.ContestRoundRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.DatetimeUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +33,9 @@ public class ContestRoundServiceImpl implements ContestRoundService {
     private final ContestRepository contestRepository;
     private final ChallengeRepository challengeRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public ContestRoundServiceImpl(ContestRoundRepository contestRoundRepository, ContestRepository contestRepository, ChallengeRepository challengeRepository) {
         this.contestRoundRepository = contestRoundRepository;
         this.contestRepository = contestRepository;
@@ -36,7 +44,7 @@ public class ContestRoundServiceImpl implements ContestRoundService {
 
     @Override
     @Transactional
-    public void createRound(Long contestId, NewRoundRequest payload, UserPrincipal me) {
+    public Long createRound(Long contestId, NewRoundRequest payload, UserPrincipal me) {
         ContestEntity contest = contestRepository.findByContestIdFetchRounds(contestId)
             .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
@@ -57,15 +65,22 @@ public class ContestRoundServiceImpl implements ContestRoundService {
             roundChallenges.forEach(round::addChallenge);
         }
 
-        contest.addRound(round);
+        round.setContest(contest);
+
+        entityManager.persist(round);
+
+        contest.setAvailable(true);
+
+        return round.getContestRoundId();
     }
 
     @Override
+    @Transactional
     public void updateRound(Long roundId, UpdateRoundRequest payload, UserPrincipal me) {
         ContestRoundEntity round = contestRoundRepository.findByRoundIdFetchChallenges(roundId)
             .orElseThrow(() -> new ResourceNotFoundException(ContestRoundEntity.class, "id", roundId));
 
-        if (!round.getName().equals(payload.getName())) {
+        if (!round.getName().equals(payload.getName()) && payload.getName() != null) {
             round.setName(payload.getName());
         }
 
@@ -78,16 +93,28 @@ public class ContestRoundServiceImpl implements ContestRoundService {
             .map(item -> item.getChallenge().getChallengeId())
             .collect(Collectors.toList());
 
-        List<Long> newChallengeIds = payload.getChallenges().stream()
-            .filter(c -> !existingChallengeIds.contains(c))
+        Set<Long> newChallengeIds = new HashSet<>(payload.getChallenges());
+        List<ChallengeEntity> newChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(newChallengeIds);
+
+        List<Long> removedChallengeIds = existingChallengeIds.stream()
+            .filter(item -> !newChallengeIds.contains(item))
             .collect(Collectors.toList());
 
-//        existingChallengeIds.stream()
-//            .filter(c -> !payload.getChallenges().contains(c))
-//            .forEach(c -> round.getChallenges().remove()); // DOING
+        round.getChallenges().forEach(item -> {
+            if (removedChallengeIds.contains(item.getChallenge().getChallengeId())) {
+                round.removeChallenge(item.getChallenge());
+            }
+        });
 
-        List<ChallengeEntity> roundChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(payload.getChallenges());
+        List<ChallengeEntity> existingChallenges = round.getChallenges().stream()
+            .map(ContestChallengeEntity::getChallenge)
+            .collect(Collectors.toList());
 
+        newChallenges.forEach(item -> {
+            if (!existingChallenges.contains(item)) {
+                round.addChallenge(item);
+            }
+        });
     }
 
     @Override

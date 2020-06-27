@@ -92,4 +92,6 @@ public class ContestController extends Controller {
 
         return ResponseEntity.ok(ResponseFactory.build(summaries));
     }
+
+
 }

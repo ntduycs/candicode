@@ -48,7 +48,7 @@ public class ContestRoundEntity extends Auditable {
         challenges.add(contestChallenge);
     }
 
-    public void removeCategory(ChallengeEntity challenge) {
+    public void removeChallenge(ChallengeEntity challenge) {
         for (Iterator<ContestChallengeEntity> iterator = challenges.iterator(); iterator.hasNext(); ) {
             ContestChallengeEntity contestChallenge = iterator.next();
             if (contestChallenge.getContestRound().equals(this) && contestChallenge.getChallenge().equals(challenge)) {
