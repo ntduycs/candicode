@@ -18,6 +18,9 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     @Query("SELECT c FROM ChallengeEntity c WHERE c.author.userId = :id")
     Page<ChallengeEntity> findAllByAuthorId(@Param("id") Long userId, Pageable pageable);
 
+    @Query("SELECT c FROM ChallengeEntity c WHERE c.author.userId = :id AND c.contestChallenge = true")
+    Page<ChallengeEntity> findAllContestChallengesByAuthorId(@Param("id") Long userId, Pageable pageable);
+
     Optional<ChallengeEntity> findByChallengeId(Long challengeId);
 
     @Query("SELECT c FROM ChallengeEntity c LEFT JOIN FETCH c.testcases WHERE c.challengeId = :challengeId")

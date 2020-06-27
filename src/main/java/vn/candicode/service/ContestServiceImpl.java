@@ -175,6 +175,18 @@ public class ContestServiceImpl implements ContestService {
      */
     @Override
     public PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId) {
-        return null;
+        Page<ContestEntity> items = contestRepository.findAllByAuthorId(myId, pageable);
+
+        List<ContestSummary> summaries = items.map(ContestBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<ContestSummary>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 }

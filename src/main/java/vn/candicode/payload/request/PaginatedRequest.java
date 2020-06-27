@@ -6,10 +6,12 @@ import java.util.List;
 
 @Setter
 public class PaginatedRequest extends Request {
-    private Integer page = 1;
-    private Integer size = 10;
-    private String sort = "createdAt";
-    private String direction = "desc";
+    private Integer page;
+    private Integer size;
+    private String sort;
+    private String direction;
+
+    private Boolean contestChallenge;
 
     public Integer getPage() {
         return page == null || page <= 0 ? 1 : page;
@@ -25,6 +27,10 @@ public class PaginatedRequest extends Request {
 
     public String getDirection() {
         return direction == null || !validDirection.contains(direction) ? "desc" : direction;
+    }
+
+    public Boolean getContestChallenge() {
+        return contestChallenge != null ? contestChallenge : false;
     }
 
     private static final List<String> validDirection = List.of("desc", "asc");

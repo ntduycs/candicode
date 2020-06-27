@@ -203,12 +203,18 @@ public class ChallengeServiceImpl implements ChallengeService {
     /**
      * @param pageable
      * @param myId
+     * @param wantContestChallenge should load only contest challenge ?
      * @return paginated list of my challenges
      */
     @Transactional(readOnly = true)
     @Override
-    public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId) {
-        Page<ChallengeEntity> items = challengeRepository.findAllByAuthorId(myId, pageable);
+    public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId, Boolean wantContestChallenge) {
+        Page<ChallengeEntity> items;
+        if (wantContestChallenge) {
+            items = challengeRepository.findAllContestChallengesByAuthorId(myId, pageable);
+        } else {
+            items = challengeRepository.findAllByAuthorId(myId, pageable);
+        }
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
 

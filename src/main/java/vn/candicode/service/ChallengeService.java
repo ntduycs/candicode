@@ -34,9 +34,10 @@ public interface ChallengeService {
     /**
      * @param pageable
      * @param myId
+     * @param wantContestChallenge should load only contest challenges ?
      * @return paginated list of my challenges
      */
-    PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId);
+    PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId, Boolean wantContestChallenge);
 
     /**
      * @param challengeId
