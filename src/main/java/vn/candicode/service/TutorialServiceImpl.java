@@ -165,6 +165,9 @@ public class TutorialServiceImpl implements TutorialService {
      */
     @Override
     public void removeTutorial(Long tutorialId, UserPrincipal me) {
+        TutorialEntity tutorial = tutorialRepository.findByTutorialIdFetchCategories(tutorialId)
+            .orElseThrow(() -> new ResourceNotFoundException(TutorialEntity.class, "id", tutorialId));
 
+        tutorialRepository.delete(tutorial);
     }
 }

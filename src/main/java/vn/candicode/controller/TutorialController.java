@@ -1,10 +1,7 @@
 package vn.candicode.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewTutorialRequest;
 import vn.candicode.payload.request.UpdateTutorialRequest;
@@ -43,6 +40,22 @@ public class TutorialController extends Controller {
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "Updated tutorial successfully"
+        )));
+    }
+
+    /**
+     * TODO: Optimize SQL
+     *
+     * @param tutorialId
+     * @param me
+     * @return
+     */
+    @DeleteMapping(path = "tutorials/{id}")
+    public ResponseEntity<?> removeTutorial(@PathVariable("id") Long tutorialId, @CurrentUser UserPrincipal me) {
+        tutorialService.removeTutorial(tutorialId, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Deleted tutorial successfully"
         )));
     }
 }
