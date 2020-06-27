@@ -119,7 +119,14 @@ public class ChallengeServiceImpl implements ChallengeService {
             ChallengeConfigurationEntity challengeConfig = new ChallengeConfigurationEntity();
 
             challengeConfig.setChallenge(challenge);
-            challengeConfig.setLanguage(availableLanguages.get(payload.getLanguage()));
+
+            String language = payload.getLanguage().toLowerCase();
+
+            if (!availableLanguages.containsKey(language)) {
+                throw new PersistenceException("No language with name '" + payload.getLanguage() + "' found");
+            }
+
+            challengeConfig.setLanguage(availableLanguages.get(language));
             challengeConfig.setDirectory(payload.getChallengeDir());
             challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, authorId));
             challengeConfig.setNonImplementedFile(storageService.simplifyPath(payload.getNonImplementedPath(), CHALLENGE, authorId));

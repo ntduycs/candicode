@@ -6,6 +6,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,4 +37,7 @@ public class CommentEntity extends Auditable {
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "parent_comment_fk"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CommentEntity parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<CommentEntity> children = new ArrayList<>();
 }

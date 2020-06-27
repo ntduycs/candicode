@@ -22,4 +22,10 @@ public class CommentSummary implements Serializable {
      */
     private Boolean me;
     private Integer numReplies;
+
+    private Long parentId;
+    private Integer likes;
+    private Integer dislikes;
+
+    private Long subjectId; // challengeId or tutorialId
 }

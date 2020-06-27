@@ -4,8 +4,7 @@ import org.springframework.data.domain.Pageable;
 import vn.candicode.common.CommentSubject;
 import vn.candicode.payload.request.NewCommentRequest;
 import vn.candicode.payload.request.UpdateCommentRequest;
-import vn.candicode.payload.response.CommentDetails;
-import vn.candicode.payload.response.CommentSummary;
+import vn.candicode.payload.response.Comment;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.UserPrincipal;
 
@@ -21,7 +20,7 @@ public interface CommentService {
      * @param author
      * @return details of new comment
      */
-    CommentDetails addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author);
+    Comment addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author);
 
     /**
      * @param subjectId   id of challenge or tutorial
@@ -31,7 +30,7 @@ public interface CommentService {
      * @param currentUser only comment's owner can update it
      * @return details of updated comment
      */
-    CommentDetails updateComment(Long subjectId, CommentSubject subjectType, Long commentId, UpdateCommentRequest payload, UserPrincipal currentUser);
+    Comment updateComment(Long subjectId, CommentSubject subjectType, Long commentId, UpdateCommentRequest payload, UserPrincipal currentUser);
 
     /**
      * @param subjectId   id of challenge or tutorial
@@ -49,7 +48,7 @@ public interface CommentService {
      * @param pageable  only contain size and page parameters, default fetching with size = 10 and page = 0
      * @return
      */
-    PaginatedResponse<CommentSummary> getCommentList(CommentSubject subject, Long subjectId, Pageable pageable);
+    PaginatedResponse<Comment> getCommentList(CommentSubject subject, Long subjectId, Pageable pageable, UserPrincipal me);
 
 
     /**
@@ -57,5 +56,5 @@ public interface CommentService {
      * @param pageable  only contain size and page parameters, default fetching with size = 10 and page = 0
      * @return
      */
-    List<CommentSummary> getCommentReplies(Long commentId, Pageable pageable);
+    List<Comment> getCommentReplies(Long commentId, Pageable pageable);
 }

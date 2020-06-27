@@ -37,7 +37,7 @@ public class ChallengeConfigurationController extends Controller {
 
     @DeleteMapping(path = "challenges/{id}/languages")
     public ResponseEntity<?> removeSupportedLanguage(@PathVariable("id") Long challengeId, @RequestBody @Valid RemoveLanguageRequest payload, @CurrentUser UserPrincipal me) {
-        boolean success = challengeConfigurationService.removeSupportedLanguage(challengeId, payload.getLanguage(), me);
+        boolean success = challengeConfigurationService.removeSupportedLanguage(challengeId, payload.getLanguage().toLowerCase(), me);
 
         if (success) {
             return ResponseEntity.ok(ResponseFactory.build(Map.of(

@@ -1,6 +1,7 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +10,7 @@ import vn.candicode.entity.*;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewCommentRequest;
 import vn.candicode.payload.request.UpdateCommentRequest;
-import vn.candicode.payload.response.CommentDetails;
-import vn.candicode.payload.response.CommentSummary;
+import vn.candicode.payload.response.Comment;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeCommentRepository;
 import vn.candicode.repository.ChallengeRepository;
@@ -19,6 +19,9 @@ import vn.candicode.repository.TutorialRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.CommentBeanUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +35,9 @@ public class CommentServiceImpl implements CommentService {
     private final TutorialCommentRepository tutorialCommentRepository;
     private final ChallengeRepository challengeRepository;
     private final TutorialRepository tutorialRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public CommentServiceImpl(ChallengeCommentRepository challengeCommentRepository, TutorialCommentRepository tutorialCommentRepository, ChallengeRepository challengeRepository, TutorialRepository tutorialRepository) {
         this.challengeCommentRepository = challengeCommentRepository;
@@ -50,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
      * @return details of new comment
      */
     @Override
-    public CommentDetails addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author) {
+    public Comment addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author) {
         if (subject.equals(CHALLENGE)) {
             return addChallengeComment(subjectId, payload, author);
         } else {
@@ -58,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    private CommentDetails addChallengeComment(Long challengeId, NewCommentRequest payload, UserPrincipal me) {
+    private Comment addChallengeComment(Long challengeId, NewCommentRequest payload, UserPrincipal me) {
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchComments(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
@@ -80,10 +86,10 @@ public class CommentServiceImpl implements CommentService {
 
         challengeCommentRepository.save(comment);
 
-        return CommentBeanUtils.details(comment);
+        return CommentBeanUtils.details(comment, me);
     }
 
-    private CommentDetails addTutorialComment(Long tutorialId, NewCommentRequest payload, UserPrincipal me) {
+    private Comment addTutorialComment(Long tutorialId, NewCommentRequest payload, UserPrincipal me) {
         TutorialEntity tutorial = tutorialRepository.findByTutorialIdFetchComments(tutorialId)
             .orElseThrow(() -> new ResourceNotFoundException(TutorialEntity.class, "id", tutorialId));
 
@@ -105,7 +111,7 @@ public class CommentServiceImpl implements CommentService {
 
         tutorialCommentRepository.save(comment);
 
-        return CommentBeanUtils.details(comment);
+        return CommentBeanUtils.details(comment, me);
     }
 
     /**
@@ -118,7 +124,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    public CommentDetails updateComment(Long subjectId, CommentSubject subjectType, Long commentId, UpdateCommentRequest payload, UserPrincipal currentUser) {
+    public Comment updateComment(Long subjectId, CommentSubject subjectType, Long commentId, UpdateCommentRequest payload, UserPrincipal currentUser) {
         CommentEntity comment;
 
         if (subjectType.equals(CHALLENGE)) {
@@ -127,7 +133,7 @@ public class CommentServiceImpl implements CommentService {
             comment = updateTutorialComment(subjectId, commentId, payload.getContent(), currentUser);
         }
 
-        return CommentBeanUtils.details(comment);
+        return CommentBeanUtils.details(comment, currentUser);
     }
 
     private CommentEntity updateChallengeComment(Long challengeId, Long commentId, String content, UserPrincipal me) {
@@ -152,8 +158,17 @@ public class CommentServiceImpl implements CommentService {
      * @param currentUser only comment's owner can delete it
      */
     @Override
+    @Transactional
     public void deleteComment(Long subjectId, Long commentId, UserPrincipal currentUser) {
+        try {
+            CommentEntity comment = entityManager.createQuery("select c from CommentEntity c where c.commentId = :id", CommentEntity.class)
+                .setParameter("id", commentId)
+                .getSingleResult();
 
+            entityManager.remove(comment);
+        } catch (NoResultException e) {
+            throw new ResourceNotFoundException(CommentEntity.class, "id", commentId);
+        }
     }
 
     /**
@@ -166,8 +181,33 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     @Override
-    public PaginatedResponse<CommentSummary> getCommentList(CommentSubject subject, Long subjectId, Pageable pageable) {
-        return null;
+    @Transactional(readOnly = true)
+    public PaginatedResponse<Comment> getCommentList(CommentSubject subject, Long subjectId, Pageable pageable, UserPrincipal me) {
+        if (subject.equals(CHALLENGE)) {
+            Page<ChallengeCommentEntity> items = challengeCommentRepository.findAll(pageable);
+            List<Comment> details = items.map(item -> CommentBeanUtils.details(item, me)).getContent();
+            return PaginatedResponse.<Comment>builder()
+                .first(items.isFirst())
+                .last(items.isLast())
+                .page(items.getNumber())
+                .size(items.getSize())
+                .totalElements(items.getTotalElements())
+                .totalPages(items.getTotalPages())
+                .items(details)
+                .build();
+        } else {
+            Page<TutorialCommentEntity> items = tutorialCommentRepository.findAll(pageable);
+            List<Comment> details = items.map(item -> CommentBeanUtils.details(item, me)).getContent();
+            return PaginatedResponse.<Comment>builder()
+                .first(items.isFirst())
+                .last(items.isLast())
+                .page(items.getNumber())
+                .size(items.getSize())
+                .totalElements(items.getTotalElements())
+                .totalPages(items.getTotalPages())
+                .items(details)
+                .build();
+        }
     }
 
     /**
@@ -176,7 +216,7 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     @Override
-    public List<CommentSummary> getCommentReplies(Long commentId, Pageable pageable) {
+    public List<Comment> getCommentReplies(Long commentId, Pageable pageable) {
         return null;
     }
 }
