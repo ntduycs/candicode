@@ -242,13 +242,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/challenges/46",
+                    "raw": "{{host}}/challenges/28",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "46"
+                        "28"
                     ]
                 }
             },
@@ -371,7 +371,7 @@
                         },
                         {
                             "key": "categories",
-                            "value": "data structure",
+                            "value": "data structure 12 ",
                             "type": "text"
                         },
                         {
@@ -493,6 +493,149 @@
                         "challenges",
                         "46",
                         "languages"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Add Comment",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"content\": \"Second Child of first comment\",\n    \"parentId\": 102\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/challenges/46/comments",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "46",
+                        "comments"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Edit Comment",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"content\": \"Second Child of first comment asd\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/challenges/46/comments/106",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "46",
+                        "comments",
+                        "106"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Delete Comment",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/challenges/46/comments/106",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "46",
+                        "comments",
+                        "106"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: All comments",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/challenges/46/comments?size=10",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "46",
+                        "comments"
+                    ],
+                    "query": [
+                        {
+                            "key": "size",
+                            "value": "10",
+                            "description": "default is 10"
+                        }
                     ]
                 }
             },
@@ -1069,6 +1212,142 @@
                             "value": "desc",
                             "description": "default is desc, [desc, asc]"
                         }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Tutorial: Add Comment",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"content\": \"Third comment\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/tutorials/100/comments",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "tutorials",
+                        "100",
+                        "comments"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Tutorial: Edit Comment",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"content\": \"Second Child of first comment asd\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/tutorials/46/comments/106",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "tutorials",
+                        "46",
+                        "comments",
+                        "106"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Tutorial: Delete Comment",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/tutorials/46/comments/106",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "tutorials",
+                        "46",
+                        "comments",
+                        "106"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Tutorial: All comments",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/tutorials/46/comments",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "tutorials",
+                        "46",
+                        "comments"
                     ]
                 }
             },
