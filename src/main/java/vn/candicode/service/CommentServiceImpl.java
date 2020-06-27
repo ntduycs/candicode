@@ -122,18 +122,28 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity comment;
 
         if (subjectType.equals(CHALLENGE)) {
-            comment = challengeCommentRepository.findByCommentIdAndChallengeId(commentId, subjectId)
-                .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "challengeId", subjectId));
-            comment.setContent(payload.getContent());
-            challengeCommentRepository.save((ChallengeCommentEntity) comment);
+            comment = updateChallengeComment(subjectId, commentId, payload.getContent(), currentUser);
         } else {
-            comment = tutorialCommentRepository.findByCommentIdAndTutorialId(commentId, subjectId)
-                .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "tutorialId", subjectId));
-            comment.setContent(payload.getContent());
-            tutorialCommentRepository.save((TutorialCommentEntity) comment);
+            comment = updateTutorialComment(subjectId, commentId, payload.getContent(), currentUser);
         }
 
         return CommentBeanUtils.details(comment);
+    }
+
+    private CommentEntity updateChallengeComment(Long challengeId, Long commentId, String content, UserPrincipal me) {
+        ChallengeCommentEntity comment = challengeCommentRepository.findByCommentIdAndChallengeId(commentId, challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "challengeId", challengeId));
+        comment.setContent(content);
+
+        return challengeCommentRepository.saveAndFlush(comment); // do flush to reflect the value of updatedAt intermediately
+    }
+
+    private CommentEntity updateTutorialComment(Long tutorialId, Long commentId, String content, UserPrincipal me) {
+        TutorialCommentEntity comment = tutorialCommentRepository.findByCommentIdAndTutorialId(commentId, tutorialId)
+            .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "challengeId", tutorialId));
+        comment.setContent(content);
+
+        return tutorialCommentRepository.saveAndFlush(comment); // do flush to reflect the value of updatedAt intermediately
     }
 
     /**
