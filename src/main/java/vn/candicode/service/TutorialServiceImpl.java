@@ -70,7 +70,11 @@ public class TutorialServiceImpl implements TutorialService {
         tutorial.setTags(payload.getTags());
         tutorial.setTitle(payload.getTitle());
 
-        payload.getCategories().forEach(e -> tutorial.addCategory(availableCategories.get(e)));
+        payload.getCategories().forEach(e -> {
+            if (availableCategories.containsKey(e)) {
+                tutorial.addCategory(availableCategories.get(e));
+            }
+        });
 
         tutorialRepository.save(tutorial);
 

@@ -38,7 +38,7 @@ public class UserPrincipal implements UserDetails {
             .password(user.getPassword())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
-            .fullName(user.getFirstName() + " " + user.getLastName())
+            .fullName(user.getFullName())
             .enabled(user.isEnabled())
             .entityRef(user)
             .authorities(roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()))

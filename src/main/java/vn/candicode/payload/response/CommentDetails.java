@@ -16,4 +16,5 @@ public class CommentDetails implements Serializable {
     private Integer likes;
     private Integer dislikes;
     private String author;
+    private Long subjectId; // challengeId or tutorialId
 }

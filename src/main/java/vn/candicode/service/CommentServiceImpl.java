@@ -4,25 +4,36 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.candicode.common.CommentSubject;
+import vn.candicode.entity.*;
+import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewCommentRequest;
 import vn.candicode.payload.response.CommentDetails;
 import vn.candicode.payload.response.CommentSummary;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeCommentRepository;
+import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.TutorialCommentRepository;
+import vn.candicode.repository.TutorialRepository;
 import vn.candicode.security.UserPrincipal;
+import vn.candicode.util.CommentBeanUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 public class CommentServiceImpl implements CommentService {
     private final ChallengeCommentRepository challengeCommentRepository;
     private final TutorialCommentRepository tutorialCommentRepository;
+    private final ChallengeRepository challengeRepository;
+    private final TutorialRepository tutorialRepository;
 
-    public CommentServiceImpl(ChallengeCommentRepository challengeCommentRepository, TutorialCommentRepository tutorialCommentRepository) {
+    public CommentServiceImpl(ChallengeCommentRepository challengeCommentRepository, TutorialCommentRepository tutorialCommentRepository, ChallengeRepository challengeRepository, TutorialRepository tutorialRepository) {
         this.challengeCommentRepository = challengeCommentRepository;
         this.tutorialCommentRepository = tutorialCommentRepository;
+        this.challengeRepository = challengeRepository;
+        this.tutorialRepository = tutorialRepository;
     }
 
     /**
@@ -36,7 +47,61 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentDetails addComment(CommentSubject subject, Long subjectId, NewCommentRequest payload, UserPrincipal author) {
-        return null;
+        if (subject.equals(CommentSubject.CHALLENGE)) {
+            return addChallengeComment(subjectId, payload, author);
+        } else {
+            return addTutorialComment(subjectId, payload, author);
+        }
+    }
+
+    private CommentDetails addChallengeComment(Long challengeId, NewCommentRequest payload, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchComments(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        ChallengeCommentEntity comment = new ChallengeCommentEntity();
+
+        comment.setAuthor(me.getFullName());
+        comment.setContent(payload.getContent());
+        comment.setLikes(0);
+        comment.setDislikes(0);
+
+        Map<Long /*comment_id*/, ChallengeCommentEntity> commentMap = challenge.getComments().stream()
+            .collect(Collectors.toMap(CommentEntity::getCommentId, item -> item));
+
+        if (payload.getParentId() != null && commentMap.containsKey(payload.getParentId())) {
+            comment.setParent(commentMap.get(payload.getParentId()));
+        }
+
+        challenge.addComment(comment);
+
+        challengeCommentRepository.save(comment);
+
+        return CommentBeanUtils.details(comment);
+    }
+
+    private CommentDetails addTutorialComment(Long tutorialId, NewCommentRequest payload, UserPrincipal me) {
+        TutorialEntity tutorial = tutorialRepository.findByTutorialIdFetchComments(tutorialId)
+            .orElseThrow(() -> new ResourceNotFoundException(TutorialEntity.class, "id", tutorialId));
+
+        TutorialCommentEntity comment = new TutorialCommentEntity();
+
+        comment.setAuthor(me.getFullName());
+        comment.setContent(payload.getContent());
+        comment.setLikes(0);
+        comment.setDislikes(0);
+
+        Map<Long /*comment_id*/, TutorialCommentEntity> commentMap = tutorial.getComments().stream()
+            .collect(Collectors.toMap(CommentEntity::getCommentId, item -> item));
+
+        if (payload.getParentId() != null && commentMap.containsKey(payload.getParentId())) {
+            comment.setParent(commentMap.get(payload.getParentId()));
+        }
+
+        tutorial.addComment(comment);
+
+        tutorialCommentRepository.save(comment);
+
+        return CommentBeanUtils.details(comment);
     }
 
     /**
