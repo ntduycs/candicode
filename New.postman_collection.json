@@ -5,7 +5,7 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
+        {
             "name": "Login",
             "request": {
                 "method": "POST",
@@ -32,24 +32,24 @@
             },
             "response": []
         },
-		{
-			"name": "Current User",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
+        {
+            "name": "Current User",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
                         {
                             "key": "token",
                             "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2ODA4NzksImV4cCI6MTU5MzU0NDg3OX0.ExS20gB2ZeXELogxJVmz3_T8jJNH5PsvawrR3_6WcZvZgtxnC4rCuGbZEzx03exXDOItr0OlTKVs0OkGNzAKvg",
                             "type": "string"
                         }
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/auth/current",
-					"host": [
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/auth/current",
+                    "host": [
                         "{{host}}"
                     ],
                     "path": [
@@ -98,12 +98,12 @@
                             "type": "string"
                         }
                     ]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
                         {
                             "key": "source",
                             "type": "file",
@@ -120,16 +120,16 @@
 						"challenges",
 						"source"
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Challenge: Create",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Create",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
                         {
                             "key": "token",
                             "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
@@ -304,6 +304,13 @@
                     "path": [
                         "challenges",
                         "me"
+                    ],
+                    "query": [
+                        {
+                            "key": "contestChallenge",
+                            "value": null,
+                            "disabled": true
+                        }
                     ]
                 }
             },
@@ -768,7 +775,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
                             "type": "string"
                         }
                     ]
@@ -780,7 +787,7 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "Title 2",
+                            "value": "Tutorial 1",
                             "type": "text"
                         },
                         {
@@ -809,8 +816,8 @@
                             "type": "text"
                         },
                         {
-                            "key": "maxRegister",
-                            "value": "100",
+                            "key": "categories",
+                            "value": "database",
                             "type": "text"
                         }
                     ]
@@ -1189,6 +1196,46 @@
                     ],
                     "path": [
                         "contests"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Contest: All of Me",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"items\": [\n        {\n            \"contestId\": 1,\n            \"title\": \"title\",\n            \"author\": \"fullname\",\n            \"createdAt\": \"datetime\",\n            \"numComments\": 10,\n            \"maxRegister\": 10,\n            \"currRegister\": 8,\n            \"tags\": [\"tag1\", \"tag2\"],\n            \"description\": \"\",\n            \"registrationDeadline\": \"datetime\",\n            \"banner\":\"\"\n        }\n    ]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/contests/me",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "contests",
+                        "me"
                     ]
                 }
             },

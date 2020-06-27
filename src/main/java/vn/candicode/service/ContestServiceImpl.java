@@ -174,6 +174,7 @@ public class ContestServiceImpl implements ContestService {
      * @return paginated list of my contests
      */
     @Override
+    @Transactional(readOnly = true)
     public PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId) {
         Page<ContestEntity> items = contestRepository.findAllByAuthorId(myId, pageable);
 
