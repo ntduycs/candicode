@@ -110,16 +110,16 @@
                             "src": "/Users/ntduycs/Desktop/Candicode_v4.zip"
                         }
                     ]
-				},
-				"url": {
-					"raw": "{{host}}/challenges/source",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"source"
-					]
+                },
+                "url": {
+                    "raw": "{{host}}/challenges/source",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "source"
+                    ]
                 }
             },
             "response": []
@@ -463,11 +463,21 @@
         {
             "name": "Challenge: Remove Language",
             "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
                 "method": "DELETE",
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"language\":\"Python\"\n}",
+                    "raw": "{\n\t\"language\":\"Java\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -475,13 +485,13 @@
                     }
                 },
                 "url": {
-                    "raw": "{{host}}/challenges/1/languages",
+                    "raw": "{{host}}/challenges/46/languages",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "1",
+                        "46",
                         "languages"
                     ]
                 }
@@ -787,7 +797,7 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "Tutorial 1",
+                            "value": "Tutorial 3",
                             "type": "text"
                         },
                         {
@@ -803,7 +813,7 @@
                         {
                             "key": "banner",
                             "type": "file",
-                            "src": "/Users/ntduycs/Desktop/Duy-Nguyen-Thanh.pdf"
+                            "src": "/Users/ntduycs/Pictures/me.JPG"
                         },
                         {
                             "key": "content",
@@ -842,7 +852,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
                             "type": "string"
                         }
                     ]
@@ -875,23 +885,35 @@
                         {
                             "key": "content",
                             "value": "content",
-                            "type": "text"
+                            "type": "text",
+                            "disabled": true
                         },
                         {
                             "key": "description",
                             "value": "description",
+                            "type": "text",
+                            "disabled": true
+                        },
+                        {
+                            "key": "categories",
+                            "value": "data structure",
+                            "type": "text"
+                        },
+                        {
+                            "key": "categories",
+                            "value": "algorithm",
                             "type": "text"
                         }
                     ]
                 },
                 "url": {
-                    "raw": "{{host}}/tutorials/1",
+                    "raw": "{{host}}/tutorials/90",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "tutorials",
-                        "1"
+                        "90"
                     ]
                 }
             },
@@ -905,7 +927,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
                             "type": "string"
                         }
                     ]
@@ -913,13 +935,13 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/tutorials/87",
+                    "raw": "{{host}}/tutorials/90",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "tutorials",
-                        "87"
+                        "90"
                     ]
                 }
             },
@@ -933,7 +955,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
                             "type": "string"
                         }
                     ]
@@ -941,13 +963,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/tutorials/87",
+                    "raw": "{{host}}/tutorials/100",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "tutorials",
-                        "87"
+                        "100"
                     ]
                 }
             },
@@ -961,7 +983,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
                             "type": "string"
                         }
                     ]
@@ -1010,7 +1032,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
                             "type": "string"
                         }
                     ]
