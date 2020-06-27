@@ -19,4 +19,6 @@ public class ContestSummary implements Serializable {
      * Can be: upcoming, ongoing, finished
      */
     private String status;
+
+    private String slug;
 }

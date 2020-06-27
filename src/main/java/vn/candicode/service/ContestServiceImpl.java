@@ -18,6 +18,7 @@ import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.ContestRepository;
 import vn.candicode.repository.ContestRoundRepository;
 import vn.candicode.security.UserPrincipal;
+import vn.candicode.util.ContestBeanUtils;
 import vn.candicode.util.DatetimeUtils;
 
 import javax.persistence.EntityExistsException;
@@ -25,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static vn.candicode.common.FileStorageType.BANNER;
 
@@ -75,38 +77,6 @@ public class ContestServiceImpl implements ContestService {
             contest.setContent(payload.getContent());
 
             contestRepository.save(contest);
-
-//            int roundNumber = 1;
-//            List<ContestRoundEntity> contestRounds = new ArrayList<>();
-//            for (NewContestRoundRequest roundConfig : payload.getRounds()) {
-//                ContestRoundEntity round = new ContestRoundEntity();
-//
-//                if (StringUtils.hasText(roundConfig.getName())) {
-//                    round.setName(roundConfig.getName());
-//                } else {
-//                    round.setName("Round " + roundNumber++);
-//                }
-//                round.setContest(contest);
-//
-//                LocalDateTime startsAt = LocalDateTime.parse(roundConfig.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-//                LocalDateTime endsAt = LocalDateTime.parse(roundConfig.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-//                round.setStartsAt(startsAt);
-//                round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
-//
-//                List<ChallengeEntity> roundChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(roundConfig.getChallenges());
-//
-//                if (roundChallenges.size() != roundConfig.getChallenges().size()) { // Guarantee that all challenges is contest challenge and existing
-//                    throw new PersistenceException("Contest challenge(s) not found or invalid");
-//                } else {
-//                    roundChallenges.forEach(round::addChallenge);
-//                }
-//
-//                contestRounds.add(round);
-//            }
-//
-//            contestRounds.forEach(contest::addRound);
-//
-//            entityManager.persist(contest);
 
             return contest.getContestId();
         } catch (IOException e) {
@@ -183,8 +153,19 @@ public class ContestServiceImpl implements ContestService {
      */
     @Override
     public PaginatedResponse<ContestSummary> getContestList(Pageable pageable) {
-        Page<ContestEntity> contests = contestRepository.findAll(pageable);
-        return null;
+        Page<ContestEntity> items = contestRepository.findAll(pageable);
+
+        List<ContestSummary> summaries = items.map(ContestBeanUtils::summarize).getContent();
+
+        return PaginatedResponse.<ContestSummary>builder()
+            .first(items.isFirst())
+            .last(items.isLast())
+            .page(items.getNumber())
+            .size(items.getSize())
+            .totalElements(items.getTotalElements())
+            .totalPages(items.getTotalPages())
+            .items(summaries)
+            .build();
     }
 
     /**
