@@ -83,4 +83,13 @@ public class ContestController extends Controller {
 
         return ResponseEntity.ok(ResponseFactory.build(summaries));
     }
+
+    @GetMapping(path = "contests/md", produces = {"application/json"})
+    public ResponseEntity<?> getMyContestLists(@ModelAttribute PaginatedRequest payload, UserPrincipal me) {
+        Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
+
+        PaginatedResponse<ContestSummary> summaries = contestService.getMyContestList(pageable, me.getUserId());
+
+        return ResponseEntity.ok(ResponseFactory.build(summaries));
+    }
 }
