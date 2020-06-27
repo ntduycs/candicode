@@ -64,6 +64,15 @@ public class ContestController extends Controller {
         ));
     }
 
+    @DeleteMapping(path = "contests/{id}")
+    public ResponseEntity<?> removeContest(@PathVariable("id") Long contestId, @CurrentUser UserPrincipal me) {
+        contestService.removeContest(contestId, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Removed contest successfully"
+        )));
+    }
+
     @GetMapping(path = "contests", produces = {"application/json"})
     public ResponseEntity<?> getContestLists(@ModelAttribute PaginatedRequest payload) {
         Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());

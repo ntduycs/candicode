@@ -24,6 +24,7 @@ import java.util.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @NaturalIdCache
 @EqualsAndHashCode(of = {"title"}, callSuper = false)
+@Where(clause = "deleted = false and available = true")
 public class ContestEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -54,6 +55,15 @@ public class ContestEntity extends Auditable {
 
     @Column
     private Integer maxRegister = -1;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    /**
+     * Contest must have at least one round to be marked as available
+     */
+    @Column(columnDefinition = "boolean default false")
+    private Boolean available = false;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "user_fk"))

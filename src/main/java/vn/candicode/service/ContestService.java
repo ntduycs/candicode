@@ -23,6 +23,14 @@ public interface ContestService {
     void updateContest(Long contestId, UpdateContestRequest payload, UserPrincipal currentUser);
 
     /**
+     * Softly delete
+     *
+     * @param contestId
+     * @param me
+     */
+    void removeContest(Long contestId, UserPrincipal me);
+
+    /**
      * @param pageable
      * @return paginated list of contests
      */

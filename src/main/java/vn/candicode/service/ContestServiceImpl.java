@@ -1,8 +1,10 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.exception.PersistenceException;
@@ -21,7 +23,6 @@ import vn.candicode.util.DatetimeUtils;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -52,7 +53,6 @@ public class ContestServiceImpl implements ContestService {
      * @return id of new contest
      */
     @Override
-    @Transactional
     public Long createContest(NewContestRequest payload, UserPrincipal author) {
         try {
             String bannerPath;
@@ -74,7 +74,7 @@ public class ContestServiceImpl implements ContestService {
             contest.setTags(payload.getTags());
             contest.setContent(payload.getContent());
 
-            entityManager.persist(contest);
+            contestRepository.save(contest);
 
 //            int roundNumber = 1;
 //            List<ContestRoundEntity> contestRounds = new ArrayList<>();
@@ -105,8 +105,8 @@ public class ContestServiceImpl implements ContestService {
 //            }
 //
 //            contestRounds.forEach(contest::addRound);
-
-            entityManager.persist(contest);
+//
+//            entityManager.persist(contest);
 
             return contest.getContestId();
         } catch (IOException e) {
@@ -126,42 +126,55 @@ public class ContestServiceImpl implements ContestService {
     @Override
     @Transactional
     public void updateContest(Long contestId, UpdateContestRequest payload, UserPrincipal author) {
+        String bannerPath;
         try {
-            String bannerPath;
-
             if (payload.getBanner() == null || payload.getBanner().isEmpty()) {
                 bannerPath = null;
             } else {
                 bannerPath = storageService.store(payload.getBanner(), BANNER, author.getUserId());
             }
-
-            ContestEntity contest = contestRepository.findByContestId(contestId)
-                .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
-
-            if (!contest.getTitle().equals(payload.getTitle())) {
-                if (contestRepository.existsByTitle(payload.getTitle())) {
-                    throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
-                } else {
-                    contest.setTitle(payload.getTitle());
-                }
-            }
-
-            if (bannerPath != null) {
-                contest.setBanner(bannerPath);
-            }
-
-            contest.setAuthor(author.getEntityRef());
-            contest.setDescription(payload.getDescription());
-            contest.setMaxRegister(payload.getMaxRegister());
-            contest.setRegistrationDeadline(LocalDateTime.parse(payload.getRegistrationDeadline(), DatetimeUtils.JSON_DATETIME_FORMAT));
-            contest.setTags(payload.getTags());
-            contest.setContent(payload.getContent());
-
-            contestRepository.save(contest);
         } catch (IOException e) {
             log.error("I/O error - cannot store contest banner. Message - {}", e.getLocalizedMessage());
             throw new StorageException(e.getLocalizedMessage());
         }
+
+        ContestEntity contest = contestRepository.findByContestId(contestId)
+            .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
+
+        if (!contest.getTitle().equals(payload.getTitle())) {
+            if (contestRepository.existsByTitle(payload.getTitle())) {
+                throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
+            } else {
+                contest.setTitle(payload.getTitle());
+            }
+        }
+
+        if (bannerPath != null) {
+            contest.setBanner(bannerPath);
+        }
+
+        contest.setDescription(payload.getDescription());
+        contest.setMaxRegister(payload.getMaxRegister());
+        contest.setRegistrationDeadline(LocalDateTime.parse(payload.getRegistrationDeadline(), DatetimeUtils.JSON_DATETIME_FORMAT));
+        contest.setTags(payload.getTags());
+        contest.setContent(payload.getContent());
+
+        contestRepository.save(contest);
+    }
+
+    /**
+     * Softly delete
+     *
+     * @param contestId
+     * @param me
+     */
+    @Override
+    @Transactional
+    public void removeContest(Long contestId, UserPrincipal me) {
+        ContestEntity contest = contestRepository.findByContestId(contestId)
+            .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
+
+        contest.setDeleted(true);
     }
 
     /**
@@ -170,6 +183,7 @@ public class ContestServiceImpl implements ContestService {
      */
     @Override
     public PaginatedResponse<ContestSummary> getContestList(Pageable pageable) {
+        Page<ContestEntity> contests = contestRepository.findAll(pageable);
         return null;
     }
 

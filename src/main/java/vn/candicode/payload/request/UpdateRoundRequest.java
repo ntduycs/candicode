@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class NewContestRoundRequest extends Request {
+public class UpdateRoundRequest {
     private String name;
 
     @NotNull(message = "Field 'startsAt' is required but not be given")

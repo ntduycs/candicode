@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "contest_rounds")
+@Where(clause = "deleted = false")
 public class ContestRoundEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -37,6 +39,9 @@ public class ContestRoundEntity extends Auditable {
 
     @OneToMany(mappedBy = "contestRound", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestChallengeEntity> challenges = new ArrayList<>();
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted = false;
 
     public void addChallenge(ChallengeEntity challenge) {
         ContestChallengeEntity contestChallenge = new ContestChallengeEntity(this, challenge);
