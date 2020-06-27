@@ -3,7 +3,6 @@ package vn.candicode.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import vn.candicode.common.FileStorageType;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.CategoryEntity;
 import vn.candicode.entity.TutorialEntity;
@@ -20,7 +19,10 @@ import vn.candicode.security.UserPrincipal;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static vn.candicode.common.FileStorageType.TUTORIAL;
 
 @Service
 @Log4j2
@@ -48,7 +50,7 @@ public class TutorialServiceImpl implements TutorialService {
         String bannerPath = null;
         try {
             if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
-                bannerPath = storageService.store(payload.getBanner(), FileStorageType.TUTORIAL, me.getUserId());
+                bannerPath = storageService.store(payload.getBanner(), TUTORIAL, me.getUserId());
             }
         } catch (IOException e) {
             log.error("Cannot store tutorial banner. Message - {}", e.getLocalizedMessage());
@@ -122,6 +124,39 @@ public class TutorialServiceImpl implements TutorialService {
             tutorial.setContent(payload.getContent());
         }
 
+        if (payload.getDescription() != null) {
+            tutorial.setBrieflyContent(payload.getDescription());
+        }
+
+
+        try {
+            if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
+                String bannerPath = storageService.store(payload.getBanner(), TUTORIAL, me.getUserId());
+                tutorial.setBanner(storageService.simplifyPath(bannerPath, TUTORIAL, me.getUserId()));
+            }
+        } catch (IOException e) {
+            log.error("Cannot store tutorial banner. Message - {}", e.getLocalizedMessage());
+        }
+
+        if (payload.getTags() != null && !payload.getTags().isEmpty()) {
+            tutorial.setTags(payload.getTags());
+        }
+
+        if (payload.getCategories() != null) {
+            Set<String> existingCategories = tutorial.getCategories().stream()
+                .map(c -> c.getCategory().getName()).collect(Collectors.toSet());
+
+            Set<String> newCategories = payload.getCategories().stream()
+                .filter(c -> !existingCategories.contains(c)).collect(Collectors.toSet());
+
+            existingCategories.stream()
+                .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
+                .forEach(c -> tutorial.removeCategory(availableCategories.get(c))); // Remove them
+
+            newCategories.forEach(c -> tutorial.addCategory(availableCategories.get(c)));
+        }
+
+        tutorialRepository.save(tutorial);
     }
 
     /**

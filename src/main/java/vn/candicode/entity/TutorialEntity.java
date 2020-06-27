@@ -24,7 +24,7 @@ public class TutorialEntity extends Auditable {
     @Column(nullable = false, updatable = false)
     private Long tutorialId;
 
-    @NaturalId
+    @NaturalId(mutable = true)
     @Column(nullable = false)
     private String title;
 
