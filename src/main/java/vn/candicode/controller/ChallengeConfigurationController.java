@@ -4,13 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewChallengeConfigurationRequest;
+import vn.candicode.payload.request.RemoveLanguageRequest;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ChallengeConfigurationService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -36,8 +36,8 @@ public class ChallengeConfigurationController extends Controller {
     }
 
     @DeleteMapping(path = "challenges/{id}/languages")
-    public ResponseEntity<?> removeSupportedLanguage(@PathVariable("id") Long challengeId, @RequestBody @NotBlank(message = "Field 'language' is required but not be given") String language, @CurrentUser UserPrincipal me) {
-        boolean success = challengeConfigurationService.removeSupportedLanguage(challengeId, language);
+    public ResponseEntity<?> removeSupportedLanguage(@PathVariable("id") Long challengeId, @RequestBody @Valid RemoveLanguageRequest payload, @CurrentUser UserPrincipal me) {
+        boolean success = challengeConfigurationService.removeSupportedLanguage(challengeId, payload.getLanguage(), me);
 
         if (success) {
             return ResponseEntity.ok(ResponseFactory.build(Map.of(

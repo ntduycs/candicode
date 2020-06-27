@@ -24,7 +24,8 @@ public interface ChallengeConfigurationService {
      *
      * @param challengeId
      * @param language    which language that want/need to remove
+     * @param me
      * @return true if removed successfully
      */
-    Boolean removeSupportedLanguage(Long challengeId, String language);
+    Boolean removeSupportedLanguage(Long challengeId, String language, UserPrincipal me);
 }

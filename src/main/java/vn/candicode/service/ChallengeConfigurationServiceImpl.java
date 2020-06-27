@@ -155,7 +155,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
      */
     @Override
     @Transactional
-    public Boolean removeSupportedLanguage(Long challengeId, String language) {
+    public Boolean removeSupportedLanguage(Long challengeId, String language, UserPrincipal me) {
         ChallengeConfigurationEntity configuration = challengeConfigurationRepository
             .findByChallengeIdAndLanguageName(challengeId, language.toLowerCase())
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", language));
