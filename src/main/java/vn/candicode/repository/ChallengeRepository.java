@@ -34,4 +34,7 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
 
     @Query("SELECT c FROM ChallengeEntity c WHERE c.contestChallenge = true AND c.challengeId IN (:ids) and c.deleted = false")
     List<ChallengeEntity> findAllContestChallengeByChallengeIdIn(@Param("ids") Set<Long> challengeIds);
+
+    @Query("SELECT c FROM ChallengeEntity c LEFT JOIN FETCH c.comments WHERE c.challengeId = :id AND c.deleted = false ")
+    Optional<ChallengeEntity> findByChallengeIdFetchComments(@Param("id") Long challengeId);
 }

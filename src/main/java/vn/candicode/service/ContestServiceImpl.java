@@ -152,6 +152,7 @@ public class ContestServiceImpl implements ContestService {
      * @return paginated list of contests
      */
     @Override
+    @Transactional(readOnly = true)
     public PaginatedResponse<ContestSummary> getContestList(Pageable pageable) {
         Page<ContestEntity> items = contestRepository.findAll(pageable);
 

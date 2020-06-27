@@ -24,6 +24,7 @@ public class UserPrincipal implements UserDetails {
     private final Boolean enabled;
     private final String firstName;
     private final String lastName;
+    private final String fullName;
     private final List<String> roles;
 
     private final Collection<? extends GrantedAuthority> authorities;
@@ -37,6 +38,7 @@ public class UserPrincipal implements UserDetails {
             .password(user.getPassword())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
+            .fullName(user.getFirstName() + " " + user.getLastName())
             .enabled(user.isEnabled())
             .entityRef(user)
             .authorities(roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()))

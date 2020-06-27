@@ -19,4 +19,7 @@ public interface TutorialRepository extends JpaRepository<TutorialEntity, Long> 
     Page<TutorialEntity> findAllByAuthorId(@Param("id") Long authorId, Pageable pageable);
 
     Optional<TutorialEntity> findByTutorialId(Long id);
+
+    @Query("SELECT t FROM TutorialEntity t LEFT JOIN FETCH t.comments WHERE t.tutorialId = :id")
+    Optional<TutorialEntity> findByTutorialIdFetchComments(@Param("id") Long id);
 }
