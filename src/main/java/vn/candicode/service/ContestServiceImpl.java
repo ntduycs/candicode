@@ -75,6 +75,7 @@ public class ContestServiceImpl implements ContestService {
             contest.setRegistrationDeadline(LocalDateTime.parse(payload.getRegistrationDeadline(), DatetimeUtils.JSON_DATETIME_FORMAT));
             contest.setTags(payload.getTags());
             contest.setContent(payload.getContent());
+            contest.setAvailable(false); // a contest that has no round was considered as not available
 
             contestRepository.save(contest);
 
@@ -154,7 +155,7 @@ public class ContestServiceImpl implements ContestService {
     @Override
     @Transactional(readOnly = true)
     public PaginatedResponse<ContestSummary> getContestList(Pageable pageable) {
-        Page<ContestEntity> items = contestRepository.findAll(pageable);
+        Page<ContestEntity> items = contestRepository.findAllAvailableContests(pageable);
 
         List<ContestSummary> summaries = items.map(ContestBeanUtils::summarize).getContent();
 

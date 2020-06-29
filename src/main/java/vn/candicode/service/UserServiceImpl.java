@@ -1,13 +1,14 @@
 package vn.candicode.service;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
 import vn.candicode.payload.request.PasswordRequest;
 import vn.candicode.payload.request.UpdateUserProfileRequest;
 import vn.candicode.security.UserPrincipal;
 
-/**
- * The services are shared with students and admins
- */
-public interface UserService {
+@Service
+@Log4j2
+public class UserServiceImpl implements UserService {
     /**
      * User send change password request to system. The request is stored and system sends verification email to him.
      *
@@ -15,21 +16,30 @@ public interface UserService {
      * @param currentUser Only account's owner can do this operation
      * @see #doChangePassword(Long)
      */
-    void requireChangePassword(PasswordRequest payload, UserPrincipal currentUser);
+    @Override
+    public void requireChangePassword(PasswordRequest payload, UserPrincipal currentUser) {
+
+    }
 
     /**
      * After user has verified the change password request (via email), do truly change password task
      *
      * @param userId
      */
-    void doChangePassword(Long userId);
+    @Override
+    public void doChangePassword(Long userId) {
+
+    }
 
     /**
      * Send user's reset password request via mail to confirm the operation
      *
      * @param currentUser user that want to reset password
      */
-    void requireResetPassword(UserPrincipal currentUser);
+    @Override
+    public void requireResetPassword(UserPrincipal currentUser) {
+
+    }
 
     /**
      * This service is called when account's owner confirm the reset password request that sent to his mailbox.
@@ -37,12 +47,18 @@ public interface UserService {
      *
      * @param userId
      */
-    void doResetPassword(Long userId);
+    @Override
+    public void doResetPassword(Long userId) {
+
+    }
 
     /**
      * @param userId
      * @param payload
      * @param currentUser Only account's owner can update his profile
      */
-    void updateProfile(Long userId, UpdateUserProfileRequest payload, UserPrincipal currentUser);
+    @Override
+    public void updateProfile(Long userId, UpdateUserProfileRequest payload, UserPrincipal currentUser) {
+
+    }
 }

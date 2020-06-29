@@ -21,6 +21,7 @@ public class ContestBeanUtils {
         summary.setSlug(SLUGIFY.slugify(contest.getTitle()));
         summary.setStatus("ongoing");
         summary.setAuthor(contest.getAuthor().getFullName());
+        summary.setAvailable(contest.getAvailable());
 
         return summary;
     }

@@ -36,5 +36,5 @@ public class NewContestRequest extends Request {
 
     @NotNull(message = "Field 'rounds' is required but not be given")
     @Size(min = 1, message = "Must contain at least 1 round")
-    private List<NewRoundRequest> rounds;
+    private List<RoundRequest> rounds;
 }

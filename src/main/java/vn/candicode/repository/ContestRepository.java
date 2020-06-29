@@ -19,4 +19,7 @@ public interface ContestRepository extends JpaRepository<ContestEntity, Long> {
 
     @Query("SELECT c FROM ContestEntity c WHERE c.author.userId = :id")
     Page<ContestEntity> findAllByAuthorId(@Param("id") Long authorId, Pageable pageable);
+
+    @Query("SELECT c FROM ContestEntity c WHERE c.available = true")
+    Page<ContestEntity> findAllAvailableContests(Pageable pageable);
 }

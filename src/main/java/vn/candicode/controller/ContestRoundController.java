@@ -3,7 +3,7 @@ package vn.candicode.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
-import vn.candicode.payload.request.NewRoundRequest;
+import vn.candicode.payload.request.NewRoundListRequest;
 import vn.candicode.payload.request.UpdateRoundRequest;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
@@ -26,12 +26,11 @@ public class ContestRoundController extends Controller {
     }
 
     @PostMapping(path = "contests/{id}/rounds")
-    public ResponseEntity<?> createRound(@PathVariable("id") Long contestId, @RequestBody @Valid NewRoundRequest payload, @CurrentUser UserPrincipal me) {
-        Long roundId = contestRoundService.createRound(contestId, payload, me);
+    public ResponseEntity<?> createRound(@PathVariable("id") Long contestId, @RequestBody @Valid NewRoundListRequest payload, @CurrentUser UserPrincipal me) {
+        contestRoundService.createRounds(contestId, payload, me);
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
-            "message", "Created new round successfully",
-            "roundId", roundId
+            "message", "Created new round(s) successfully"
         )));
     }
 

@@ -24,4 +24,6 @@ public class ContestSummary implements Serializable {
     private String slug;
 
     private String author;
+
+    private Boolean available;
 }

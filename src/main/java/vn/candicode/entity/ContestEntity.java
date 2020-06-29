@@ -24,7 +24,7 @@ import java.util.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @NaturalIdCache
 @EqualsAndHashCode(of = {"title"}, callSuper = false)
-@Where(clause = "deleted = false and available = true")
+@Where(clause = "deleted = false")
 public class ContestEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

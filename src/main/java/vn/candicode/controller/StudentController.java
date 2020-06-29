@@ -3,9 +3,7 @@ package vn.candicode.controller;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewStudentRequest;
 import vn.candicode.service.StudentService;
@@ -44,4 +42,12 @@ public class StudentController extends Controller {
             ));
         }
     }
+
+    @PutMapping(path = "students/{id}/roles")
+    public ResponseEntity<?> updateStudentRole(@PathVariable("id") Long studentId) {
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "This feature is coming soon. Please integrate this with Momo implementation"
+        )));
+    }
+
 }

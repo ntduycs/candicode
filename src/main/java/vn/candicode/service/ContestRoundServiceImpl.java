@@ -9,7 +9,8 @@ import vn.candicode.entity.ContestEntity;
 import vn.candicode.entity.ContestRoundEntity;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
-import vn.candicode.payload.request.NewRoundRequest;
+import vn.candicode.payload.request.NewRoundListRequest;
+import vn.candicode.payload.request.RoundRequest;
 import vn.candicode.payload.request.UpdateRoundRequest;
 import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.ContestRepository;
@@ -22,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,34 +45,41 @@ public class ContestRoundServiceImpl implements ContestRoundService {
 
     @Override
     @Transactional
-    public Long createRound(Long contestId, NewRoundRequest payload, UserPrincipal me) {
+    public void createRounds(Long contestId, NewRoundListRequest payload, UserPrincipal me) {
         ContestEntity contest = contestRepository.findByContestIdFetchRounds(contestId)
             .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
-        ContestRoundEntity round = new ContestRoundEntity();
+        Set<Long> challengeIds = payload.getRounds().stream()
+            .flatMap(r -> r.getChallenges().stream())
+            .collect(Collectors.toSet());
 
-        round.setName("Round " + contest.getRounds().size() + 1);
+        Map<Long, ChallengeEntity> challengeMap = challengeRepository.findAllByContestChallengeByChallengeIdIn(challengeIds).stream()
+            .collect(Collectors.toMap(ChallengeEntity::getChallengeId, challenge -> challenge));
 
-        LocalDateTime startsAt = LocalDateTime.parse(payload.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-        LocalDateTime endsAt = LocalDateTime.parse(payload.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-        round.setStartsAt(startsAt);
-        round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
+        for (RoundRequest roundRequest : payload.getRounds()) {
+            ContestRoundEntity round = new ContestRoundEntity();
 
-        List<ChallengeEntity> roundChallenges = challengeRepository.findAllContestChallengeByChallengeIdIn(payload.getChallenges());
+            round.setName("Round " + contest.getRounds().size() + 1);
 
-        if (roundChallenges.size() != payload.getChallenges().size()) { // Guarantee that all challenges is contest challenge and existing
-            throw new PersistenceException("Some Contest challenge(s) not found");
-        } else {
-            roundChallenges.forEach(round::addChallenge);
+            LocalDateTime startsAt = LocalDateTime.parse(roundRequest.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
+            LocalDateTime endsAt = LocalDateTime.parse(roundRequest.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
+            round.setStartsAt(startsAt);
+            round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
+
+            for (Long challengeId : roundRequest.getChallenges()) {
+                if (challengeMap.containsKey(challengeId)) {
+                    round.addChallenge(challengeMap.get(challengeId));
+                }
+            }
+
+            if (round.getChallenges().isEmpty()) {
+                throw new PersistenceException("Round has no challenge.");
+            } else {
+                contest.addRound(round);
+            }
         }
 
-        round.setContest(contest);
-
-        entityManager.persist(round);
-
         contest.setAvailable(true);
-
-        return round.getContestRoundId();
     }
 
     @Override
