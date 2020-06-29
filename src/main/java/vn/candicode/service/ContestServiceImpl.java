@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ContestEntity;
+import vn.candicode.entity.ContestRoundEntity;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
@@ -23,8 +24,6 @@ import vn.candicode.util.ContestBeanUtils;
 import vn.candicode.util.DatetimeUtils;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,17 +35,12 @@ import static vn.candicode.common.FileStorageType.BANNER;
 public class ContestServiceImpl implements ContestService {
     private final ContestRepository contestRepository;
     private final ContestRoundRepository contestRoundRepository;
-    private final ChallengeRepository challengeRepository;
 
     private final StorageService storageService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public ContestServiceImpl(ContestRepository contestRepository, ContestRoundRepository contestRoundRepository, ChallengeRepository challengeRepository, StorageService storageService) {
         this.contestRepository = contestRepository;
         this.contestRoundRepository = contestRoundRepository;
-        this.challengeRepository = challengeRepository;
         this.storageService = storageService;
     }
 
@@ -197,9 +191,11 @@ public class ContestServiceImpl implements ContestService {
     @Override
     @Transactional(readOnly = true)
     public ContestDetails getContestDetails(Long contestId, UserPrincipal me) {
-        ContestEntity contest = contestRepository.findByContestIdFetchRounds(contestId)
+        ContestEntity contest = contestRepository.findByContestId(contestId)
             .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
-        return ContestBeanUtils.details(contest);
+        List<ContestRoundEntity> rounds = contestRoundRepository.findByContestIdFetchChallenges(contestId);
+
+        return ContestBeanUtils.details(contest, rounds);
     }
 }

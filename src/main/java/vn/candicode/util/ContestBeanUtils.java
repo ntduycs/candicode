@@ -12,6 +12,7 @@ import vn.candicode.payload.response.ContestSummary;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class ContestBeanUtils {
     private static final Slugify SLUGIFY = new Slugify();
@@ -34,7 +35,7 @@ public class ContestBeanUtils {
         return summary;
     }
 
-    public static ContestDetails details(ContestEntity contest) {
+    public static ContestDetails details(ContestEntity contest, List<ContestRoundEntity> rounds) {
         ContestDetails details = new ContestDetails();
 
         details.setAuthor(contest.getAuthor().getFullName());
@@ -50,7 +51,7 @@ public class ContestBeanUtils {
         details.setMaxRegister(contest.getMaxRegister());
         details.setContent(contest.getContent());
 
-        for (ContestRoundEntity contestRound : contest.getRounds()) {
+        for (ContestRoundEntity contestRound : rounds) {
             details.getRounds().add(details(contestRound));
         }
 
