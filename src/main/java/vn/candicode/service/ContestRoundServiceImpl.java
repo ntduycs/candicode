@@ -21,7 +21,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -93,7 +92,7 @@ public class ContestRoundServiceImpl implements ContestRoundService {
             .map(item -> item.getChallenge().getChallengeId())
             .collect(Collectors.toList());
 
-        Set<Long> newChallengeIds = new HashSet<>(payload.getChallenges());
+        Set<Long> newChallengeIds = payload.getChallenges();
         List<ChallengeEntity> newChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(newChallengeIds);
 
         List<Long> removedChallengeIds = existingChallengeIds.stream()

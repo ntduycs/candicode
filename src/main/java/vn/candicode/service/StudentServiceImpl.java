@@ -2,40 +2,41 @@ package vn.candicode.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import vn.candicode.common.FileAuthor;
 import vn.candicode.core.StorageService;
-import vn.candicode.entity.RoleEntity;
 import vn.candicode.entity.StudentEntity;
+import vn.candicode.exception.PersistenceException;
+import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewStudentRequest;
 import vn.candicode.payload.request.UpdateStudentRoleRequest;
-import vn.candicode.repository.RoleRepository;
 import vn.candicode.repository.StudentRepository;
+import vn.candicode.repository.UserRepository;
+import vn.candicode.security.UserPrincipal;
+import vn.candicode.service.CommonService.Role;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static vn.candicode.common.FileAuthor.STUDENT;
+import static vn.candicode.service.CommonService.Role.getByRoleId;
 
 @Service
 public class StudentServiceImpl implements StudentService {
+    private final UserRepository userRepository;
     private final StudentRepository studentRepository;
 
     private final StorageService storageService;
+    private final CommonService commonService;
 
     private final PasswordEncoder passwordEncoder;
 
-    private final Map<String, RoleEntity> availableRoles;
-
-    public StudentServiceImpl(StudentRepository studentRepository, RoleRepository roleRepository, StorageService storageService, PasswordEncoder passwordEncoder) {
+    public StudentServiceImpl(UserRepository userRepository, StudentRepository studentRepository, StorageService storageService, CommonService commonService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.storageService = storageService;
+        this.commonService = commonService;
         this.passwordEncoder = passwordEncoder;
-
-        this.availableRoles = roleRepository
-            .findAllByNameIn(List.of("student", "challenge creator", "contest creator", "tutorial creator"))
-            .stream().collect(Collectors.toMap(RoleEntity::getName, role -> role));
     }
 
     /**
@@ -50,17 +51,21 @@ public class StudentServiceImpl implements StudentService {
     public Long createAccount(NewStudentRequest payload) throws IOException {
         final String encodedPassword = passwordEncoder.encode(payload.getPassword());
 
+        if (userRepository.existsByEmail(payload.getEmail())) {
+            throw new PersistenceException("User has already existing with email " + payload.getEmail());
+        }
+
         StudentEntity student = new StudentEntity();
         student.setEmail(payload.getEmail());
         student.setPassword(encodedPassword);
         student.setFirstName(payload.getFirstName());
         student.setLastName(payload.getLastName());
 
-        student.addRole(availableRoles.get("student"));
+        student.addRole(commonService.getStudentRoles().get(Role.STUDENT));
 
         Long studentId = studentRepository.save(student).getUserId();
 
-        storageService.initDirectoriesForUser(studentId, STUDENT);
+        storageService.initDirectoriesForUser(studentId, FileAuthor.STUDENT);
 
         return studentId;
     }
@@ -71,7 +76,28 @@ public class StudentServiceImpl implements StudentService {
      * @param payload
      */
     @Override
-    public void updateRole(UpdateStudentRoleRequest payload) {
+    public void updateRole(Long studentId, UpdateStudentRoleRequest payload, UserPrincipal me) {
+        StudentEntity admin = studentRepository.findByUserIdFetchRoles(studentId)
+            .orElseThrow(() -> new ResourceNotFoundException(StudentEntity.class, "id", studentId));
 
+        if (payload.getRoles() == null || payload.getRoles().isEmpty()) {
+            return;
+        }
+
+        Set<Long> newRoleIds = payload.getRoles().stream()
+            .filter(id -> getByRoleId(id).isPresent())
+            .collect(Collectors.toSet());
+
+        Set<Long> existingRoleIds = admin.getRoles().stream()
+            .map(item -> item.getRole().getRoleId())
+            .collect(Collectors.toSet());
+
+        admin.getRoles().removeIf(item -> !newRoleIds.contains(item.getRole().getRoleId()));
+        newRoleIds.removeAll(existingRoleIds);
+
+        // Do add new roles for admin
+        if (!newRoleIds.isEmpty()) {
+            newRoleIds.forEach(id -> getByRoleId(id).ifPresent(role -> admin.addRole(commonService.getStudentRoles().get(role))));
+        }
     }
 }

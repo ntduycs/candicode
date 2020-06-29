@@ -26,8 +26,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static vn.candicode.common.FileStorageType.CHALLENGE;
 import static vn.candicode.common.FileStorageType.SUBMISSION;
@@ -40,16 +38,15 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
 
     private final StorageService storageService;
     private final CodeRunnerService codeRunnerService;
+    private final CommonService commonService;
 
-    private final Map<String, LanguageEntity> availableLanguages;
-
-    public ChallengeConfigurationServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
+    public ChallengeConfigurationServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, StorageService storageService, CodeRunnerService codeRunnerService, CommonService commonService) {
         this.challengeRepository = challengeRepository;
         this.challengeConfigurationRepository = challengeConfigurationRepository;
+
         this.storageService = storageService;
         this.codeRunnerService = codeRunnerService;
-
-        this.availableLanguages = languageRepository.findAll().stream().collect(Collectors.toMap(LanguageEntity::getName, lang -> lang));
+        this.commonService = commonService;
     }
 
     /**
@@ -68,6 +65,10 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
     public SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeConfigurationRequest payload, UserPrincipal me) {
         Long myId = me.getUserId();
         String language = payload.getLanguage().toLowerCase();
+
+        if (!commonService.getLanguages().containsKey(language)) {
+            throw new ResourceNotFoundException(LanguageEntity.class, "name", payload.getLanguage());
+        }
 
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
@@ -125,7 +126,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             ChallengeConfigurationEntity challengeConfig = new ChallengeConfigurationEntity();
 
             challengeConfig.setChallenge(challenge);
-            challengeConfig.setLanguage(availableLanguages.get(language));
+            challengeConfig.setLanguage(commonService.getLanguages().get(language));
             challengeConfig.setDirectory(payload.getChallengeDir());
             challengeConfig.setRoot(rootDir);
             challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, myId));

@@ -12,7 +12,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"email\":\"student1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+                    "raw": "{\n\t\"email\":\"admin1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -940,17 +940,12 @@
                     "formdata": [
                         {
                             "key": "title",
-                            "value": "Tutorial 3",
+                            "value": "Tutorial 4",
                             "type": "text"
                         },
                         {
                             "key": "tags",
                             "value": "tag1",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "tag2",
                             "type": "text"
                         },
                         {
@@ -971,7 +966,8 @@
                         {
                             "key": "categories",
                             "value": "database",
-                            "type": "text"
+                            "type": "text",
+                            "disabled": true
                         }
                     ]
                 },
@@ -1340,13 +1336,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/tutorials/46/comments",
+                    "raw": "{{host}}/tutorials/98/comments",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "tutorials",
-                        "46",
+                        "98",
                         "comments"
                     ]
                 }
@@ -1820,6 +1816,80 @@
                         "57",
                         "rounds",
                         "58"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Admin: Create",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"email\":\"admin1@gmail.com\",\n    \"password\":\"candicode\",\n    \"confirmPassword\":\"candicode\",\n    \"firstName\":\"Admin\",\n    \"lastName\":\"1\",\n    \"roles\": [7]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/admins",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "admins"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Admin: Update Roles",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"roles\": [7]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/admins/109/roles",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "admins",
+                        "109",
+                        "roles"
                     ]
                 }
             },

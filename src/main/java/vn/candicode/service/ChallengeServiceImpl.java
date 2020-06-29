@@ -8,10 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.common.EntityConstants;
 import vn.candicode.core.StorageService;
-import vn.candicode.entity.CategoryEntity;
 import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
-import vn.candicode.entity.LanguageEntity;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
@@ -53,24 +51,19 @@ import static vn.candicode.common.FileStorageType.CHALLENGE;
 public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final SummaryRepository summaryRepository;
-    private final ChallengeConfigurationRepository challengeConfigurationRepository;
 
     private final StorageService storageService;
-
-    private final Map<String, LanguageEntity> availableLanguages;
-    private final Map<String, CategoryEntity> availableCategories;
+    private final CommonService commonService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, StorageService storageService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, StorageService storageService, CommonService commonService) {
         this.challengeRepository = challengeRepository;
         this.summaryRepository = summaryRepository;
-        this.challengeConfigurationRepository = challengeConfigurationRepository;
-        this.storageService = storageService;
 
-        this.availableLanguages = languageRepository.findAll().stream().collect(Collectors.toMap(LanguageEntity::getName, lang -> lang));
-        this.availableCategories = categoryRepository.findAll().stream().collect(Collectors.toMap(CategoryEntity::getName, cate -> cate));
+        this.storageService = storageService;
+        this.commonService = commonService;
     }
 
     /**
@@ -108,8 +101,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
             if (payload.getCategories() != null) {
                 payload.getCategories().forEach(e -> {
-                    if (availableCategories.containsKey(e)) {
-                        challenge.addCategory(availableCategories.get(e));
+                    if (commonService.getCategories().containsKey(e)) {
+                        challenge.addCategory(commonService.getCategories().get(e));
                     }
                 });
             }
@@ -122,11 +115,11 @@ public class ChallengeServiceImpl implements ChallengeService {
 
             String language = payload.getLanguage().toLowerCase();
 
-            if (!availableLanguages.containsKey(language)) {
+            if (!commonService.getLanguages().containsKey(language)) {
                 throw new PersistenceException("No language with name '" + payload.getLanguage() + "' found");
             }
 
-            challengeConfig.setLanguage(availableLanguages.get(language));
+            challengeConfig.setLanguage(commonService.getLanguages().get(language));
             challengeConfig.setDirectory(payload.getChallengeDir());
             challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, authorId));
             challengeConfig.setNonImplementedFile(storageService.simplifyPath(payload.getNonImplementedPath(), CHALLENGE, authorId));
@@ -334,14 +327,14 @@ public class ChallengeServiceImpl implements ChallengeService {
             existingCategories.stream()
                 .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
                 .forEach(c -> {
-                    if (availableCategories.containsKey(c)) {
-                        challenge.removeCategory(availableCategories.get(c));
+                    if (commonService.getCategories().containsKey(c)) {
+                        challenge.removeCategory(commonService.getCategories().get(c));
                     }
                 }); // Remove them
 
             newCategories.forEach(c -> {
-                if (availableCategories.containsKey(c)) {
-                    challenge.addCategory(availableCategories.get(c));
+                if (commonService.getCategories().containsKey(c)) {
+                    challenge.addCategory(commonService.getCategories().get(c));
                 }
             });
         }

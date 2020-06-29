@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
-import vn.candicode.entity.CategoryEntity;
 import vn.candicode.entity.TutorialEntity;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
@@ -15,7 +14,6 @@ import vn.candicode.payload.request.UpdateTutorialRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.TutorialDetails;
 import vn.candicode.payload.response.TutorialSummary;
-import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.TutorialRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.TutorialBeanUtils;
@@ -23,7 +21,6 @@ import vn.candicode.util.TutorialBeanUtils;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,15 +30,14 @@ import static vn.candicode.common.FileStorageType.BANNER;
 @Log4j2
 public class TutorialServiceImpl implements TutorialService {
     private final TutorialRepository tutorialRepository;
+
     private final StorageService storageService;
+    private final CommonService commonService;
 
-    private final Map<String, CategoryEntity> availableCategories;
-
-    public TutorialServiceImpl(TutorialRepository tutorialRepository, CategoryRepository categoryRepository, StorageService storageService) {
+    public TutorialServiceImpl(TutorialRepository tutorialRepository, StorageService storageService, CommonService commonService) {
         this.tutorialRepository = tutorialRepository;
         this.storageService = storageService;
-
-        this.availableCategories = categoryRepository.findAll().stream().collect(Collectors.toMap(CategoryEntity::getName, cate -> cate));
+        this.commonService = commonService;
     }
 
     /**
@@ -73,8 +69,8 @@ public class TutorialServiceImpl implements TutorialService {
 
         if (payload.getCategories() != null) {
             payload.getCategories().forEach(e -> {
-                if (availableCategories.containsKey(e)) {
-                    tutorial.addCategory(availableCategories.get(e));
+                if (commonService.getCategories().containsKey(e)) {
+                    tutorial.addCategory(commonService.getCategories().get(e));
                 }
             });
         }
@@ -193,14 +189,14 @@ public class TutorialServiceImpl implements TutorialService {
             existingCategories.stream()
                 .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
                 .forEach(c -> {
-                    if (availableCategories.containsKey(c)) {
-                        tutorial.removeCategory(availableCategories.get(c));
+                    if (commonService.getCategories().containsKey(c)) {
+                        tutorial.removeCategory(commonService.getCategories().get(c));
                     }
                 }); // Remove them
 
             newCategories.forEach(c -> {
-                if (availableCategories.containsKey(c)) {
-                    tutorial.addCategory(availableCategories.get(c));
+                if (commonService.getCategories().containsKey(c)) {
+                    tutorial.addCategory(commonService.getCategories().get(c));
                 }
             });
         }
