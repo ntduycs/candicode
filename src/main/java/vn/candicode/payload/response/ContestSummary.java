@@ -15,6 +15,7 @@ public class ContestSummary implements Serializable {
     private Set<String> tags;
     private String registrationDeadline;
     private String banner;
+    private Integer maxRegister;
 
     /**
      * Can be: upcoming, ongoing, finished

@@ -7,6 +7,7 @@ import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
+import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.CurrentUser;
@@ -93,5 +94,10 @@ public class ContestController extends Controller {
         return ResponseEntity.ok(ResponseFactory.build(summaries));
     }
 
+    @GetMapping(path = "contests/{id}")
+    public ResponseEntity<?> getContestDetails(@PathVariable("id") Long contestId, @CurrentUser UserPrincipal me) {
+        ContestDetails details = contestService.getContestDetails(contestId, me);
 
+        return ResponseEntity.ok(ResponseFactory.build(details));
+    }
 }

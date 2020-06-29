@@ -12,6 +12,7 @@ import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
+import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeRepository;
@@ -191,5 +192,14 @@ public class ContestServiceImpl implements ContestService {
             .totalPages(items.getTotalPages())
             .items(summaries)
             .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ContestDetails getContestDetails(Long contestId, UserPrincipal me) {
+        ContestEntity contest = contestRepository.findByContestIdFetchRounds(contestId)
+            .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
+
+        return ContestBeanUtils.details(contest);
     }
 }

@@ -3,6 +3,7 @@ package vn.candicode.service;
 import org.springframework.data.domain.Pageable;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
+import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.UserPrincipal;
@@ -42,4 +43,6 @@ public interface ContestService {
      * @return paginated list of my contests
      */
     PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId);
+
+    ContestDetails getContestDetails(Long contestId, UserPrincipal me);
 }
