@@ -30,7 +30,6 @@ public class NewChallengeRequest extends Request {
     @NotBlank(message = "Field 'runPath' is required but not be given")
     private String runPath;
 
-    @NotBlank(message = "Field 'compilePath' is required but not be given")
     private String compilePath;
 
     @NotBlank(message = "Field 'implementedPath' is required but not be given")
