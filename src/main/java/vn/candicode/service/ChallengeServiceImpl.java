@@ -19,6 +19,7 @@ import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.sub.Challenge;
 import vn.candicode.payload.response.sub.Testcase;
 import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.ChallengeConfigurationRepository;
@@ -27,6 +28,7 @@ import vn.candicode.repository.SummaryRepository;
 import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.ChallengeBeanUtils;
+import vn.candicode.util.FileUtils;
 import vn.candicode.util.RegexUtils;
 
 import javax.persistence.EntityExistsException;
@@ -48,6 +50,7 @@ import static vn.candicode.common.FileStorageType.CHALLENGE;
 public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final SummaryRepository summaryRepository;
+    private final ChallengeConfigurationRepository challengeConfigurationRepository;
 
     private final StorageService storageService;
     private final CommonService commonService;
@@ -55,9 +58,10 @@ public class ChallengeServiceImpl implements ChallengeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, StorageService storageService, CommonService commonService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, ChallengeConfigurationRepository challengeConfigurationRepository1, StorageService storageService, CommonService commonService) {
         this.challengeRepository = challengeRepository;
         this.summaryRepository = summaryRepository;
+        this.challengeConfigurationRepository = challengeConfigurationRepository1;
 
         this.storageService = storageService;
         this.commonService = commonService;
@@ -231,11 +235,18 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
+        List<ChallengeConfigurationEntity> challengeConfigurations = challengeConfigurationRepository
+            .findAllByChallengeIdFetchLanguage(challengeId);
+
         ChallengeDetails details = ChallengeBeanUtils.details(challenge);
 
         challenge.getTestcases().stream()
             .map(item -> new Testcase(item.getTestcaseId(), item.getInput(), item.getExpectedOutput(), item.getHidden(), me.getUserId().equals(challenge.getAuthor().getUserId())))
             .forEach(item -> details.getTestcases().add(item));
+
+        details.setContents(challengeConfigurations.stream()
+            .map(config -> new Challenge(config.getLanguage().getName(), FileUtils.readFileToString(new File(storageService.resolvePath(config.getNonImplementedFile(), CHALLENGE, challenge.getAuthor().getUserId())))))
+            .collect(Collectors.toList()));
 
         return details;
     }

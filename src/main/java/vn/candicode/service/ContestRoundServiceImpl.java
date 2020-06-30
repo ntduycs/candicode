@@ -128,6 +128,8 @@ public class ContestRoundServiceImpl implements ContestRoundService {
                 }
             });
         }
+
+//        contestRoundRepository.saveAll(rounds);
     }
 
     @Override
