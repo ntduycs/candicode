@@ -87,7 +87,7 @@ public class ContestRoundServiceImpl implements ContestRoundService {
     public void updateRound(Long contestId, UpdateRoundListRequest payload, UserPrincipal me) {
         Map<Long, RoundRequest> roundMap = payload.getRounds().stream().collect(Collectors.toMap(RoundRequest::getRoundId, i -> i));
 
-        List<ContestRoundEntity> rounds = contestRoundRepository.findAllByRoundIdFetchChallenges(contestId, roundMap.keySet());
+        List<ContestRoundEntity> rounds = contestRoundRepository.findAllByContestIdAndRoundIdsFetchChallenges(contestId, roundMap.keySet());
 
         for (ContestRoundEntity round : rounds) {
             RoundRequest roundRequest = roundMap.get(round.getContestRoundId());
@@ -132,10 +132,11 @@ public class ContestRoundServiceImpl implements ContestRoundService {
 
     @Override
     @Transactional
-    public void removeRound(Long roundId, UserPrincipal me) {
-        ContestRoundEntity round = contestRoundRepository.findByRoundIdFetchChallenges(roundId)
-            .orElseThrow(() -> new ResourceNotFoundException(ContestRoundEntity.class, "id", roundId));
+    public void removeRound(Long contestId, List<Long> roundIds, UserPrincipal me) {
+        List<ContestRoundEntity> rounds = contestRoundRepository.findAllByContestIdAndRoundIds(contestId, roundIds);
 
-        round.setDeleted(true);
+        for (ContestRoundEntity round : rounds) {
+            round.setDeleted(true);
+        }
     }
 }

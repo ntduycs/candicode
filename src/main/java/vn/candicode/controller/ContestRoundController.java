@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewRoundListRequest;
+import vn.candicode.payload.request.RemoveRoundListRequest;
 import vn.candicode.payload.request.UpdateRoundListRequest;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
@@ -43,9 +44,9 @@ public class ContestRoundController extends Controller {
         )));
     }
 
-    @DeleteMapping(path = "contests/{cid}/rounds/{rid}")
-    public ResponseEntity<?> removeRound(@PathVariable("cid") Long contestId, @PathVariable("rid") Long roundId, @CurrentUser UserPrincipal me) {
-        contestRoundService.removeRound(roundId, me);
+    @DeleteMapping(path = "contests/{cid}/rounds")
+    public ResponseEntity<?> removeRound(@PathVariable("cid") Long contestId, @RequestBody @Valid RemoveRoundListRequest payload, @CurrentUser UserPrincipal me) {
+        contestRoundService.removeRound(contestId, payload.getRoundIds(), me);
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "Removed round successfully"

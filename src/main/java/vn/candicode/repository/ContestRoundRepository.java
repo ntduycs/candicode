@@ -17,5 +17,8 @@ public interface ContestRoundRepository extends JpaRepository<ContestRoundEntity
     List<ContestRoundEntity> findByContestIdFetchChallenges(@Param("id") Long id);
 
     @Query("SELECT r FROM ContestRoundEntity r JOIN FETCH r.challenges rc JOIN FETCH rc.challenge WHERE r.contest.contestId = :id AND r.contestRoundId IN (:roundIds)")
-    List<ContestRoundEntity> findAllByRoundIdFetchChallenges(@Param("id") Long contestId, @Param("roundIds") Set<Long> roundIds);
+    List<ContestRoundEntity> findAllByContestIdAndRoundIdsFetchChallenges(@Param("id") Long contestId, @Param("roundIds") Set<Long> roundIds);
+
+    @Query("SELECT r FROM ContestRoundEntity r WHERE r.contest.contestId = :id AND r.contestRoundId IN (:roundIds)")
+    List<ContestRoundEntity> findAllByContestIdAndRoundIds(Long contestId, List<Long> roundIds);
 }

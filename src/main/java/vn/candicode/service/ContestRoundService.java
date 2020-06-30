@@ -4,6 +4,8 @@ import vn.candicode.payload.request.NewRoundListRequest;
 import vn.candicode.payload.request.UpdateRoundListRequest;
 import vn.candicode.security.UserPrincipal;
 
+import java.util.List;
+
 public interface ContestRoundService {
     /**
      * @param contestId
@@ -14,5 +16,5 @@ public interface ContestRoundService {
 
     void updateRound(Long contestId, UpdateRoundListRequest payload, UserPrincipal me);
 
-    void removeRound(Long roundId, UserPrincipal me);
+    void removeRound(Long contestId, List<Long> roundIds, UserPrincipal me);
 }
