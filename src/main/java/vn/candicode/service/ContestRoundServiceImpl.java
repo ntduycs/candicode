@@ -11,7 +11,7 @@ import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewRoundListRequest;
 import vn.candicode.payload.request.RoundRequest;
-import vn.candicode.payload.request.UpdateRoundRequest;
+import vn.candicode.payload.request.UpdateRoundListRequest;
 import vn.candicode.repository.ChallengeRepository;
 import vn.candicode.repository.ContestRepository;
 import vn.candicode.repository.ContestRoundRepository;
@@ -84,45 +84,50 @@ public class ContestRoundServiceImpl implements ContestRoundService {
 
     @Override
     @Transactional
-    public void updateRound(Long roundId, UpdateRoundRequest payload, UserPrincipal me) {
-        ContestRoundEntity round = contestRoundRepository.findByRoundIdFetchChallenges(roundId)
-            .orElseThrow(() -> new ResourceNotFoundException(ContestRoundEntity.class, "id", roundId));
+    public void updateRound(Long contestId, UpdateRoundListRequest payload, UserPrincipal me) {
+        Map<Long, RoundRequest> roundMap = payload.getRounds().stream().collect(Collectors.toMap(RoundRequest::getRoundId, i -> i));
 
-        if (!round.getName().equals(payload.getName()) && payload.getName() != null) {
-            round.setName(payload.getName());
+        List<ContestRoundEntity> rounds = contestRoundRepository.findAllByRoundIdFetchChallenges(contestId, roundMap.keySet());
+
+        for (ContestRoundEntity round : rounds) {
+            RoundRequest roundRequest = roundMap.get(round.getContestRoundId());
+
+            if (!round.getName().equals(roundRequest.getName()) && roundRequest.getName() != null) {
+                round.setName(roundRequest.getName());
+            }
+
+            LocalDateTime startsAt = LocalDateTime.parse(roundRequest.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
+            LocalDateTime endsAt = LocalDateTime.parse(roundRequest.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
+            round.setStartsAt(startsAt);
+            round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
+
+            List<Long> existingChallengeIds = round.getChallenges().stream()
+                .map(item -> item.getChallenge().getChallengeId())
+                .collect(Collectors.toList());
+
+            Set<Long> newChallengeIds = roundRequest.getChallenges();
+            List<ChallengeEntity> newChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(newChallengeIds);
+
+            List<Long> removedChallengeIds = existingChallengeIds.stream()
+                .filter(item -> !newChallengeIds.contains(item))
+                .collect(Collectors.toList());
+
+            round.getChallenges().forEach(item -> {
+                if (removedChallengeIds.contains(item.getChallenge().getChallengeId())) {
+                    round.removeChallenge(item.getChallenge());
+                }
+            });
+
+            List<ChallengeEntity> existingChallenges = round.getChallenges().stream()
+                .map(ContestChallengeEntity::getChallenge)
+                .collect(Collectors.toList());
+
+            newChallenges.forEach(item -> {
+                if (!existingChallenges.contains(item)) {
+                    round.addChallenge(item);
+                }
+            });
         }
-
-        LocalDateTime startsAt = LocalDateTime.parse(payload.getStartsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-        LocalDateTime endsAt = LocalDateTime.parse(payload.getEndsAt(), DatetimeUtils.JSON_DATETIME_FORMAT);
-        round.setStartsAt(startsAt);
-        round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
-
-        List<Long> existingChallengeIds = round.getChallenges().stream()
-            .map(item -> item.getChallenge().getChallengeId())
-            .collect(Collectors.toList());
-
-        Set<Long> newChallengeIds = payload.getChallenges();
-        List<ChallengeEntity> newChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(newChallengeIds);
-
-        List<Long> removedChallengeIds = existingChallengeIds.stream()
-            .filter(item -> !newChallengeIds.contains(item))
-            .collect(Collectors.toList());
-
-        round.getChallenges().forEach(item -> {
-            if (removedChallengeIds.contains(item.getChallenge().getChallengeId())) {
-                round.removeChallenge(item.getChallenge());
-            }
-        });
-
-        List<ChallengeEntity> existingChallenges = round.getChallenges().stream()
-            .map(ContestChallengeEntity::getChallenge)
-            .collect(Collectors.toList());
-
-        newChallenges.forEach(item -> {
-            if (!existingChallenges.contains(item)) {
-                round.addChallenge(item);
-            }
-        });
     }
 
     @Override

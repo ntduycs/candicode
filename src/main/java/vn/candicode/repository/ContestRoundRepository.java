@@ -7,6 +7,7 @@ import vn.candicode.entity.ContestRoundEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ContestRoundRepository extends JpaRepository<ContestRoundEntity, Long> {
     @Query("SELECT r FROM ContestRoundEntity r JOIN FETCH r.challenges rc JOIN FETCH rc.challenge WHERE r.contestRoundId = :id")
@@ -14,4 +15,7 @@ public interface ContestRoundRepository extends JpaRepository<ContestRoundEntity
 
     @Query("SELECT r FROM ContestRoundEntity r JOIN FETCH r.challenges rc JOIN FETCH rc.challenge WHERE r.contest.contestId = :id")
     List<ContestRoundEntity> findByContestIdFetchChallenges(@Param("id") Long id);
+
+    @Query("SELECT r FROM ContestRoundEntity r JOIN FETCH r.challenges rc JOIN FETCH rc.challenge WHERE r.contest.contestId = :id AND r.contestRoundId IN (:roundIds)")
+    List<ContestRoundEntity> findAllByRoundIdFetchChallenges(@Param("id") Long contestId, @Param("roundIds") Set<Long> roundIds);
 }

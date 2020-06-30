@@ -2,6 +2,8 @@ package vn.candicode.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -23,4 +25,9 @@ public class PasswordUpdateEntity extends Auditable {
 
     @Column(nullable = false, updatable = false)
     private Long expiredIn; // in minutes
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "user_fkey"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private UserEntity user;
 }

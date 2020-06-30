@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewRoundListRequest;
-import vn.candicode.payload.request.UpdateRoundRequest;
+import vn.candicode.payload.request.UpdateRoundListRequest;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ContestRoundService;
@@ -34,9 +34,9 @@ public class ContestRoundController extends Controller {
         )));
     }
 
-    @PutMapping(path = "contests/{cid}/rounds/{rid}")
-    public ResponseEntity<?> updateRound(@PathVariable("cid") Long contestId, @PathVariable("rid") Long roundId, @RequestBody @Valid UpdateRoundRequest payload, @CurrentUser UserPrincipal me) {
-        contestRoundService.updateRound(roundId, payload, me);
+    @PutMapping(path = "contests/{cid}/rounds")
+    public ResponseEntity<?> updateRound(@PathVariable("cid") Long contestId, @RequestBody @Valid UpdateRoundListRequest payload, @CurrentUser UserPrincipal me) {
+        contestRoundService.updateRound(contestId, payload, me);
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "Updated round successfully"

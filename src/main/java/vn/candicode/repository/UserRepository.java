@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmailFetchRoles(@Param("email") String email);
 
     boolean existsByEmail(String email);
+
+    Optional<UserEntity> findByUserId(Long userId);
 }

@@ -12,6 +12,11 @@ import java.util.Set;
 @Getter
 @Setter
 public class RoundRequest extends Request {
+    /**
+     * Only use this field for updating rounds
+     */
+    private Long roundId;
+
     private String name;
 
     @NotNull(message = "Field 'startsAt' is required but not be given")
