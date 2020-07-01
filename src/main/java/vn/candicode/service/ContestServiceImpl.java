@@ -17,6 +17,7 @@ import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.ChallengeRepository;
+import vn.candicode.repository.ContestRegistrationRepository;
 import vn.candicode.repository.ContestRepository;
 import vn.candicode.repository.ContestRoundRepository;
 import vn.candicode.security.UserPrincipal;
@@ -35,12 +36,14 @@ import static vn.candicode.common.FileStorageType.BANNER;
 public class ContestServiceImpl implements ContestService {
     private final ContestRepository contestRepository;
     private final ContestRoundRepository contestRoundRepository;
+    private final ContestRegistrationRepository contestRegistrationRepository;
 
     private final StorageService storageService;
 
-    public ContestServiceImpl(ContestRepository contestRepository, ContestRoundRepository contestRoundRepository, ChallengeRepository challengeRepository, StorageService storageService) {
+    public ContestServiceImpl(ContestRepository contestRepository, ContestRoundRepository contestRoundRepository, ChallengeRepository challengeRepository, ContestRegistrationRepository contestRegistrationRepository, StorageService storageService) {
         this.contestRepository = contestRepository;
         this.contestRoundRepository = contestRoundRepository;
+        this.contestRegistrationRepository = contestRegistrationRepository;
         this.storageService = storageService;
     }
 
@@ -196,6 +199,10 @@ public class ContestServiceImpl implements ContestService {
 
         List<ContestRoundEntity> rounds = contestRoundRepository.findByContestIdFetchChallenges(contestId);
 
-        return ContestBeanUtils.details(contest, rounds);
+        ContestDetails contestDetails = ContestBeanUtils.details(contest, rounds);
+
+        contestDetails.setEnrolled(contestRegistrationRepository.findByContestIdAndStudentId(contestId, me.getUserId()) != null);
+
+        return contestDetails;
     }
 }

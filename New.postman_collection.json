@@ -12,7 +12,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"email\":\"admin1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+                    "raw": "{\n\t\"email\":\"student1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -242,13 +242,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{host}}/challenges/28",
+                    "raw": "{{host}}/challenges/46",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "challenges",
-                        "28"
+                        "46"
                     ]
                 }
             },
@@ -262,7 +262,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNDIxNDk0LCJleHAiOjE1OTQyODU0OTR9.rBbYNOl_n6MVLDBDoEsRNLOjJxaN3bDriKj1jF8VbfW-9-06HLb9gY51thnyd_rleSIgCdgiSf2rcxIuhTgDTg",
                             "type": "string"
                         }
                     ]
@@ -1549,7 +1549,7 @@
                     "bearer": [
                         {
                             "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
                             "type": "string"
                         }
                     ]
@@ -1566,13 +1566,13 @@
                     }
                 },
                 "url": {
-                    "raw": "{{host}}/contests/slug",
+                    "raw": "{{host}}/contests/57",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "contests",
-                        "slug"
+                        "57"
                     ]
                 }
             },
@@ -1734,17 +1734,6 @@
             "response": []
         },
         {
-            "name": "contest: details",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": ""
-                }
-            },
-            "response": []
-        },
-        {
             "name": "Round: create",
             "request": {
                 "auth": {
@@ -1761,7 +1750,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"startsAt\":\"2020-06-28 00:00:00.000\",\n    \"endsAt\":\"2020-06-29 00:00:00.000\",\n    \"challenges\": [28]\n}",
+                    "raw": "{\n    \"rounds\": [\n        {\n            \"startsAt\": \"2020-06-28 00:00:00.000\",\n            \"endsAt\": \"2020-06-29 00:00:00.000\",\n            \"challenges\": [\n                28\n            ]\n        },\n        {\n            \"startsAt\": \"2020-06-28 00:00:00.000\",\n            \"endsAt\": \"2020-06-29 00:00:00.000\",\n            \"challenges\": [\n                28, 24\n            ]\n        }\n    ]\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -1769,13 +1758,13 @@
                     }
                 },
                 "url": {
-                    "raw": "{{host}}/contests/57/rounds",
+                    "raw": "{{host}}/contests/9/rounds",
                     "host": [
                         "{{host}}"
                     ],
                     "path": [
                         "contests",
-                        "57",
+                        "9",
                         "rounds"
                     ]
                 }
@@ -1890,6 +1879,35 @@
                         "admins",
                         "109",
                         "roles"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Contest: Enroll",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/contests/57/registration",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "contests",
+                        "57",
+                        "registration"
                     ]
                 }
             },

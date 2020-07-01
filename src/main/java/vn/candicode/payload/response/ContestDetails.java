@@ -32,4 +32,6 @@ public class ContestDetails implements Serializable {
     private Boolean available;
 
     private List<ContestRound> rounds = new ArrayList<>();
+
+    private Boolean enrolled;
 }
