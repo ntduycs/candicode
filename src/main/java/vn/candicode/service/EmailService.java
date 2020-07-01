@@ -11,7 +11,7 @@ public interface EmailService {
      */
     void sendResetPasswordConfirmationEmail(Long userId);
 
-    void sendNewGeneratedPasswordEmail(Long userId);
+    void sendNewGeneratedPasswordEmail(Long userId, String newPassword);
 
     /**
      * Notify user that his email has just used to register with Candicode system. It also serves as welcome email.

@@ -1,5 +1,6 @@
 package vn.candicode;
 
+import com.google.common.io.BaseEncoding;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 @SpringBootTest
@@ -111,5 +113,16 @@ class CandicodeApplicationTests {
         }
 
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).thenRun(() -> System.out.println(strings));
+    }
+
+    @Test
+    void testGenerateString() {
+        Random random = new Random();
+        byte[] buffer = new byte[8];
+
+        for (int i = 0; i < 5; i++) {
+            random.nextBytes(buffer);
+            System.out.println(BaseEncoding.base64Url().encode(buffer));
+        }
     }
 }

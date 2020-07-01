@@ -1,5 +1,6 @@
 package vn.candicode.service;
 
+import com.google.common.io.BaseEncoding;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,13 @@ import vn.candicode.repository.PasswordUpdateRepository;
 import vn.candicode.repository.UserRepository;
 import vn.candicode.security.UserPrincipal;
 
-import java.util.UUID;
+import java.util.Random;
 
 @Service
 @Log4j2
 public class UserServiceImpl implements UserService {
     private static final long PASSWORD_UPDATE_EXPIRATION = 24 * 60; // days
+    private static final Random RANDOM = new Random();
 
     private final PasswordUpdateRepository passwordUpdateRepository;
     private final UserRepository userRepository;
@@ -61,6 +63,8 @@ public class UserServiceImpl implements UserService {
         entity.setExpiredIn(PASSWORD_UPDATE_EXPIRATION);
 
         passwordUpdateRepository.save(entity);
+
+        emailService.sendChangePasswordEmail(currentUser.getUserId());
     }
 
     /**
@@ -99,7 +103,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void doResetPassword(Long userId) {
-        String randomPassword = UUID.randomUUID().toString();
+        byte[] buffer = new byte[8];
+
+        RANDOM.nextBytes(buffer);
+
+        String randomPassword = BaseEncoding.base64Url().omitPadding().encode(buffer);
 
         UserEntity user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new ResourceNotFoundException(UserEntity.class, "id", userId));
@@ -107,7 +115,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(randomPassword);
         user.setPassword(encodedPassword);
 
-        emailService.sendNewGeneratedPasswordEmail(userId);
+        emailService.sendNewGeneratedPasswordEmail(userId, randomPassword);
     }
 
     /**

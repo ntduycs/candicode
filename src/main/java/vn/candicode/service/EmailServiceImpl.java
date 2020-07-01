@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendNewGeneratedPasswordEmail(Long userId) {
+    public void sendNewGeneratedPasswordEmail(Long userId, String newPassword) {
 
     }
 
