@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.entity.ContestRoundEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
@@ -95,6 +96,13 @@ public class ContestServiceImpl implements ContestService {
     @Override
     @Transactional
     public void updateContest(Long contestId, UpdateContestRequest payload, UserPrincipal author) {
+        ContestEntity contest = contestRepository.findByContestId(contestId)
+            .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
+
+        if (!contest.getAuthor().getUserId().equals(author.getUserId())) {
+            throw new BadRequestException("You are not the owner of this contest");
+        }
+
         String bannerPath;
         try {
             if (payload.getBanner() == null || payload.getBanner().isEmpty()) {
@@ -106,9 +114,6 @@ public class ContestServiceImpl implements ContestService {
             log.error("I/O error - cannot store contest banner. Message - {}", e.getLocalizedMessage());
             throw new StorageException(e.getLocalizedMessage());
         }
-
-        ContestEntity contest = contestRepository.findByContestId(contestId)
-            .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
         if (!contest.getTitle().equals(payload.getTitle())) {
             if (contestRepository.existsByTitle(payload.getTitle())) {
@@ -142,6 +147,10 @@ public class ContestServiceImpl implements ContestService {
     public void removeContest(Long contestId, UserPrincipal me) {
         ContestEntity contest = contestRepository.findByContestId(contestId)
             .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
+
+        if (!contest.getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this contest");
+        }
 
         contest.setDeleted(true);
     }

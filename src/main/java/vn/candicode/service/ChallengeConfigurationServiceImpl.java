@@ -11,6 +11,7 @@ import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.LanguageEntity;
 import vn.candicode.entity.TestcaseEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewChallengeConfigurationRequest;
 import vn.candicode.payload.response.SubmissionDetails;
@@ -72,6 +73,10 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
 
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        if (!challenge.getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
 
         List<TestcaseEntity> testcases = challenge.getTestcases();
         int totalTestcases = testcases.size();
@@ -160,6 +165,10 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         ChallengeConfigurationEntity configuration = challengeConfigurationRepository
             .findByChallengeIdAndLanguageName(challengeId, language.toLowerCase())
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", language));
+
+        if (!configuration.getAuthorId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
 
         configuration.setDeleted(true);
 

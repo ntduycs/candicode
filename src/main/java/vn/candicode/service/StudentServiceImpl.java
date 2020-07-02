@@ -77,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public void updateRole(Long studentId, UpdateStudentRoleRequest payload, UserPrincipal me) {
-        StudentEntity admin = studentRepository.findByUserIdFetchRoles(studentId)
+        StudentEntity student = studentRepository.findByUserIdFetchRoles(studentId)
             .orElseThrow(() -> new ResourceNotFoundException(StudentEntity.class, "id", studentId));
 
         if (payload.getRoles() == null || payload.getRoles().isEmpty()) {
@@ -88,16 +88,16 @@ public class StudentServiceImpl implements StudentService {
             .filter(id -> getByRoleId(id).isPresent())
             .collect(Collectors.toSet());
 
-        Set<Long> existingRoleIds = admin.getRoles().stream()
+        Set<Long> existingRoleIds = student.getRoles().stream()
             .map(item -> item.getRole().getRoleId())
             .collect(Collectors.toSet());
 
-        admin.getRoles().removeIf(item -> !newRoleIds.contains(item.getRole().getRoleId()));
+        student.getRoles().removeIf(item -> !newRoleIds.contains(item.getRole().getRoleId()));
         newRoleIds.removeAll(existingRoleIds);
 
         // Do add new roles for admin
         if (!newRoleIds.isEmpty()) {
-            newRoleIds.forEach(id -> getByRoleId(id).ifPresent(role -> admin.addRole(commonService.getStudentRoles().get(role))));
+            newRoleIds.forEach(id -> getByRoleId(id).ifPresent(role -> student.addRole(commonService.getStudentRoles().get(role))));
         }
     }
 }

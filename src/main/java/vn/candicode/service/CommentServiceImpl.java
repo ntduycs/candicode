@@ -140,6 +140,11 @@ public class CommentServiceImpl implements CommentService {
     private CommentEntity updateChallengeComment(Long challengeId, Long commentId, String content, UserPrincipal me) {
         ChallengeCommentEntity comment = challengeCommentRepository.findByCommentIdAndChallengeId(commentId, challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "challengeId", challengeId));
+
+        if (!comment.getAuthor().equals(me.getFullName())) {
+            throw new BadRequestException("You are not the owner of this comment");
+        }
+
         comment.setContent(content);
 
         return challengeCommentRepository.saveAndFlush(comment); // do flush to reflect the value of updatedAt intermediately
@@ -148,6 +153,11 @@ public class CommentServiceImpl implements CommentService {
     private CommentEntity updateTutorialComment(Long tutorialId, Long commentId, String content, UserPrincipal me) {
         TutorialCommentEntity comment = tutorialCommentRepository.findByCommentIdAndTutorialId(commentId, tutorialId)
             .orElseThrow(() -> new ResourceNotFoundException(CommentEntity.class, "commentId", commentId, "challengeId", tutorialId));
+
+        if (!comment.getAuthor().equals(me.getFullName())) {
+            throw new BadRequestException("You are not the owner of this comment");
+        }
+
         comment.setContent(content);
 
         return tutorialCommentRepository.saveAndFlush(comment); // do flush to reflect the value of updatedAt intermediately
@@ -165,6 +175,10 @@ public class CommentServiceImpl implements CommentService {
             CommentEntity comment = entityManager.createQuery("select c from CommentEntity c where c.commentId = :id", CommentEntity.class)
                 .setParameter("id", commentId)
                 .getSingleResult();
+
+            if (!comment.getAuthor().equals(currentUser.getFullName())) {
+                throw new BadRequestException("You are not the owner of this comment");
+            }
 
             entityManager.remove(comment);
         } catch (NoResultException e) {

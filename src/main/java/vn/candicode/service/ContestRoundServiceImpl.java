@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.entity.ContestRoundEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewRoundListRequest;
@@ -88,6 +89,12 @@ public class ContestRoundServiceImpl implements ContestRoundService {
 
         List<ContestRoundEntity> rounds = contestRoundRepository.findAllByContestIdAndRoundIdsFetchChallenges(contestId, roundMap.keySet());
 
+        ContestRoundEntity firstRound = rounds.get(0);
+
+        if (!firstRound.getContest().getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this contest");
+        }
+
         for (ContestRoundEntity round : rounds) {
             RoundRequest roundRequest = roundMap.get(round.getContestRoundId());
 
@@ -115,26 +122,6 @@ public class ContestRoundServiceImpl implements ContestRoundService {
             List<ChallengeEntity> newChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(newChallengeIds);
 
             newChallenges.forEach(round::addChallenge);
-
-//            List<Long> removedChallengeIds = existingChallengeIds.stream()
-//                .filter(item -> !newChallengeIds.contains(item))
-//                .collect(Collectors.toList());
-//
-//            round.getChallenges().forEach(item -> {
-//                if (removedChallengeIds.contains(item.getChallenge().getChallengeId())) {
-//                    round.removeChallenge(item.getChallenge());
-//                }
-//            });
-//
-//            List<ChallengeEntity> existingChallenges = round.getChallenges().stream()
-//                .map(ContestChallengeEntity::getChallenge)
-//                .collect(Collectors.toList());
-//
-//            newChallenges.forEach(item -> {
-//                if (!existingChallenges.contains(item)) {
-//                    round.addChallenge(item);
-//                }
-//            });
         }
 
         contestRoundRepository.saveAll(rounds);
@@ -145,8 +132,16 @@ public class ContestRoundServiceImpl implements ContestRoundService {
     public void removeRound(Long contestId, List<Long> roundIds, UserPrincipal me) {
         List<ContestRoundEntity> rounds = contestRoundRepository.findAllByContestIdAndRoundIds(contestId, roundIds);
 
-        for (ContestRoundEntity round : rounds) {
-            round.setDeleted(true);
+        if (rounds.size() > 0) {
+            ContestRoundEntity firstRound = rounds.get(0);
+
+            if (!firstRound.getContest().getAuthor().getUserId().equals(me.getUserId())) {
+                throw new BadRequestException("You are not the owner of this contest");
+            }
+
+            for (ContestRoundEntity round : rounds) {
+                round.setDeleted(true);
+            }
         }
     }
 }

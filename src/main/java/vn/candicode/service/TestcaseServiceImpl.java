@@ -10,6 +10,7 @@ import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.TestcaseEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewTestcaseListRequest;
 import vn.candicode.payload.request.TestcaseRequest;
@@ -67,6 +68,10 @@ public class TestcaseServiceImpl implements TestcaseService {
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
+        if (!challenge.getAuthor().getUserId().equals(currentUser.getUserId())) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
+
         Pattern inputFormat = Pattern.compile(challenge.getInputFormat());
         Pattern outputFormat = Pattern.compile(challenge.getOutputFormat());
 
@@ -97,6 +102,10 @@ public class TestcaseServiceImpl implements TestcaseService {
 
         ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        if (!challenge.getAuthor().getUserId().equals(currentUser.getUserId())) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
 
         Pattern testcaseInputFormatValidator = Pattern.compile(challenge.getInputFormat());
 
@@ -207,6 +216,10 @@ public class TestcaseServiceImpl implements TestcaseService {
         ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
+        if (!challenge.getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
+
         Pattern inputFormat = Pattern.compile(challenge.getInputFormat());
         Pattern outputFormat = Pattern.compile(challenge.getOutputFormat());
 
@@ -257,7 +270,13 @@ public class TestcaseServiceImpl implements TestcaseService {
 
         Integer[] testcaseState = new Integer[]{removedTestcases.size(), testcaseEntities.size() - removedTestcases.size()};
 
-        testcaseRepository.deleteAll(removedTestcases);
+        if (removedTestcases.size() > 0) {
+            if (!removedTestcases.get(0).getChallenge().getAuthor().getUserId().equals(me.getUserId())) {
+                throw new BadRequestException("You are not the owner of this challenge");
+            }
+
+            testcaseRepository.deleteAll(removedTestcases);
+        }
 
         return testcaseState;
     }

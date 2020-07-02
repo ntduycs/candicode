@@ -1,12 +1,14 @@
 package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.common.FileAuthor;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.AdminEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewAdminRequest;
@@ -47,6 +49,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public Long createAccount(NewAdminRequest payload, UserPrincipal currentUser) throws IOException {
+        if (!currentUser.getAuthorities().contains(new SimpleGrantedAuthority("super admin"))) {
+            throw new BadRequestException("Only SUPER ADMIN can do this task");
+        }
+
         final String encodedPassword = passwordEncoder.encode(payload.getPassword());
 
         if (userRepository.existsByEmail(payload.getEmail())) {

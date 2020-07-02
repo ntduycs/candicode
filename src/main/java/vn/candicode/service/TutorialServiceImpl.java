@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.TutorialEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewTutorialRequest;
@@ -149,6 +150,10 @@ public class TutorialServiceImpl implements TutorialService {
         TutorialEntity tutorial = tutorialRepository.findByTutorialIdFetchCategories(tutorialId)
             .orElseThrow(() -> new ResourceNotFoundException(TutorialEntity.class, "id", tutorialId));
 
+        if (!tutorial.getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this tutorial");
+        }
+
         if (payload.getTitle() != null && !tutorial.getTitle().equals(payload.getTitle())) {
             if (tutorialRepository.existsByTitle(payload.getTitle())) {
                 throw new PersistenceException("Tutorial has been already exist with tile" + payload.getTitle());
@@ -212,6 +217,10 @@ public class TutorialServiceImpl implements TutorialService {
     public void removeTutorial(Long tutorialId, UserPrincipal me) {
         TutorialEntity tutorial = tutorialRepository.findByTutorialIdFetchCategories(tutorialId)
             .orElseThrow(() -> new ResourceNotFoundException(TutorialEntity.class, "id", tutorialId));
+
+        if (!tutorial.getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this tutorial");
+        }
 
         tutorialRepository.delete(tutorial);
     }

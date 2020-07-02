@@ -23,11 +23,8 @@ import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.sub.Challenge;
 import vn.candicode.payload.response.sub.Testcase;
-import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.ChallengeRepository;
-import vn.candicode.repository.SummaryRepository;
-import vn.candicode.security.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.ChallengeBeanUtils;
 import vn.candicode.util.FileUtils;
@@ -51,7 +48,6 @@ import static vn.candicode.common.FileStorageType.CHALLENGE;
 @Log4j2
 public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
-    private final SummaryRepository summaryRepository;
     private final ChallengeConfigurationRepository challengeConfigurationRepository;
 
     private final StorageService storageService;
@@ -60,10 +56,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SummaryRepository summaryRepository, ChallengeConfigurationRepository challengeConfigurationRepository, LanguageRepository languageRepository, CategoryRepository categoryRepository, ChallengeConfigurationRepository challengeConfigurationRepository1, StorageService storageService, CommonService commonService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigurationRepository challengeConfigurationRepository, StorageService storageService, CommonService commonService) {
         this.challengeRepository = challengeRepository;
-        this.summaryRepository = summaryRepository;
-        this.challengeConfigurationRepository = challengeConfigurationRepository1;
+        this.challengeConfigurationRepository = challengeConfigurationRepository;
 
         this.storageService = storageService;
         this.commonService = commonService;
@@ -265,6 +260,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchCategories(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
+        if (!challenge.getAuthor().getUserId().equals(me.getUserId())) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
+
         if (payload.getTitle() != null && !challenge.getTitle().equals(payload.getTitle())) {
             if (challengeRepository.existsByTitle(payload.getTitle())) {
                 throw new PersistenceException("Challenge has been already exist with tile" + payload.getTitle());
@@ -340,6 +339,10 @@ public class ChallengeServiceImpl implements ChallengeService {
     public void deleteChallenge(Long challengeId, UserPrincipal me) {
         ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        if (!challenge.getAuthor().getUserId().equals(me.getUserId()) || !me.getAuthorities().contains(new SimpleGrantedAuthority("super admin"))) {
+            throw new BadRequestException("You are not the owner of this challenge");
+        }
 
         challenge.setDeleted(true);
     }
