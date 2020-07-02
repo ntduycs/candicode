@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ContestEntity;
-import vn.candicode.entity.ContestRoundEntity;
 import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
@@ -206,9 +205,7 @@ public class ContestServiceImpl implements ContestService {
         ContestEntity contest = contestRepository.findByContestId(contestId)
             .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
-        List<ContestRoundEntity> rounds = contestRoundRepository.findByContestIdFetchChallenges(contestId);
-
-        ContestDetails contestDetails = ContestBeanUtils.details(contest, rounds);
+        ContestDetails contestDetails = ContestBeanUtils.details(contest);
 
         contestDetails.setEnrolled(contestRegistrationRepository.findByContestIdAndStudentId(contestId, me.getUserId()) != null);
 
