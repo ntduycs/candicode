@@ -28,6 +28,7 @@ public class ChallengeBeanUtils {
         summary.setTags(entity.getTags());
         summary.setCategories(entity.getCategories().stream().map(c -> c.getCategory().getName()).collect(Collectors.toList()));
         summary.setNumComments((long) entity.getComments().size());
+        summary.setLanguages(entity.getConfigurations().stream().map(c -> c.getLanguage().getName()).collect(Collectors.toList()));
 
         return summary;
     }
@@ -52,6 +53,7 @@ public class ChallengeBeanUtils {
         details.setDescription(entity.getDescription());
         details.setTcInputFormat(new TestcaseFormat(RegexUtils.resolveRegex(entity.getInputFormat())));
         details.setTcOutputFormat(new TestcaseFormat(RegexUtils.resolveRegex(entity.getOutputFormat())));
+        details.setLanguages(entity.getConfigurations().stream().map(c -> c.getLanguage().getName()).collect(Collectors.toList()));
 
         return details;
     }

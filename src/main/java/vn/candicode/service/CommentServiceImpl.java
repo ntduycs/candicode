@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.common.CommentSubject;
 import vn.candicode.entity.*;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewCommentRequest;
 import vn.candicode.payload.request.UpdateCommentRequest;

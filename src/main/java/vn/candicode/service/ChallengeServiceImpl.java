@@ -3,6 +3,7 @@ package vn.candicode.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +11,7 @@ import vn.candicode.common.EntityConstants;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
@@ -181,7 +183,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional(readOnly = true)
     public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
-        Page<ChallengeEntity> items = challengeRepository.findAll(pageable);
+        Page<ChallengeEntity> items = challengeRepository.findAllFetchLanguages(pageable);
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
 
@@ -241,7 +243,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeDetails details = ChallengeBeanUtils.details(challenge);
 
         challenge.getTestcases().stream()
-            .map(item -> new Testcase(item.getTestcaseId(), item.getInput(), item.getExpectedOutput(), item.getHidden(), me.getUserId().equals(challenge.getAuthor().getUserId())))
+            .map(item -> new Testcase(item.getTestcaseId(), item.getInput(), item.getExpectedOutput(), item.getHidden(), me != null && challenge.getAuthor().getUserId().equals(me.getUserId())))
             .forEach(item -> details.getTestcases().add(item));
 
         details.setContents(challengeConfigurations.stream()
@@ -293,10 +295,12 @@ public class ChallengeServiceImpl implements ChallengeService {
                 .map(c -> c.getCategory().getName()).collect(Collectors.toSet())
                 : new HashSet<>();
 
-            Set<String> newCategories = payload.getCategories().stream().filter(c -> !existingCategories.contains(c)).collect(Collectors.toSet());
+            Set<String> newCategories = payload.getCategories().stream()
+                .filter(c -> !existingCategories.contains(c))
+                .collect(Collectors.toSet());
 
             existingCategories.stream()
-                .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that be included in this update
+                .filter(c -> !payload.getCategories().contains(c)) // Filter existing categories that not be included in this update
                 .forEach(c -> {
                     if (commonService.getCategories().containsKey(c)) {
                         challenge.removeCategory(commonService.getCategories().get(c));

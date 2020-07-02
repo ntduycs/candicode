@@ -65,6 +65,9 @@ public class ChallengeEntity extends Auditable {
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChallengeCategoryEntity> categories = new HashSet<>();
 
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChallengeConfigurationEntity> configurations = new HashSet<>();
+
     @Convert(converter = TagConverter.class)
     private Set<String> tags = new HashSet<>();
 

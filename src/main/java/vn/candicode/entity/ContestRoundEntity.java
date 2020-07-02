@@ -1,5 +1,6 @@
 package vn.candicode.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "contest_rounds")
 @Where(clause = "deleted = false")
+@EqualsAndHashCode(callSuper = false, of = "contestRoundId")
 public class ContestRoundEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -52,6 +54,18 @@ public class ContestRoundEntity extends Auditable {
         for (Iterator<ContestChallengeEntity> iterator = challenges.iterator(); iterator.hasNext(); ) {
             ContestChallengeEntity contestChallenge = iterator.next();
             if (contestChallenge.getContestRound().equals(this) && contestChallenge.getChallenge().equals(challenge)) {
+                iterator.remove();
+                contestChallenge.setChallenge(null);
+                contestChallenge.setContestRound(null);
+                break;
+            }
+        }
+    }
+
+    public void removeChallenge(Long challengeId) {
+        for (Iterator<ContestChallengeEntity> iterator = challenges.iterator(); iterator.hasNext(); ) {
+            ContestChallengeEntity contestChallenge = iterator.next();
+            if (contestChallenge.getContestRound().getContestRoundId().equals(this.getContestRoundId()) && contestChallenge.getChallenge().getChallengeId().equals(challengeId)) {
                 iterator.remove();
                 contestChallenge.setChallenge(null);
                 contestChallenge.setContestRound(null);

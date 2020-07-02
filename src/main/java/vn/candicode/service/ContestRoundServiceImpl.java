@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.entity.ChallengeEntity;
-import vn.candicode.entity.ContestChallengeEntity;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.entity.ContestRoundEntity;
 import vn.candicode.exception.PersistenceException;
@@ -101,35 +100,44 @@ public class ContestRoundServiceImpl implements ContestRoundService {
             round.setStartsAt(startsAt);
             round.setDuration(ChronoUnit.MINUTES.between(startsAt, endsAt));
 
-            List<Long> existingChallengeIds = round.getChallenges().stream()
+            Set<Long> existingChallengeIds = round.getChallenges().stream()
                 .map(item -> item.getChallenge().getChallengeId())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-            Set<Long> newChallengeIds = roundRequest.getChallenges();
+            Set<Long> newChallengeIds = roundRequest.getChallenges().stream()
+                .filter(c -> !existingChallengeIds.contains(c))
+                .collect(Collectors.toSet());
+
+            existingChallengeIds.stream()
+                .filter(c -> !roundRequest.getChallenges().contains(c))
+                .forEach(round::removeChallenge);
+
             List<ChallengeEntity> newChallenges = challengeRepository.findAllByContestChallengeByChallengeIdIn(newChallengeIds);
 
-            List<Long> removedChallengeIds = existingChallengeIds.stream()
-                .filter(item -> !newChallengeIds.contains(item))
-                .collect(Collectors.toList());
+            newChallenges.forEach(round::addChallenge);
 
-            round.getChallenges().forEach(item -> {
-                if (removedChallengeIds.contains(item.getChallenge().getChallengeId())) {
-                    round.removeChallenge(item.getChallenge());
-                }
-            });
-
-            List<ChallengeEntity> existingChallenges = round.getChallenges().stream()
-                .map(ContestChallengeEntity::getChallenge)
-                .collect(Collectors.toList());
-
-            newChallenges.forEach(item -> {
-                if (!existingChallenges.contains(item)) {
-                    round.addChallenge(item);
-                }
-            });
+//            List<Long> removedChallengeIds = existingChallengeIds.stream()
+//                .filter(item -> !newChallengeIds.contains(item))
+//                .collect(Collectors.toList());
+//
+//            round.getChallenges().forEach(item -> {
+//                if (removedChallengeIds.contains(item.getChallenge().getChallengeId())) {
+//                    round.removeChallenge(item.getChallenge());
+//                }
+//            });
+//
+//            List<ChallengeEntity> existingChallenges = round.getChallenges().stream()
+//                .map(ContestChallengeEntity::getChallenge)
+//                .collect(Collectors.toList());
+//
+//            newChallenges.forEach(item -> {
+//                if (!existingChallenges.contains(item)) {
+//                    round.addChallenge(item);
+//                }
+//            });
         }
 
-//        contestRoundRepository.saveAll(rounds);
+        contestRoundRepository.saveAll(rounds);
     }
 
     @Override
