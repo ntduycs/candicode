@@ -1,1918 +1,2472 @@
 {
-    "info": {
-        "_postman_id": "e45add80-ef07-47e8-a7a3-330b213a1d57",
-        "name": "New",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-    },
-    "item": [
-        {
-            "name": "Login",
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"email\":\"student1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/auth/login",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "auth",
-                        "login"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Current User",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2ODA4NzksImV4cCI6MTU5MzU0NDg3OX0.ExS20gB2ZeXELogxJVmz3_T8jJNH5PsvawrR3_6WcZvZgtxnC4rCuGbZEzx03exXDOItr0OlTKVs0OkGNzAKvg",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/auth/current",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "auth",
-                        "current"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Student: Create",
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"email\":\"student1@gmail.com\",\n\t\"password\":\"candicode\",\n\t\"confirmPassword\":\"candicode\",\n\t\"firstName\":\"Student\",\n\t\"lastName\":\"1\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/students",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "students"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Upload",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "source",
-                            "type": "file",
-                            "src": "/Users/ntduycs/Desktop/Candicode_v4.zip"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/source",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "source"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "title",
-                            "value": "Hihi challenge",
-                            "type": "text"
-                        },
-                        {
-                            "key": "level",
-                            "value": "Easy",
-                            "type": "text"
-                        },
-                        {
-                            "key": "description",
-                            "value": "Sample description 1",
-                            "type": "text"
-                        },
-                        {
-                            "key": "language",
-                            "value": "cpp",
-                            "type": "text"
-                        },
-                        {
-                            "key": "banner",
-                            "type": "file",
-                            "src": "/Users/ntduycs/Pictures/me.JPG"
-                        },
-                        {
-                            "key": "runPath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/run.sh",
-                            "type": "text"
-                        },
-                        {
-                            "key": "compilePath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/compile.sh",
-                            "type": "text"
-                        },
-                        {
-                            "key": "implementedPath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/hihi.cpp",
-                            "type": "text"
-                        },
-                        {
-                            "key": "nonImplementedPath",
-                            "value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/hihchallenge.cpp",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tcInputFormat",
-                            "value": "string",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tcOutputFormat",
-                            "value": "string",
-                            "type": "text"
-                        },
-                        {
-                            "key": "challengeDir",
-                            "value": "200627023025-1-1",
-                            "type": "text"
-                        },
-                        {
-                            "key": "categories",
-                            "value": "algorithm",
-                            "type": "text"
-                        },
-                        {
-                            "key": "categories",
-                            "value": "database",
-                            "type": "text"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{host}}/challenges",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Details",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges/46",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: All",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNDIxNDk0LCJleHAiOjE1OTQyODU0OTR9.rBbYNOl_n6MVLDBDoEsRNLOjJxaN3bDriKj1jF8VbfW-9-06HLb9gY51thnyd_rleSIgCdgiSf2rcxIuhTgDTg",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: All of Me",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges/me",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "me"
-                    ],
-                    "query": [
-                        {
-                            "key": "contestChallenge",
-                            "value": null,
-                            "disabled": true
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Edit",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "title",
-                            "value": "Edited Challenge abc",
-                            "type": "text"
-                        },
-                        {
-                            "key": "description",
-                            "value": "Edited Description",
-                            "type": "text"
-                        },
-                        {
-                            "key": "level",
-                            "value": "Hard",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "a",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "b",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "c",
-                            "type": "text"
-                        },
-                        {
-                            "key": "categories",
-                            "value": "database",
-                            "type": "text"
-                        },
-                        {
-                            "key": "categories",
-                            "value": "data structure 12 ",
-                            "type": "text"
-                        },
-                        {
-                            "key": "banner",
-                            "type": "file",
-                            "src": "/Users/ntduycs/Pictures/intellij-bg.jpg"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/28",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "28"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Delete",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges/24",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "24"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Add Language",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"language\":\"Java\",\n\t\"challengeDir\": \"200627033107-1-1\",\n\t\"runPath\": \"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/run.sh\",\n\t\"compilePath\": \"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/compile.sh\",\n\t\"implementedPath\":\"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/Hihi.java\",\n\t\"nonImplementedPath\":\"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/HihiChallenge.java\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/languages",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "languages"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Remove Language",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "DELETE",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"language\":\"Java\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/languages",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "languages"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Add Comment",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"content\": \"Second Child of first comment\",\n    \"parentId\": 102\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/comments",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "comments"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Edit Comment",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"content\": \"Second Child of first comment asd\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/comments/106",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "comments",
-                        "106"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: Delete Comment",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges/46/comments/106",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "comments",
-                        "106"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Challenge: All comments",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges/46/comments?size=10",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "comments"
-                    ],
-                    "query": [
-                        {
-                            "key": "size",
-                            "value": "10",
-                            "description": "default is 10"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Submission: Create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"language\":\"cpp\",\n\t\"code\":\"void doSomething() {\\n    // Fill your code here ...\\n}\",\n\t\"doneWithin\": \"\" // in minutes\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/submissions",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "submissions"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Submission: My submissions",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/submissions/me",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "submissions",
-                        "me"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Submission: by challenge_id",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/challenges/46/submissions",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "submissions"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Submission: by contest_round_id",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/contests/57/rounds/58/submissions",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "57",
-                        "rounds",
-                        "58",
-                        "submissions"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Testcase: Add",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"hello world\",\n\t\t\t\"output\":\"hello world\",\n\t\t\t\"hidden\":true\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"1 + 2 = 3\",\n\t\t\t\"output\":\"1 + 2 = 3\"\n\t\t}\n\t]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/testcases",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "testcases"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Testcase: Delete",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "DELETE",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"testcaseIds\": [20,21]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/16/testcases",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "16",
-                        "testcases"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Testcase: Update",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 18,\n\t\t\t\"input\": \"[12,2,3]\",\n\t\t\t\"output\": \"[2,3,12]\",\n\t\t\t\"hidden\": false\n\t\t},\n\t\t{\n\t\t\t\"testcaseId\": 19,\n\t\t\t\"input\": \"[2,3,10,11]\",\n\t\t\t\"output\": \"[2,3,10,11]\",\n\t\t\t\"hidden\": true\n\t\t}\t\n\t]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/16/testcases",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "16",
-                        "testcases"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Testcase: Verify",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n\t\"input\":\"1 + 2 = 3\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/46/testcases/verification",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "46",
-                        "testcases",
-                        "verification"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "title",
-                            "value": "Tutorial 4",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "tag1",
-                            "type": "text"
-                        },
-                        {
-                            "key": "banner",
-                            "type": "file",
-                            "src": "/Users/ntduycs/Pictures/me.JPG"
-                        },
-                        {
-                            "key": "content",
-                            "value": "content",
-                            "type": "text"
-                        },
-                        {
-                            "key": "description",
-                            "value": "description",
-                            "type": "text"
-                        },
-                        {
-                            "key": "categories",
-                            "value": "database",
-                            "type": "text",
-                            "disabled": true
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{host}}/tutorials",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Update",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "title",
-                            "value": "Title",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "tag1",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "tag2",
-                            "type": "text"
-                        },
-                        {
-                            "key": "banner",
-                            "type": "file",
-                            "src": []
-                        },
-                        {
-                            "key": "content",
-                            "value": "content",
-                            "type": "text",
-                            "disabled": true
-                        },
-                        {
-                            "key": "description",
-                            "value": "description",
-                            "type": "text",
-                            "disabled": true
-                        },
-                        {
-                            "key": "categories",
-                            "value": "data structure",
-                            "type": "text"
-                        },
-                        {
-                            "key": "categories",
-                            "value": "algorithm",
-                            "type": "text"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{host}}/tutorials/90",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "90"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Delete",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/tutorials/90",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "90"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Details",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/tutorials/100",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "100"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: All",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/tutorials?page=1&size=10&sort=createdAt&direction=desc",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials"
-                    ],
-                    "query": [
-                        {
-                            "key": "page",
-                            "value": "1",
-                            "description": "default is 1"
-                        },
-                        {
-                            "key": "size",
-                            "value": "10",
-                            "description": "default is 10"
-                        },
-                        {
-                            "key": "sort",
-                            "value": "createdAt",
-                            "description": "default is createdAt"
-                        },
-                        {
-                            "key": "direction",
-                            "value": "desc",
-                            "description": "default is desc, [desc, asc]"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: All of Me",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/tutorials/me?page=1&size=10&sort=createdAt&direction=desc",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "me"
-                    ],
-                    "query": [
-                        {
-                            "key": "page",
-                            "value": "1",
-                            "description": "default is 1"
-                        },
-                        {
-                            "key": "size",
-                            "value": "10",
-                            "description": "default is 10"
-                        },
-                        {
-                            "key": "sort",
-                            "value": "createdAt",
-                            "description": "default is createdAt"
-                        },
-                        {
-                            "key": "direction",
-                            "value": "desc",
-                            "description": "default is desc, [desc, asc]"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Add Comment",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"content\": \"Third comment\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/tutorials/100/comments",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "100",
-                        "comments"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Edit Comment",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"content\": \"Second Child of first comment asd\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/tutorials/46/comments/106",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "46",
-                        "comments",
-                        "106"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: Delete Comment",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/tutorials/46/comments/106",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "46",
-                        "comments",
-                        "106"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Tutorial: All comments",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/tutorials/98/comments",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "tutorials",
-                        "98",
-                        "comments"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: Create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: Update",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "title",
-                            "value": "New Contest 2 updated updated",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "tag1",
-                            "type": "text"
-                        },
-                        {
-                            "key": "tags",
-                            "value": "tag2",
-                            "type": "text"
-                        },
-                        {
-                            "key": "banner",
-                            "type": "file",
-                            "src": "/Users/ntduycs/Pictures/intellij-bg.jpg",
-                            "disabled": true
-                        },
-                        {
-                            "key": "description",
-                            "value": "description",
-                            "type": "text"
-                        },
-                        {
-                            "key": "registrationDeadline",
-                            "value": "2020-06-21 14:30:00.000",
-                            "type": "text"
-                        },
-                        {
-                            "key": "maxRegister",
-                            "value": "10",
-                            "type": "text"
-                        },
-                        {
-                            "key": "content",
-                            "value": "content",
-                            "type": "text"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{host}}/contests/13",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "13"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: All",
-            "protocolProfileBehavior": {
-                "disableBodyPruning": true
-            },
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"items\": [\n        {\n            \"contestId\": 1,\n            \"title\": \"title\",\n            \"author\": \"fullname\",\n            \"createdAt\": \"datetime\",\n            \"numComments\": 10,\n            \"maxRegister\": 10,\n            \"currRegister\": 8,\n            \"tags\": [\"tag1\", \"tag2\"],\n            \"description\": \"\",\n            \"registrationDeadline\": \"datetime\",\n            \"banner\":\"\"\n        }\n    ]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: All of Me",
-            "protocolProfileBehavior": {
-                "disableBodyPruning": true
-            },
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"items\": [\n        {\n            \"contestId\": 1,\n            \"title\": \"title\",\n            \"author\": \"fullname\",\n            \"createdAt\": \"datetime\",\n            \"numComments\": 10,\n            \"maxRegister\": 10,\n            \"currRegister\": 8,\n            \"tags\": [\"tag1\", \"tag2\"],\n            \"description\": \"\",\n            \"registrationDeadline\": \"datetime\",\n            \"banner\":\"\"\n        }\n    ]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests/me",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "me"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: Details",
-            "protocolProfileBehavior": {
-                "disableBodyPruning": true
-            },
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"contestId\": 1,\n    \"title\": \"title\",\n    \"author\": \"fullname\",\n    \"createdAt\": \"datetime\",\n    \"numComments\": 10,\n    \"maxRegister\": 10,\n    \"currRegister\": 8,\n    \"tags\": [\"tag1\", \"tag2\"],\n    \"description\": \"\",\n    \"registrationDeadline\": \"datetime\",\n    \"banner\":\"\",\n    \"content\": \"\",\n    \"rounds\": [\n        {\n            \"startsAt\": \"yyyy-MM-dd HH:mm:ss.SSS\",\n            \"endsAt\": \"yyyy-MM-dd HH:mm:ss.SSS\",\n            \"contraints\": {\n                \"attendeePercent\": 50, // default 100\n                \"scorePercent\": 88, // default 0\n                \"maxAttempts\": 5 // consider to dev\n            },\n            \"challenges\": [\n                \"slug-challenge-title-1\"\n            ],\n            \"status\": false // false if not start or ended\n        }\n    ]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests/57",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "57"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: Leader Board",
-            "protocolProfileBehavior": {
-                "disableBodyPruning": true
-            },
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"leaders\": [\n        {\n            \"fullName\": \"\",\n            \"details\": [\n                {\n                    \"score\": 12,\n                    \"doneWithin\": 122 // in seconds\n                }\n            ],\n            \"avatar\": \"\",\n            \"slug\": \"\" // in form if \"fn-ln-hash\"\n        }\n    ] // default display 10\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests/slug",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "slug"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Category: Create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"categories\": [\n        {\n            \"text\": \"Category 1\",\n            \"children\": [\n                {\n                    \"text\": \"Sub Category 1\",\n                    \"children\": [\n                        {\n                            \"text\": \"Sub Sub Category 1\"\n                        }\n                    ]\n                },\n                {\n                    \"text\": \"Sub Category 2\",\n                    \"children\": []\n                }\n            ]\n        },\n        {\n            \"text\": \"Category 2\"\n        }\n    ]\n}\n\n// Lam notification feature",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/categories",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "categories"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Category: All",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/categories",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "categories"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Comment: All",
-            "protocolProfileBehavior": {
-                "disableBodyPruning": true
-            },
-            "request": {
-                "method": "GET",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"comments\": [\n        {\n            \"author\": \"\", // fullname,\n            \"avatar\": \"\",\n            \"createdAt\": \"\",\n            \"content\":\"\",\n            \"me\": true\n        }\n    ]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/challenges/id/comments?size=10&page=1",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "challenges",
-                        "id",
-                        "comments"
-                    ],
-                    "query": [
-                        {
-                            "key": "size",
-                            "value": "10"
-                        },
-                        {
-                            "key": "page",
-                            "value": "1"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Search",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": ""
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Round: create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"rounds\": [\n        {\n            \"startsAt\": \"2020-06-28 00:00:00.000\",\n            \"endsAt\": \"2020-06-29 00:00:00.000\",\n            \"challenges\": [\n                28\n            ]\n        },\n        {\n            \"startsAt\": \"2020-06-28 00:00:00.000\",\n            \"endsAt\": \"2020-06-29 00:00:00.000\",\n            \"challenges\": [\n                28, 24\n            ]\n        }\n    ]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests/9/rounds",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "9",
-                        "rounds"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Round: update",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"startsAt\":\"2020-06-28 00:00:00.000\",\n    \"endsAt\":\"2020-06-29 00:00:00.000\",\n    \"challenges\": [24, 28]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/contests/57/rounds/58",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "57",
-                        "rounds",
-                        "58"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Admin: Create",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"email\":\"admin1@gmail.com\",\n    \"password\":\"candicode\",\n    \"confirmPassword\":\"candicode\",\n    \"firstName\":\"Admin\",\n    \"lastName\":\"1\",\n    \"roles\": [7]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/admins",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "admins"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Admin: Update Roles",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"roles\": [7]\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{host}}/admins/109/roles",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "admins",
-                        "109",
-                        "roles"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Contest: Enroll",
-            "request": {
-                "auth": {
-                    "type": "bearer",
-                    "bearer": [
-                        {
-                            "key": "token",
-                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "method": "POST",
-                "header": [],
-                "url": {
-                    "raw": "{{host}}/contests/57/registration",
-                    "host": [
-                        "{{host}}"
-                    ],
-                    "path": [
-                        "contests",
-                        "57",
-                        "registration"
-                    ]
-                }
-            },
-            "response": []
-        }
-    ],
-    "protocolProfileBehavior": {}
+	"info": {
+		"_postman_id": "e45add80-ef07-47e8-a7a3-330b213a1d57",
+		"name": "New",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login Student",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"student1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"admin1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/auth/current",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student: Create",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"student2@gmail.com\",\n\t\"password\":\"candicode\",\n\t\"confirmPassword\":\"candicode\",\n\t\"firstName\":\"Student\",\n\t\"lastName\":\"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/students",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student: Update roles",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjI2NzM1LCJleHAiOjE1OTQ0OTA3MzV9.JhunneHnOZzJ4tY2OuCn_k3S51ygb5huyPY1jqX3Dw8TatGV55TeUvlQFvZJSWJxhPt9moOMJ5wezRRoUSw2Jw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"roles\": [2,4,5,6]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/students/1/roles",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"students",
+						"1",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Upload",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "source",
+							"type": "file",
+							"src": "/Users/ntduycs/Desktop/Candicode_v4.zip"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/challenges/source",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"source"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Hihi challenge",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "Easy",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Sample description 1",
+							"type": "text"
+						},
+						{
+							"key": "language",
+							"value": "cpp",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": "/Users/ntduycs/Pictures/me.JPG"
+						},
+						{
+							"key": "runPath",
+							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/run.sh",
+							"type": "text"
+						},
+						{
+							"key": "compilePath",
+							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/compile.sh",
+							"type": "text"
+						},
+						{
+							"key": "implementedPath",
+							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/hihi.cpp",
+							"type": "text"
+						},
+						{
+							"key": "nonImplementedPath",
+							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/hihchallenge.cpp",
+							"type": "text"
+						},
+						{
+							"key": "tcInputFormat",
+							"value": "string",
+							"type": "text"
+						},
+						{
+							"key": "tcOutputFormat",
+							"value": "string",
+							"type": "text"
+						},
+						{
+							"key": "challengeDir",
+							"value": "200627023025-1-1",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "algorithm",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "database",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/challenges",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Details",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges/46",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: All",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges?title=abc&author=abc&tag=bach-khoa,b,c&language=java,python&start&end=&page&size&sort&direction&level",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "abc"
+						},
+						{
+							"key": "author",
+							"value": "abc"
+						},
+						{
+							"key": "tag",
+							"value": "bach-khoa,b,c"
+						},
+						{
+							"key": "language",
+							"value": "java,python"
+						},
+						{
+							"key": "start",
+							"value": null,
+							"description": "get all if not present"
+						},
+						{
+							"key": "end",
+							"value": "",
+							"description": "default by now if not present"
+						},
+						{
+							"key": "page",
+							"value": null,
+							"description": "defailt is 1 if no"
+						},
+						{
+							"key": "size",
+							"value": null,
+							"description": "defailt is 10 if not present"
+						},
+						{
+							"key": "sort",
+							"value": null,
+							"description": "default is createdAt if not present"
+						},
+						{
+							"key": "direction",
+							"value": null,
+							"description": "defailt is desc if not present (desc or asc)"
+						},
+						{
+							"key": "level",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: All of Me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges/me?title=abc&author=abc&tag=bach-khoa,b,c&language=java,python&start=&end=&page=&size=&sort=&direction=",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"me"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "abc"
+						},
+						{
+							"key": "author",
+							"value": "abc"
+						},
+						{
+							"key": "tag",
+							"value": "bach-khoa,b,c"
+						},
+						{
+							"key": "language",
+							"value": "java,python"
+						},
+						{
+							"key": "start",
+							"value": ""
+						},
+						{
+							"key": "end",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "size",
+							"value": ""
+						},
+						{
+							"key": "sort",
+							"value": ""
+						},
+						{
+							"key": "direction",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Edit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Edited Challenge xyz",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Edited Description",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "Hard",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "a",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "b",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "c",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "database",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "data structure 12 ",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": "/Users/ntduycs/Pictures/intellij-bg.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/challenges/28",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"28"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges/24",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"24"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Add Language",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"language\":\"Java\",\n\t\"challengeDir\": \"200627033107-1-1\",\n\t\"runPath\": \"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/run.sh\",\n\t\"compilePath\": \"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/compile.sh\",\n\t\"implementedPath\":\"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/Hihi.java\",\n\t\"nonImplementedPath\":\"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/HihiChallenge.java\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/languages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Remove Language",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"language\":\"Java\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/languages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Add Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Second Child of first comment\",\n    \"parentId\": 102\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/comments",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Edit Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Second Child of first comment asd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/comments/106",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"comments",
+						"106"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: Delete Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges/46/comments/106",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"comments",
+						"106"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Challenge: All comments",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges/46/comments?size=10",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "size",
+							"value": "10",
+							"description": "default is 10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Code: Run",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"language\":\"cpp\",\n\t\"code\":\"void doSomething() {\\n    // Fill your code here ...\\n}\",\n\t\"doneWithin\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/score",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submission: Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"compiled\": \"success or failed\",\n\t\"doneWithin\": null,\n\t\"executionTime\": \"\",\n\t\"passed\": 23,\n\t\"total\": 30,\n\t\"code\": \"\",\n\t\"language\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/submissions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submission: My submissions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/submissions/me",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"submissions",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submission: by challenge_id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/challenges/46/submissions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submission: by contest_round_id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/contests/57/rounds/58/submissions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"57",
+						"rounds",
+						"58",
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Testcase: Add",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"hello world\",\n\t\t\t\"output\":\"hello world\",\n\t\t\t\"hidden\":true\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"1 + 2 = 3\",\n\t\t\t\"output\":\"1 + 2 = 3\"\n\t\t}\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/testcases",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"testcases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Testcase: Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"testcaseIds\": [20,21]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/16/testcases",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"16",
+						"testcases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Testcase: Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 18,\n\t\t\t\"input\": \"[12,2,3]\",\n\t\t\t\"output\": \"[2,3,12]\",\n\t\t\t\"hidden\": false\n\t\t},\n\t\t{\n\t\t\t\"testcaseId\": 19,\n\t\t\t\"input\": \"[2,3,10,11]\",\n\t\t\t\"output\": \"[2,3,10,11]\",\n\t\t\t\"hidden\": true\n\t\t}\t\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/16/testcases",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"16",
+						"testcases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Testcase: Verify",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"input\":\"1 + 2 = 3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/46/testcases/verification",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"46",
+						"testcases",
+						"verification"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Tutorial 4",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "tag1",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": "/Users/ntduycs/Pictures/me.JPG"
+						},
+						{
+							"key": "content",
+							"value": "content",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "description",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "database",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/tutorials",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Title",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "tag1",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "tag2",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "content",
+							"value": "content",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "description",
+							"value": "description",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "categories",
+							"value": "data structure",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "algorithm",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/tutorials/90",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"90"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/tutorials/90",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"90"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/tutorials/100",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: All",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/tutorials?title=abc&author=abc&tag=bach-khoa,b,c&start=&end=&page=&size=&sort=&direction=",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "abc",
+							"description": "default is 1"
+						},
+						{
+							"key": "author",
+							"value": "abc",
+							"description": "default is 10"
+						},
+						{
+							"key": "tag",
+							"value": "bach-khoa,b,c",
+							"description": "default is createdAt"
+						},
+						{
+							"key": "start",
+							"value": ""
+						},
+						{
+							"key": "end",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "size",
+							"value": ""
+						},
+						{
+							"key": "sort",
+							"value": ""
+						},
+						{
+							"key": "direction",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: All of Me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/tutorials/me?title=abc&author=abc&tag=bach-khoa,b,c&language=java,python&start=&end=&page=&size=&sort=&direction=",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"me"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "abc",
+							"description": "default is 1"
+						},
+						{
+							"key": "author",
+							"value": "abc",
+							"description": "default is 10"
+						},
+						{
+							"key": "tag",
+							"value": "bach-khoa,b,c",
+							"description": "default is createdAt"
+						},
+						{
+							"key": "language",
+							"value": "java,python",
+							"description": "default is desc, [desc, asc]"
+						},
+						{
+							"key": "start",
+							"value": ""
+						},
+						{
+							"key": "end",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "size",
+							"value": ""
+						},
+						{
+							"key": "sort",
+							"value": ""
+						},
+						{
+							"key": "direction",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Add Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Third comment\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/tutorials/100/comments",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"100",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Edit Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Second Child of first comment asd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/tutorials/46/comments/106",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"46",
+						"comments",
+						"106"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: Delete Comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/tutorials/46/comments/106",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"46",
+						"comments",
+						"106"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tutorial: All comments",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/tutorials/98/comments",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tutorials",
+						"98",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "New Contest 2 updated updated",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "tag1",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "tag2",
+							"type": "text"
+						},
+						{
+							"key": "banner",
+							"type": "file",
+							"src": "/Users/ntduycs/Pictures/intellij-bg.jpg",
+							"disabled": true
+						},
+						{
+							"key": "description",
+							"value": "description",
+							"type": "text"
+						},
+						{
+							"key": "registrationDeadline",
+							"value": "2020-06-21 14:30:00.000",
+							"type": "text"
+						},
+						{
+							"key": "maxRegister",
+							"value": "10",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "content",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/contests/13",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: All",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"items\": [\n        {\n            \"contestId\": 1,\n            \"title\": \"title\",\n            \"author\": \"fullname\",\n            \"createdAt\": \"datetime\",\n            \"numComments\": 10,\n            \"maxRegister\": 10,\n            \"currRegister\": 8,\n            \"tags\": [\"tag1\", \"tag2\"],\n            \"description\": \"\",\n            \"registrationDeadline\": \"datetime\",\n            \"banner\":\"\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests?title=abc&author=abc&tag=bach-khoa,b,c&start=&end=&page=&size=&sort=&direction=&status",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "abc"
+						},
+						{
+							"key": "author",
+							"value": "abc"
+						},
+						{
+							"key": "tag",
+							"value": "bach-khoa,b,c"
+						},
+						{
+							"key": "start",
+							"value": ""
+						},
+						{
+							"key": "end",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "size",
+							"value": ""
+						},
+						{
+							"key": "sort",
+							"value": ""
+						},
+						{
+							"key": "direction",
+							"value": ""
+						},
+						{
+							"key": "status",
+							"value": null,
+							"description": "ongoing, incoming, finished"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: All of Me",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"items\": [\n        {\n            \"contestId\": 1,\n            \"title\": \"title\",\n            \"author\": \"fullname\",\n            \"createdAt\": \"datetime\",\n            \"numComments\": 10,\n            \"maxRegister\": 10,\n            \"currRegister\": 8,\n            \"tags\": [\"tag1\", \"tag2\"],\n            \"description\": \"\",\n            \"registrationDeadline\": \"datetime\",\n            \"banner\":\"\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests/me?title=abc&author=abc&tag=bach-khoa,b,c&language=java,python&start=&end=&page=&size=&sort=&direction=",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"me"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "abc"
+						},
+						{
+							"key": "author",
+							"value": "abc"
+						},
+						{
+							"key": "tag",
+							"value": "bach-khoa,b,c"
+						},
+						{
+							"key": "language",
+							"value": "java,python"
+						},
+						{
+							"key": "start",
+							"value": ""
+						},
+						{
+							"key": "end",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "size",
+							"value": ""
+						},
+						{
+							"key": "sort",
+							"value": ""
+						},
+						{
+							"key": "direction",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: Details",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contestId\": 1,\n    \"title\": \"title\",\n    \"author\": \"fullname\",\n    \"createdAt\": \"datetime\",\n    \"numComments\": 10,\n    \"maxRegister\": 10,\n    \"currRegister\": 8,\n    \"tags\": [\"tag1\", \"tag2\"],\n    \"description\": \"\",\n    \"registrationDeadline\": \"datetime\",\n    \"banner\":\"\",\n    \"content\": \"\",\n    \"rounds\": [\n        {\n            \"startsAt\": \"yyyy-MM-dd HH:mm:ss.SSS\",\n            \"endsAt\": \"yyyy-MM-dd HH:mm:ss.SSS\",\n            \"contraints\": {\n                \"attendeePercent\": 50, // default 100\n                \"scorePercent\": 88, // default 0\n                \"maxAttempts\": 5 // consider to dev\n            },\n            \"challenges\": [\n                \"slug-challenge-title-1\"\n            ],\n            \"status\": false // false if not start or ended\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests/37",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"37"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: Leader Board",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"leaders\": [\n        {\n            \"fullName\": \"\",\n            \"details\": [\n                {\n                    \"score\": 12,\n                    \"doneWithin\": 122 // in seconds\n                }\n            ],\n            \"avatar\": \"\",\n            \"slug\": \"\" // in form if \"fn-ln-hash\"\n        }\n    ] // default display 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests/slug",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"slug"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Category: Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"categories\": [\n        {\n            \"text\": \"Category 1\"\n        },\n        {\n            \"text\": \"Category 2\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/categories",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Category: Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"categories\": [\n        {\n            \"categoryId\": 1,\n            \"text\": \"Category 1\"\n        },\n        {\n            \"categoryId\": 1,\n            \"text\": \"Category 2\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/categories",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Category: Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"categoriesId\": [1,2]\n}\n\n// Lam notification feature",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/categories",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Category: All",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/categories",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Comment: All",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"comments\": [\n        {\n            \"author\": \"\", // fullname,\n            \"avatar\": \"\",\n            \"createdAt\": \"\",\n            \"content\":\"\",\n            \"me\": true\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/challenges/id/comments?size=10&page=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"challenges",
+						"id",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Round: create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"rounds\": [\n        {\n            \"startsAt\": \"2020-06-28 00:00:00.000\",\n            \"endsAt\": \"2020-06-29 00:00:00.000\",\n            \"challenges\": [\n                28\n            ]\n        },\n        {\n            \"startsAt\": \"2020-06-28 00:00:00.000\",\n            \"endsAt\": \"2020-06-29 00:00:00.000\",\n            \"challenges\": [\n                28, 24\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests/9/rounds",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"9",
+						"rounds"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Round: update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"rounds\": [\n        {\n            \"roundId\":116,\n            \"startsAt\": \"2020-08-28 00:00:00.000\",\n            \"endsAt\": \"2020-08-29 00:00:00.000\",\n            \"challenges\": [\n                24, 28\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests/37/rounds",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"37",
+						"rounds"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Round: Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roundIds\": [\n        113\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/contests/37/rounds",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"37",
+						"rounds"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin: Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjI2NzM1LCJleHAiOjE1OTQ0OTA3MzV9.JhunneHnOZzJ4tY2OuCn_k3S51ygb5huyPY1jqX3Dw8TatGV55TeUvlQFvZJSWJxhPt9moOMJ5wezRRoUSw2Jw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"admin2@gmail.com\",\n    \"password\":\"candicode\",\n    \"confirmPassword\":\"candicode\",\n    \"firstName\":\"Admin\",\n    \"lastName\":\"2\",\n    \"roles\": [7]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/admins",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin: Update Roles",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roles\": [2]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/admins/125/roles",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"admins",
+						"125",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contest: Enroll",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/contests/57/registration",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"contests",
+						"57",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User: Update profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "firstName",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "lastName",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "slogan",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "facebook",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "github",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "linkedin",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "location",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "company",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "university",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "avatar",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/profiles",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User: Password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"oldPassword\":\"\",\n    \"newPassword\":\"\",\n    \"confirmPassword\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/password",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tag: get",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"oldPassword\":\"\",\n    \"newPassword\":\"\",\n    \"confirmPassword\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/tags?page&size",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"tags"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": null,
+							"description": "10"
+						},
+						{
+							"key": "size",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
 }
