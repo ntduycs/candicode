@@ -2466,6 +2466,32 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Like/Dislike",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"challenge or tutorial\",\n    \"id\": 1,\n    \"like\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/reaction",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"reaction"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
