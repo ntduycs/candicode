@@ -31,14 +31,14 @@ public class UserPrincipal implements UserDetails {
 
     private final UserEntity entityRef;
 
-    private String slogan;
-    private String avatar;
-    private String facebook;
-    private String github;
-    private String linkedin;
-    private String location;
-    private String company;
-    private String university;
+    private final String slogan;
+    private final String avatar;
+    private final String facebook;
+    private final String github;
+    private final String linkedin;
+    private final String location;
+    private final String company;
+    private final String university;
 
     public static UserPrincipal build(UserEntity user, List<String> roles) {
         return UserPrincipal.builder()
