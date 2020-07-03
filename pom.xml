@@ -20,17 +20,14 @@
         <guava.version>29.0-jre</guava.version>
         <hibernate-module.version>2.11.0</hibernate-module.version>
         <commons-fileupload.version>1.4</commons-fileupload.version>
-        <tika-core.version>1.24.1</tika-core.version>
+        <slugify.version>2.4</slugify.version>
+        <datasource-proxy.version>1.6</datasource-proxy.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -100,9 +97,14 @@
             <version>${commons-fileupload.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>${tika-core.version}</version>
+            <groupId>com.github.slugify</groupId>
+            <artifactId>slugify</artifactId>
+            <version>${slugify.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>${datasource-proxy.version}</version>
         </dependency>
 
     </dependencies>
