@@ -31,6 +31,15 @@ public class UserPrincipal implements UserDetails {
 
     private final UserEntity entityRef;
 
+    private String slogan;
+    private String avatar;
+    private String facebook;
+    private String github;
+    private String linkedin;
+    private String location;
+    private String company;
+    private String university;
+
     public static UserPrincipal build(UserEntity user, List<String> roles) {
         return UserPrincipal.builder()
             .userId(user.getUserId())
