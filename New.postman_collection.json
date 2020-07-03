@@ -2332,6 +2332,16 @@
 		{
 			"name": "User: Update profile",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM4MDg2NjIsImV4cCI6MTU5NDY3MjY2Mn0.v0vHGisGSFEndCBA9ayr1uH-EALJRjn9fvy9PtP29bA7k-1jfTszNWb_V4YXBwwjXOFCLHkXAdnNNEMKH6ao_w",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -2349,7 +2359,7 @@
 						},
 						{
 							"key": "slogan",
-							"value": "",
+							"value": "I love you",
 							"type": "text"
 						},
 						{
@@ -2385,7 +2395,7 @@
 						{
 							"key": "avatar",
 							"type": "file",
-							"src": []
+							"src": "/Users/ntduycs/Pictures/me.JPG"
 						}
 					]
 				},

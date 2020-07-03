@@ -5,6 +5,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import vn.candicode.common.FileStorageType;
+import vn.candicode.core.StorageService;
 import vn.candicode.entity.PasswordUpdateEntity;
 import vn.candicode.entity.UserEntity;
 import vn.candicode.exception.BadRequestException;
@@ -15,6 +18,7 @@ import vn.candicode.repository.PasswordUpdateRepository;
 import vn.candicode.repository.UserRepository;
 import vn.candicode.security.UserPrincipal;
 
+import java.io.IOException;
 import java.util.Random;
 
 @Service
@@ -27,13 +31,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final EmailService emailService;
+    private final StorageService storageService;
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(PasswordUpdateRepository passwordUpdateRepository, UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(PasswordUpdateRepository passwordUpdateRepository, UserRepository userRepository, EmailService emailService, StorageService storageService, PasswordEncoder passwordEncoder) {
         this.passwordUpdateRepository = passwordUpdateRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.storageService = storageService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -124,7 +130,58 @@ public class UserServiceImpl implements UserService {
      * @param currentUser Only account's owner can update his profile
      */
     @Override
+    @Transactional
     public void updateProfile(Long userId, UpdateUserProfileRequest payload, UserPrincipal currentUser) {
+        if (!currentUser.getUserId().equals(userId)) {
+            throw new BadRequestException("Cannot update profile of another user");
+        }
 
+        UserEntity student = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new ResourceNotFoundException(UserEntity.class, "id", userId));
+
+        if (StringUtils.hasText(payload.getFirstName())) {
+            student.setFirstName(payload.getFirstName());
+        }
+
+        if (StringUtils.hasText(payload.getLastName())) {
+            student.setLastName(payload.getLastName());
+        }
+
+        if (StringUtils.hasText(payload.getCompany())) {
+            student.setCompany(payload.getCompany());
+        }
+
+        if (StringUtils.hasText(payload.getFacebook())) {
+            student.setFacebook(payload.getFacebook());
+        }
+
+        if (StringUtils.hasText(payload.getGithub())) {
+            student.setGithub(payload.getGithub());
+        }
+
+        if (StringUtils.hasText(payload.getLinkedin())) {
+            student.setLinkedin(payload.getLinkedin());
+        }
+
+        if (StringUtils.hasText(payload.getLocation())) {
+            student.setLocation(payload.getLocation());
+        }
+
+        if (StringUtils.hasText(payload.getSlogan())) {
+            student.setSlogan(payload.getSlogan());
+        }
+
+        if (StringUtils.hasText(payload.getUniversity())) {
+            student.setUniversity(payload.getUniversity());
+        }
+
+        if (payload.getAvatar() != null && !payload.getAvatar().isEmpty()) {
+            try {
+                String fullyAvatarPath = storageService.store(payload.getAvatar(), FileStorageType.AVATAR, userId);
+                student.setAvatar(storageService.simplifyPath(fullyAvatarPath, FileStorageType.AVATAR, userId));
+            } catch (IOException e) {
+                log.error("Cannot store avatar for user - {}", userId);
+            }
+        }
     }
 }

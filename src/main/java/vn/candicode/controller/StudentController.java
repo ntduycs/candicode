@@ -6,7 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewStudentRequest;
+import vn.candicode.payload.request.UpdateUserProfileRequest;
+import vn.candicode.security.CurrentUser;
+import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.StudentService;
+import vn.candicode.service.UserService;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -16,9 +20,11 @@ import java.util.Map;
 @Log4j2
 public class StudentController extends Controller {
     private final StudentService studentService;
+    private final UserService userService;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, UserService userService) {
         this.studentService = studentService;
+        this.userService = userService;
     }
 
     @Override
@@ -47,6 +53,15 @@ public class StudentController extends Controller {
     public ResponseEntity<?> updateStudentRole(@PathVariable("id") Long studentId) {
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "This feature is coming soon. Please integrate this with Momo implementation"
+        )));
+    }
+
+    @PostMapping(path = "profiles")
+    public ResponseEntity<?> updateStudentProfile(@ModelAttribute @Valid UpdateUserProfileRequest payload, @CurrentUser UserPrincipal me) {
+        userService.updateProfile(me.getUserId(), payload, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Updated profile successfully"
         )));
     }
 

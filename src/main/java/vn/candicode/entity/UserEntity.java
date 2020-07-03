@@ -73,4 +73,14 @@ public class UserEntity extends Auditable {
             }
         }
     }
+
+    // Only for student
+    private String slogan;
+    private String facebook;
+    private String github;
+    private String linkedin;
+    private String location;
+    private String company;
+    private String university;
+    private String avatar;
 }
