@@ -97,6 +97,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers(GET, "/tags").permitAll()
 
+            .antMatchers(POST, "/categories").hasAuthority("admin")
+            .antMatchers(PUT, "/categories").hasAuthority("admin")
+            .antMatchers(DELETE, "/categories").hasAuthority("admin")
+            .antMatchers(GET, "/categories").permitAll()
+
             .anyRequest().authenticated();
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

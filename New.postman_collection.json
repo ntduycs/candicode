@@ -1933,7 +1933,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzODA4NjgyLCJleHAiOjE1OTQ2NzI2ODJ9.ZFcOoIp3OHegZ5x2jDu1vsNSi3p9jvpDvTIy1ldhMTg5ufJ3QLuFzIUQEYTscrgNGMmEr4mI-nz0iUxYikCIJw",
 							"type": "string"
 						}
 					]
@@ -1942,7 +1942,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"categories\": [\n        {\n            \"text\": \"Category 1\"\n        },\n        {\n            \"text\": \"Category 2\"\n        }\n    ]\n}",
+					"raw": "{\n    \"categories\": [\n        \"duy\", \"van\"\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1969,7 +1969,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzODA4NjgyLCJleHAiOjE1OTQ2NzI2ODJ9.ZFcOoIp3OHegZ5x2jDu1vsNSi3p9jvpDvTIy1ldhMTg5ufJ3QLuFzIUQEYTscrgNGMmEr4mI-nz0iUxYikCIJw",
 							"type": "string"
 						}
 					]
@@ -1978,7 +1978,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"categories\": [\n        {\n            \"categoryId\": 1,\n            \"text\": \"Category 1\"\n        },\n        {\n            \"categoryId\": 1,\n            \"text\": \"Category 2\"\n        }\n    ]\n}",
+					"raw": "{\n    \"categories\": [\n        {\n            \"categoryId\": 142,\n            \"name\": \"van\"\n        },\n        {\n            \"categoryId\": 143,\n            \"name\": \"van 2\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -2005,7 +2005,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTE4OTMyNzAsImV4cCI6MTU5Mjc1NzI3MH0.r3dw99MskNw2jaVI8-MTFPDmTgsyONL3t09peVKNKnnxaiykWXkWcR7rIF3Vy_vaw-7mOrdNOxd7ww0lobz8-w",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzODA4NjgyLCJleHAiOjE1OTQ2NzI2ODJ9.ZFcOoIp3OHegZ5x2jDu1vsNSi3p9jvpDvTIy1ldhMTg5ufJ3QLuFzIUQEYTscrgNGMmEr4mI-nz0iUxYikCIJw",
 							"type": "string"
 						}
 					]
@@ -2014,7 +2014,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"categoriesId\": [1,2]\n}\n\n// Lam notification feature",
+					"raw": "{\n    \"categoryIds\": [138, 139]\n}\n\n// Lam notification feature",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -2445,7 +2445,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/tags?page&size",
+					"raw": "{{host}}/tags?size=10",
 					"host": [
 						"{{host}}"
 					],
@@ -2454,13 +2454,9 @@
 					],
 					"query": [
 						{
-							"key": "page",
-							"value": null,
-							"description": "10"
-						},
-						{
 							"key": "size",
-							"value": null
+							"value": "10",
+							"description": "10"
 						}
 					]
 				}

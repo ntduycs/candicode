@@ -25,10 +25,18 @@ public class CategoryEntity implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long categoryId;
 
-    @NaturalId
+    @NaturalId(mutable = true)
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private Long numUsed = 0L;
+
+    public CategoryEntity() {
+    }
+
+    public CategoryEntity(String name) {
+        this.name = name;
+        this.numUsed = 0L;
+    }
 }

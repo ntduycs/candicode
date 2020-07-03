@@ -17,14 +17,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 @Log4j2
 public class SecurityTokenFilter extends OncePerRequestFilter {
+    private static final Pattern NUMERIC = Pattern.compile("\\d+");
+
     private final SecurityTokenProvider tokenProvider;
     private final UserPrincipalService userPrincipalService;
 
-    private final List<String> URI_WHITELIST = List.of("/api/auth/login", "/api/students");
+    private final List<String> GET_URI_WHITELIST = List.of("/api/tags", "/api/categories", "/api/challenges", "/api/tutorials", "/api/contests", "/api/submissions", "/api/tags", "/api/categories");
 
     public SecurityTokenFilter(SecurityTokenProvider tokenProvider, UserPrincipalService userPrincipalService) {
         this.tokenProvider = tokenProvider;
@@ -49,15 +52,33 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.warn("Could not set up security authentication. Exception - {}", e.getClass().getSimpleName());
-
-//            boolean shouldBypass = httpServletRequest.getMethod().equals("POST") && URI_WHITELIST.contains(httpServletRequest.getRequestURI());
-//            if (!shouldBypass) {
-//                if (e instanceof ExpiredJwtException) {
-//                    throw new TokenExpiredException(e.getMessage());
-//                }
-//            }
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        if ("GET".equals(request.getMethod())) {
+            if (GET_URI_WHITELIST.contains(request.getRequestURI())) {
+                return true;
+            } else if (request.getRequestURI().contains("comment")) {
+                return true;
+            } else if (request.getRequestURI().contains("me")) {
+                return false;
+            } else return isNumeric(request.getRequestURI().substring(request.getRequestURI().lastIndexOf("/") + 1));
+        } else if ("POST".equals(request.getMethod()) && request.getRequestURI().equals("/api/students")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isNumeric(String s) {
+        if (s == null) {
+            return false;
+        }
+
+        return NUMERIC.matcher(s).matches();
     }
 }
