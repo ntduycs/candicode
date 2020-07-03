@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 public class NotificationServiceImpl implements NotificationService {
+
     /**
      * This service is called when:
      * <ul>
      *     <li>Someone likes/dislikes your challenge</li>
-     *     <li>Someone participated in solving your challenge</li>
      * </ul>
      *
      * @param challengeId
@@ -21,15 +21,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * This service is called when:
-     * <ul>
-     *     <li>Someone registered to join your contest</li>
-     * </ul>
+     * When someone like your tutorial
      *
-     * @param contestId
+     * @param tutorialId
      */
     @Override
-    public void sendContestNotification(Long contestId) {
+    public void sendTutorialNotification(Long tutorialId) {
 
     }
 
@@ -37,7 +34,6 @@ public class NotificationServiceImpl implements NotificationService {
      * This service is called when:
      * <ul>
      *     <li>The contest round that you've registered/created is about to starting</li>
-     *     <li>The contest round that you've joined/created has just ended (notify user to check result)</li>
      * </ul>
      *
      * @param contestRoundId
@@ -47,17 +43,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
-    /**
-     * This service is called when:
-     * <ul>
-     *     <li>Someone likes/dislikes your comment</li>
-     *     <li>Someone replied your comment</li>
-     * </ul>
-     *
-     * @param commentId
-     */
     @Override
-    public void sendCommentNotification(Long commentId) {
+    public void sendUpgradePlanNotification(Long userId) {
 
     }
 }

@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.candicode.entity.TutorialEntity;
+import vn.candicode.entity.dto.Tag;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TutorialRepository extends JpaRepository<TutorialEntity, Long> {
@@ -22,4 +24,7 @@ public interface TutorialRepository extends JpaRepository<TutorialEntity, Long> 
 
     @Query("SELECT t FROM TutorialEntity t LEFT JOIN FETCH t.comments WHERE t.tutorialId = :id")
     Optional<TutorialEntity> findByTutorialIdFetchComments(@Param("id") Long id);
+
+    @Query("SELECT new vn.candicode.entity.dto.Tag(c.tutorialId, c.tags) FROM TutorialEntity c")
+    List<Tag> findAllTutorialTags();
 }

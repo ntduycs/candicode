@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.candicode.entity.ContestEntity;
+import vn.candicode.entity.dto.Tag;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ContestRepository extends JpaRepository<ContestEntity, Long> {
@@ -22,4 +24,7 @@ public interface ContestRepository extends JpaRepository<ContestEntity, Long> {
 
     @Query("SELECT c FROM ContestEntity c WHERE c.available = true")
     Page<ContestEntity> findAllAvailableContests(Pageable pageable);
+
+    @Query("SELECT new vn.candicode.entity.dto.Tag(c.contestId, c.tags) FROM ContestEntity c")
+    List<Tag> findAllContestTags();
 }

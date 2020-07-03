@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.dto.Tag;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,4 +41,7 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
 
     @Query("SELECT c FROM ChallengeEntity c JOIN c.configurations d JOIN d.language WHERE c.deleted = false")
     Page<ChallengeEntity> findAllFetchLanguages(Pageable pageable);
+
+    @Query("SELECT new vn.candicode.entity.dto.Tag(c.challengeId, c.tags) FROM ChallengeEntity c")
+    List<Tag> findAllChallengeTags();
 }

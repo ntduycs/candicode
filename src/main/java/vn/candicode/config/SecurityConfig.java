@@ -95,6 +95,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers(POST, "/contests/*/registration").hasAuthority("student")
 
+            .antMatchers(GET, "/tags").permitAll()
+
             .anyRequest().authenticated();
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

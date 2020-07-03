@@ -31,9 +31,4 @@ public class CategoryEntity implements Serializable {
 
     @Column(nullable = false)
     private Long numUsed = 0L;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "parent_category_fk"))
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private CategoryEntity parent;
 }

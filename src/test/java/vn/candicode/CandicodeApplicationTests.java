@@ -10,6 +10,7 @@ import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
 import vn.candicode.core.StorageService;
+import vn.candicode.service.TagService;
 import vn.candicode.util.DatetimeUtils;
 import vn.candicode.util.FileUtils;
 
@@ -30,6 +31,9 @@ class CandicodeApplicationTests {
 
     @Autowired
     private StorageService storageService;
+
+    @Autowired
+    private TagService tagService;
 
     @Test
     void contextLoads() {
@@ -124,5 +128,10 @@ class CandicodeApplicationTests {
             random.nextBytes(buffer);
             System.out.println(BaseEncoding.base64Url().encode(buffer));
         }
+    }
+
+    @Test
+    void testFetchTags() {
+        tagService.getPopularTags(null);
     }
 }

@@ -1,15 +1,17 @@
-package vn.candicode.payload.response.sub;
+package vn.candicode.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class Tag implements Serializable {
-    private String name;
-    private Integer count;
+    private Long id;
+    private Set<String> tags;
 }
