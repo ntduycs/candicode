@@ -95,8 +95,8 @@ public class ContestController extends Controller {
     }
 
     @GetMapping(path = "contests/{id}")
-    public ResponseEntity<?> getContestDetails(@PathVariable("id") Long contestId, @CurrentUser UserPrincipal me) {
-        ContestDetails details = contestService.getContestDetails(contestId, me);
+    public ResponseEntity<?> getContestDetails(@PathVariable("id") Long contestId) {
+        ContestDetails details = contestService.getContestDetails(contestId);
 
         return ResponseEntity.ok(ResponseFactory.build(details));
     }

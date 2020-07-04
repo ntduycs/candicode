@@ -44,5 +44,5 @@ public interface ContestService {
      */
     PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId);
 
-    ContestDetails getContestDetails(Long contestId, UserPrincipal me);
+    ContestDetails getContestDetails(Long contestId);
 }

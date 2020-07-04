@@ -1,6 +1,5 @@
 package vn.candicode.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,7 +8,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vn.candicode.exception.TokenExpiredException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -27,7 +25,7 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
     private final SecurityTokenProvider tokenProvider;
     private final UserPrincipalService userPrincipalService;
 
-    private final List<String> GET_URI_WHITELIST = List.of("/api/tags", "/api/categories", "/api/challenges", "/api/tutorials", "/api/contests", "/api/submissions", "/api/tags", "/api/categories");
+    private final List<String> GET_URI_WHITELIST = List.of("/api/tags", "/api/categories");
 
     public SecurityTokenFilter(SecurityTokenProvider tokenProvider, UserPrincipalService userPrincipalService) {
         this.tokenProvider = tokenProvider;
@@ -59,19 +57,7 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        if ("GET".equals(request.getMethod())) {
-            if (GET_URI_WHITELIST.contains(request.getRequestURI())) {
-                return true;
-            } else if (request.getRequestURI().contains("comment")) {
-                return true;
-            } else if (request.getRequestURI().contains("me")) {
-                return false;
-            } else return isNumeric(request.getRequestURI().substring(request.getRequestURI().lastIndexOf("/") + 1));
-        } else if ("POST".equals(request.getMethod()) && request.getRequestURI().equals("/api/students")) {
-            return true;
-        }
-
-        return false;
+        return "GET".equals(request.getMethod()) && GET_URI_WHITELIST.contains(request.getRequestURI());
     }
 
     private boolean isNumeric(String s) {
