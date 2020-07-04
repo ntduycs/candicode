@@ -44,6 +44,30 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * This method will be deprecated soon
+     *
+     * @param payload
+     * @param me
+     */
+    @Override
+    @Transactional
+    public void changePassword(PasswordRequest payload, UserPrincipal me) {
+        if (!payload.getNewPassword().equals(payload.getConfirmPassword())) {
+            throw new BadRequestException("Confirm password does not match");
+        }
+
+        if (!passwordEncoder.matches(payload.getOldPassword(), me.getPassword())) {
+            throw new BadRequestException("Old password not correct");
+        }
+
+        String encodedPassword = passwordEncoder.encode(payload.getNewPassword());
+
+        me.getEntityRef().setPassword(encodedPassword);
+
+        userRepository.save(me.getEntityRef());
+    }
+
+    /**
      * User send change password request to system. The request is stored and system sends verification email to him.
      *
      * @param payload

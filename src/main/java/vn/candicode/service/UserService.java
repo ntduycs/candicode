@@ -9,6 +9,14 @@ import vn.candicode.security.UserPrincipal;
  */
 public interface UserService {
     /**
+     * This method will be deprecated soon
+     *
+     * @param payload
+     * @param me
+     */
+    void changePassword(PasswordRequest payload, UserPrincipal me);
+
+    /**
      * User send change password request to system. The request is stored and system sends verification email to him.
      *
      * @param payload

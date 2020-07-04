@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewStudentRequest;
+import vn.candicode.payload.request.PasswordRequest;
 import vn.candicode.payload.request.UpdateUserProfileRequest;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
@@ -62,6 +63,15 @@ public class StudentController extends Controller {
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "Updated profile successfully"
+        )));
+    }
+
+    @PutMapping(path = "password")
+    public ResponseEntity<?> updatePassword(@RequestBody @Valid PasswordRequest payload, @CurrentUser UserPrincipal me) {
+        userService.changePassword(payload, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Changed password successfully"
         )));
     }
 
