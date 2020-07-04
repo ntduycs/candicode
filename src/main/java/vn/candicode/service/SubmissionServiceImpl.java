@@ -11,6 +11,7 @@ import vn.candicode.core.ExecutionResult;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.*;
 import vn.candicode.exception.ResourceNotFoundException;
+import vn.candicode.payload.request.NewCodeRunRequest;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionDetails;
@@ -59,7 +60,7 @@ public class SubmissionServiceImpl implements SubmissionService {
      * @return
      */
     @Override
-    public SubmissionSummary doScoreSubmission(Long challengeId, NewSubmissionRequest payload, UserPrincipal me) {
+    public SubmissionSummary doScoreSubmission(Long challengeId, NewCodeRunRequest payload, UserPrincipal me) {
         Long myId = me.getUserId();
         String language = payload.getLanguage().toLowerCase();
 
@@ -92,21 +93,21 @@ public class SubmissionServiceImpl implements SubmissionService {
             compileResult = CompileResult.success(language);
         }
 
-        SubmissionEntity submission = new SubmissionEntity();
+//        SubmissionEntity submission = new SubmissionEntity();
 
         if (!compileResult.isCompiled()) {
-            submission.setCompiled(false);
-            submission.setDoneWithin(null);
-            submission.setExecTime(null);
-            submission.setPoint(0);
-            submission.setSubmittedCode(payload.getCode());
-            submission.setAuthor((StudentEntity) me.getEntityRef());
-            submission.setChallenge(challenge);
-            submission.setPassedTestcases(0);
-            submission.setTotalTestcases(totalTestcases);
-            submission.setDoneWithin(payload.getDoneWithin());
-
-            submissionRepository.save(submission);
+//            submission.setCompiled(false);
+//            submission.setDoneWithin(null);
+//            submission.setExecTime(null);
+//            submission.setPoint(0);
+//            submission.setSubmittedCode(payload.getCode());
+//            submission.setAuthor((StudentEntity) me.getEntityRef());
+//            submission.setChallenge(challenge);
+//            submission.setPassedTestcases(0);
+//            submission.setTotalTestcases(totalTestcases);
+//            submission.setDoneWithin(payload.getDoneWithin());
+//
+//            submissionRepository.save(submission);
 
             return SubmissionSummary.builder()
                 .compiled("failed")
@@ -133,27 +134,27 @@ public class SubmissionServiceImpl implements SubmissionService {
             );
         }
 
-        Double avgExecutionTime = submissionDetails.stream()
-            .filter(item -> item.getExecutionTime() != null)
-            .mapToLong(SubmissionDetails::getExecutionTime)
-            .average().orElse(Double.NaN);
+//        Double avgExecutionTime = submissionDetails.stream()
+//            .filter(item -> item.getExecutionTime() != null)
+//            .mapToLong(SubmissionDetails::getExecutionTime)
+//            .average().orElse(Double.NaN);
 
         int passedTestcases = submissionDetails.stream()
             .filter(item -> Boolean.TRUE.equals(item.getPassed()))
             .mapToInt(item -> 1).sum();
 
-        submission.setCompiled(true);
-        submission.setDoneWithin(null);
-        submission.setExecTime(avgExecutionTime);
-        submission.setPoint(passedTestcases / totalTestcases * challenge.getMaxPoint());
-        submission.setSubmittedCode(payload.getCode());
-        submission.setAuthor((StudentEntity) me.getEntityRef());
-        submission.setChallenge(challenge);
-        submission.setPassedTestcases(passedTestcases);
-        submission.setTotalTestcases(totalTestcases);
-        submission.setDoneWithin(payload.getDoneWithin());
-
-        submissionRepository.save(submission);
+//        submission.setCompiled(true);
+//        submission.setDoneWithin(null);
+//        submission.setExecTime(avgExecutionTime);
+//        submission.setPoint(passedTestcases / totalTestcases * challenge.getMaxPoint());
+//        submission.setSubmittedCode(payload.getCode());
+//        submission.setAuthor((StudentEntity) me.getEntityRef());
+//        submission.setChallenge(challenge);
+//        submission.setPassedTestcases(passedTestcases);
+//        submission.setTotalTestcases(totalTestcases);
+//        submission.setDoneWithin(payload.getDoneWithin());
+//
+//        submissionRepository.save(submission);
 
         return SubmissionSummary.builder()
             .compiled("success")
@@ -162,6 +163,28 @@ public class SubmissionServiceImpl implements SubmissionService {
             .passed(passedTestcases)
             .details(submissionDetails)
             .build();
+    }
+
+    @Transactional
+    @Override
+    public void saveSubmission(Long challengeId, NewSubmissionRequest payload, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
+        SubmissionEntity submission = new SubmissionEntity();
+
+        submission.setCompiled(payload.getCompiled());
+        submission.setDoneWithin(payload.getDoneWithin());
+        submission.setExecTime(payload.getExecutionTime());
+        submission.setPoint(payload.getPassed() / payload.getTotal() * challenge.getMaxPoint());
+        submission.setSubmittedCode(payload.getCode());
+        submission.setAuthor((StudentEntity) me.getEntityRef());
+        submission.setChallenge(challenge);
+        submission.setPassedTestcases(payload.getPassed());
+        submission.setTotalTestcases(payload.getTotal());
+        submission.setDoneWithin(payload.getDoneWithin());
+
+        submissionRepository.save(submission);
     }
 
     /**

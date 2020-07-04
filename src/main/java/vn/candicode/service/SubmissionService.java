@@ -1,6 +1,7 @@
 package vn.candicode.service;
 
 import org.springframework.data.domain.Pageable;
+import vn.candicode.payload.request.NewCodeRunRequest;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionHistory;
@@ -14,7 +15,9 @@ public interface SubmissionService {
      * @param author      Only student can do this operation
      * @return
      */
-    SubmissionSummary doScoreSubmission(Long challengeId, NewSubmissionRequest payload, UserPrincipal author);
+    SubmissionSummary doScoreSubmission(Long challengeId, NewCodeRunRequest payload, UserPrincipal author);
+
+    void saveSubmission(Long challengeId, NewSubmissionRequest payload, UserPrincipal me);
 
     /**
      * @param pageable

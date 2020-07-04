@@ -1,22 +1,24 @@
 package vn.candicode.payload.request;
 
+import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
+@Getter
 @Setter
 public class NewSubmissionRequest extends Request {
-    private String language;
+    @NotNull
+    private Boolean compiled;
+    private Double doneWithin;
+    @NotNull
+    private Double executionTime;
+    @NotNull
+    private Integer passed;
+    @NotNull
+    private Integer total;
+    @NotNull
     private String code;
-    private Double doneWithin; // in minutes
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public Double getDoneWithin() {
-        return doneWithin == null ? 0 : doneWithin;
-    }
+    @NotNull
+    private String language;
 }

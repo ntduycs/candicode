@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
+import vn.candicode.payload.request.NewCodeRunRequest;
 import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.response.PaginatedResponse;
@@ -14,6 +15,7 @@ import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.SubmissionService;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 public class SubmissionController extends Controller {
@@ -29,10 +31,12 @@ public class SubmissionController extends Controller {
     }
 
     @PostMapping(path = "challenges/{id}/submissions")
-    public ResponseEntity<?> submitCode(@PathVariable("id") Long challengeId, @RequestBody @Valid NewSubmissionRequest payload, @CurrentUser UserPrincipal me) {
-        SubmissionSummary summary = submissionService.doScoreSubmission(challengeId, payload, me);
+    public ResponseEntity<?> saveSubmission(@PathVariable("id") Long challengeId, @RequestBody @Valid NewSubmissionRequest payload, @CurrentUser UserPrincipal me) {
+        submissionService.saveSubmission(challengeId, payload, me);
 
-        return ResponseEntity.ok(ResponseFactory.build(summary));
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "message", "Saved submission successfully"
+        )));
     }
 
     @GetMapping(path = "submissions/me")
@@ -60,5 +64,12 @@ public class SubmissionController extends Controller {
         PaginatedResponse<SubmissionHistory> roundSubmissions = submissionService.getSubmissionsByContestRound(pageable, roundId);
 
         return ResponseEntity.ok(ResponseFactory.build(roundSubmissions));
+    }
+
+    @PostMapping(path = "challenges/{id}/score")
+    public ResponseEntity<?> doScore(@PathVariable("id") Long challengeId, @RequestBody @Valid NewCodeRunRequest payload, @CurrentUser UserPrincipal me) {
+        SubmissionSummary submissionSummary = submissionService.doScoreSubmission(challengeId, payload, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(submissionSummary));
     }
 }
