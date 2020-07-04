@@ -63,6 +63,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
      * @return
      */
     @Override
+    @Transactional
     public SubmissionSummary addSupportedLanguage(Long challengeId, NewChallengeConfigurationRequest payload, UserPrincipal me) {
         Long myId = me.getUserId();
         String language = payload.getLanguage().toLowerCase();
@@ -141,6 +142,8 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             challengeConfig.setAuthorId(myId);
 
             challengeConfigurationRepository.save(challengeConfig);
+
+            challenge.addConfiguration(challengeConfig);
         }
 
         return SubmissionSummary.builder()

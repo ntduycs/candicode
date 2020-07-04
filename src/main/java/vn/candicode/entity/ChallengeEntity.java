@@ -127,6 +127,10 @@ public class ChallengeEntity extends Auditable {
         }
     }
 
+    public void addConfiguration(ChallengeConfigurationEntity configuration) {
+        this.configurations.add(configuration);
+    }
+
     public void setMaxPoint(String level) {
         switch (level) {
             case "easy":
