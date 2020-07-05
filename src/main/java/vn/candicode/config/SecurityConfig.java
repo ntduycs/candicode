@@ -104,6 +104,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers(POST, "/profiles").hasAuthority("student")
 
+            .antMatchers(POST, "/plans/confirm").permitAll()
+
             .anyRequest().authenticated();
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

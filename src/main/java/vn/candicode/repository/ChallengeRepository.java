@@ -39,7 +39,7 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     @Query("SELECT c FROM ChallengeEntity c LEFT JOIN FETCH c.comments WHERE c.challengeId = :id AND c.deleted = false ")
     Optional<ChallengeEntity> findByChallengeIdFetchComments(@Param("id") Long challengeId);
 
-    @Query("SELECT c FROM ChallengeEntity c JOIN c.configurations d JOIN d.language WHERE c.deleted = false and c.contestChallenge = false")
+    @Query("SELECT c FROM ChallengeEntity c WHERE c.deleted = false and c.contestChallenge = false")
     Page<ChallengeEntity> findAllFetchLanguages(Pageable pageable);
 
     @Query("SELECT new vn.candicode.entity.dto.Tag(c.challengeId, c.tags) FROM ChallengeEntity c")

@@ -1,6 +1,6 @@
 set search_path to candicode;
 
-insert into candicode.plans (plan_id, text, validity_period)
+insert into candicode.plans (plan_id, name)
 values (1, 'Basic', -1),
        (2, 'Extended', 100),
        (3, 'Premium', 100);

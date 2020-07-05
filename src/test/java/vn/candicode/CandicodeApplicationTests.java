@@ -10,6 +10,9 @@ import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
 import vn.candicode.core.StorageService;
+import vn.candicode.payload.request.MomoPaymentInitRequest;
+import vn.candicode.payload.response.MomoPaymentInitResponse;
+import vn.candicode.service.PaymentService;
 import vn.candicode.service.TagService;
 import vn.candicode.util.DatetimeUtils;
 import vn.candicode.util.FileUtils;
@@ -34,6 +37,9 @@ class CandicodeApplicationTests {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Test
     void contextLoads() {
@@ -131,7 +137,11 @@ class CandicodeApplicationTests {
     }
 
     @Test
-    void testFetchTags() {
-        tagService.getPopularTags(null);
+    void testInitMomoPaymentTrans() {
+        MomoPaymentInitRequest request = new MomoPaymentInitRequest();
+        request.setPlan("standard");
+
+        MomoPaymentInitResponse response = paymentService.initPaymentTransaction(request, null);
+        System.out.println(response.getPayUrl());
     }
 }

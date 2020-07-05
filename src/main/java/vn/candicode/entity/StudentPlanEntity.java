@@ -28,4 +28,7 @@ public class StudentPlanEntity implements Serializable {
 
     @Column
     private Long duration; // in days
+
+    @Column(columnDefinition = "integer default 0")
+    private Integer price = 0;
 }

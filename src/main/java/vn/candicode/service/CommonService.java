@@ -4,8 +4,10 @@ import org.springframework.stereotype.Component;
 import vn.candicode.entity.CategoryEntity;
 import vn.candicode.entity.LanguageEntity;
 import vn.candicode.entity.RoleEntity;
+import vn.candicode.entity.StudentPlanEntity;
 import vn.candicode.repository.CategoryRepository;
 import vn.candicode.repository.RoleRepository;
+import vn.candicode.repository.StudentPlanRepository;
 import vn.candicode.security.LanguageRepository;
 
 import java.util.*;
@@ -19,8 +21,9 @@ public class CommonService {
 
     private final Map<String, CategoryEntity> categories;
     private final Map<String, LanguageEntity> languages;
+    private final Map<String, StudentPlanEntity> plans;
 
-    public CommonService(RoleRepository roleRepository, CategoryRepository categoryRepository, LanguageRepository languageRepository) {
+    public CommonService(RoleRepository roleRepository, CategoryRepository categoryRepository, LanguageRepository languageRepository, StudentPlanRepository studentPlanRepository) {
         List<RoleEntity> roleEntities = roleRepository.findAll();
 
         for (RoleEntity roleEntity : roleEntities) {
@@ -33,18 +36,16 @@ public class CommonService {
 
         this.categories = categoryRepository.findAll().stream().collect(Collectors.toMap(CategoryEntity::getName, cate -> cate));
         this.languages = languageRepository.findAll().stream().collect(Collectors.toMap(LanguageEntity::getName, lang -> lang));
+        this.plans = studentPlanRepository.findAll().stream().collect(Collectors.toMap(StudentPlanEntity::getName, plan -> plan));
     }
 
     enum Role {
         STUDENT(1, "student", false, true),
-        ADMIN(2, "admin", true, false),
-        PARTNER(3, "partner", false, false),
-        CHALLENGE_CREATOR(4, "challenge creator", true, true),
-        CONTEST_CREATOR(5, "contest creator", true, true),
-        TUTORIAL_CREATOR(6, "tutorial creator", true, true),
-        SUPER_ADMIN(7, "super admin", true, false),
-        MANAGE_ADMIN(8, "manage admin", true, false),
-        CONTENT_ADMIN(9, "content admin", true, false),
+        CHALLENGE_CREATOR(2, "challenge creator", true, true),
+        CONTEST_CREATOR(4, "contest creator", true, true),
+        TUTORIAL_CREATOR(3, "tutorial creator", true, true),
+        ADMIN(5, "admin", true, false),
+        SUPER_ADMIN(6, "super admin", true, false),
         ;
 
         private final long roleId;
@@ -94,5 +95,9 @@ public class CommonService {
 
     public Map<String, LanguageEntity> getLanguages() {
         return languages;
+    }
+
+    public Map<String, StudentPlanEntity> getPlans() {
+        return plans;
     }
 }
