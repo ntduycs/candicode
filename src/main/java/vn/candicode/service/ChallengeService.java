@@ -10,13 +10,15 @@ import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.UserPrincipal;
 
+import java.util.Map;
+
 public interface ChallengeService {
     /**
      * @param payload
      * @param author
      * @return id of new challenge
      */
-    Long createChallenge(NewChallengeRequest payload, UserPrincipal author);
+    Map<String, Object> createChallenge(NewChallengeRequest payload, UserPrincipal author);
 
     /**
      * @param file   must be a zip file
@@ -52,8 +54,9 @@ public interface ChallengeService {
      * @param challengeId
      * @param payload
      * @param currentUser
+     * @return map of 2 keys (success:boolean and error:string)
      */
-    void updateChallenge(Long challengeId, UpdateChallengeRequest payload, UserPrincipal currentUser);
+    Map<String, Object> updateChallenge(Long challengeId, UpdateChallengeRequest payload, UserPrincipal currentUser);
 
     /**
      * <ul>

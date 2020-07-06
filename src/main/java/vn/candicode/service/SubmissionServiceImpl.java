@@ -60,6 +60,7 @@ public class SubmissionServiceImpl implements SubmissionService {
      * @return
      */
     @Override
+    @Transactional
     public SubmissionSummary doScoreSubmission(Long challengeId, NewCodeRunRequest payload, UserPrincipal me) {
         Long myId = me.getUserId();
         String language = payload.getLanguage().toLowerCase();
@@ -68,7 +69,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             .findByChallengeIdAndLanguageName(challengeId, language)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", payload.getLanguage()));
 
-        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
         List<TestcaseEntity> testcases = challenge.getTestcases();

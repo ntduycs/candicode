@@ -47,6 +47,11 @@ public class StorageServiceImpl implements StorageService {
             if (!Files.exists(bannerDir())) {
                 Files.createDirectories(bannerDir());
             }
+
+            if (!Files.exists(stagingDir())) {
+                Files.createDirectories(stagingDir());
+            }
+
         } catch (IOException e) {
             log.error("Cannot init the required directories. Message - {}", e.getLocalizedMessage());
             throw e;
@@ -70,6 +75,8 @@ public class StorageServiceImpl implements StorageService {
     public void initDirectoriesForUser(Long userId, FileAuthor author) throws IOException {
         init(avatarDirFor(userId));
         init(challengeDirFor(userId));
+        init(bannerDirFor(userId));
+        init(stagingDirFor(userId));
 
         if (author.equals(STUDENT)) {
             init(submissionDirFor(userId));
@@ -91,6 +98,11 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public Path challengeDirFor(Long userId) {
         return challengeDir().resolve(String.valueOf(userId));
+    }
+
+    @Override
+    public Path stagingDirFor(Long userId) {
+        return stagingDir().resolve(String.valueOf(userId));
     }
 
     /**
@@ -116,7 +128,7 @@ public class StorageServiceImpl implements StorageService {
      * @return path to banner dir of owner
      */
     @Override
-    public Path bannerDirOf(Long ownerId) {
+    public Path bannerDirFor(Long ownerId) {
         return bannerDir().resolve(String.valueOf(ownerId));
     }
 
@@ -131,9 +143,10 @@ public class StorageServiceImpl implements StorageService {
         Path path = null;
         switch (type) {
             case SUBMISSION:
-                break;
             case CHALLENGE:
-                path = challengeDirFor(owner).resolve(FileUtils.genDirname(owner, type));
+                break;
+            case STAGING:
+                path = stagingDirFor(owner).resolve(FileUtils.genDirname(owner, type));
                 Path challengeZipFile = path.resolve(file.getOriginalFilename());
                 Files.createDirectory(path);
                 file.transferTo(challengeZipFile);
@@ -145,7 +158,7 @@ public class StorageServiceImpl implements StorageService {
                 file.transferTo(path);
                 break;
             case BANNER:
-                path = bannerDirOf(owner).resolve(FileUtils.genFilename(owner, type, file.getOriginalFilename()));
+                path = bannerDirFor(owner).resolve(FileUtils.genFilename(owner, type, file.getOriginalFilename()));
                 file.transferTo(path);
                 break;
             default:
@@ -169,16 +182,17 @@ public class StorageServiceImpl implements StorageService {
      * null if <code>path</code> is not a directory or non-existing
      */
     @Override
-    public List<CCFile> parse(String path) {
+    public List<CCFile> parse(String path, String challengeDirname) {
         File dir = new File(path);
 
         if (dir.exists() && dir.isDirectory()) {
-            CCDirectory rootDir = new CCDirectory(dir.getName(), dir.getPath(), new ArrayList<>());
+
+            CCDirectory rootDir = new CCDirectory(dir.getName(), simplifyPath(dir.getPath(), challengeDirname), new ArrayList<>());
 
             File[] files = dir.listFiles();
-            
+
             if (files != null) {
-                parse(files, 0, rootDir);
+                parse(files, 0, rootDir, challengeDirname);
             }
 
             return rootDir.getChildren();
@@ -187,21 +201,25 @@ public class StorageServiceImpl implements StorageService {
         return null;
     }
 
-    private void parse(File[] files, int index, CCDirectory parentDir) {
-        if (index == files.length) { // Traversed all files in parentDir entirely
+    private String simplifyPath(String path, String root) {
+        return path.substring(path.indexOf(root) + root.length());
+    }
+
+    private void parse(File[] files, int index, CCDirectory parentDir, String challengeDirname) {
+        if (index == files.length) { // Already traversed all files in parentDir entirely
             return;
         }
 
         File file = files[index];
 
         String filename = file.getName();
-        String filepath = file.getPath();
+        String filepath = simplifyPath(file.getPath(), challengeDirname);
 
         if (file.isDirectory()) {
             CCDirectory dir = new CCDirectory(filename, filepath, new ArrayList<>());
             File[] subFiles = file.listFiles();
             if (subFiles != null) {
-                parse(subFiles, 0, dir);
+                parse(subFiles, 0, dir, challengeDirname);
             }
             parentDir.getChildren().add(dir);
         } else {
@@ -209,7 +227,7 @@ public class StorageServiceImpl implements StorageService {
         }
 
         // Continue to parse next sub-file of parentDir
-        parse(files, ++index, parentDir);
+        parse(files, ++index, parentDir, challengeDirname);
     }
 
     /**
@@ -221,9 +239,11 @@ public class StorageServiceImpl implements StorageService {
         if (fullPath == null) return null;
         switch (type) {
             case BANNER:
-                return bannerDirOf(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
+                return bannerDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case CHALLENGE:
                 return challengeDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
+            case STAGING:
+                return stagingDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case SUBMISSION:
                 return submissionDirFor(owner).relativize(Paths.get(fullPath).toAbsolutePath().normalize()).toString();
             case AVATAR:
@@ -244,15 +264,27 @@ public class StorageServiceImpl implements StorageService {
         if (path == null) return null;
         switch (type) {
             case BANNER:
-                return bannerDirOf(owner).resolve(path).toString();
+                return bannerDirFor(owner).resolve(path).toString();
             case CHALLENGE:
                 return challengeDirFor(owner).resolve(path).toString();
             case SUBMISSION:
                 return submissionDirFor(owner).resolve(path).toString();
             case AVATAR:
                 return avatarDirFor(owner).resolve(path).toString();
+            case STAGING:
+                return stagingDirFor(owner).resolve(path).toString();
             default:
                 throw new UnsupportedOperationException("Cannot resolve path of a " + type.name());
         }
+    }
+
+    /**
+     * @param dirname without path
+     * @return owner path of dir
+     * @see FileUtils#genDirname(Long, FileStorageType)
+     */
+    @Override
+    public Long getDirOwner(String dirname) {
+        return Long.parseLong(dirname.split("-", 3)[2]);
     }
 }

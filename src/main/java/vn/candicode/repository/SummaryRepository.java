@@ -1,18 +1,18 @@
 package vn.candicode.repository;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * This repository contain all named query that used when querying on multiple tables
  */
 public interface SummaryRepository {
 
-    List<Object[]> findLanguagesByChallengeId(Long challengeId);
+    Map<Long, Long> countNumCommentsGroupByChallengeId(List<Long> challengeIds);
 
-    List<Object[]> findLanguagesByChallengeIdIn(Set<Long> challengeIds);
+    Map<Long, Long> countNumSubmissionsGroupByChallengeId(List<Long> challengeIds);
 
-    List<Object[]> countChallengeAttendees(Set<Long> challengeIds);
+    Map<Long, List<String>> findAllLanguagesByChallengeId(List<Long> challengeIds);
 
-    List<Object[]> countChallengeAttendees(Long challengeId);
+    Map<Long, List<String>> findAllCategoriesByChallengeId(List<Long> challengeIds);
 }

@@ -18,7 +18,7 @@ import vn.candicode.payload.response.SubmissionDetails;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.repository.ChallengeConfigurationRepository;
 import vn.candicode.repository.ChallengeRepository;
-import vn.candicode.security.LanguageRepository;
+import vn.candicode.repository.LanguageRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.FileUtils;
 import vn.candicode.util.LanguageUtils;
@@ -72,7 +72,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             throw new ResourceNotFoundException(LanguageEntity.class, "name", payload.getLanguage());
         }
 
-        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
         if (!challenge.getAuthor().getUserId().equals(me.getUserId())) {

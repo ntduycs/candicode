@@ -6,9 +6,9 @@ import vn.candicode.entity.LanguageEntity;
 import vn.candicode.entity.RoleEntity;
 import vn.candicode.entity.StudentPlanEntity;
 import vn.candicode.repository.CategoryRepository;
+import vn.candicode.repository.LanguageRepository;
 import vn.candicode.repository.RoleRepository;
 import vn.candicode.repository.StudentPlanRepository;
-import vn.candicode.security.LanguageRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;

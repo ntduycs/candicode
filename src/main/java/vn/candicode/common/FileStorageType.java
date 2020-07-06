@@ -3,9 +3,9 @@ package vn.candicode.common;
 public enum FileStorageType {
     CHALLENGE(1),
     SUBMISSION(2),
-    AVATAR(5),
-    BANNER(6),
-    ;
+    AVATAR(3),
+    BANNER(4),
+    STAGING(5);
 
     public final int code;
 

@@ -24,6 +24,8 @@ public interface StorageService {
      */
     Path challengeDirFor(Long userId);
 
+    Path stagingDirFor(Long userId);
+
     /**
      * @param userId
      * @return path to submission dir of student
@@ -40,7 +42,7 @@ public interface StorageService {
      * @param ownerId challengeId or tutorialId or contestId
      * @return path to banner dir of owner
      */
-    Path bannerDirOf(Long ownerId);
+    Path bannerDirFor(Long ownerId);
 
     /**
      * @param file
@@ -56,7 +58,7 @@ public interface StorageService {
      * @param dir path to target directory
      * @return lists all contained files and directories inside <code>dir</code> as tree
      */
-    List<CCFile> parse(String dir);
+    List<CCFile> parse(String dir, String challengeDirname);
 
     /**
      * @param fullPath the fully path
@@ -71,6 +73,8 @@ public interface StorageService {
      * @return
      */
     String resolvePath(String path, FileStorageType type, Long owner);
+
+    Long getDirOwner(String dirname);
 
     // ==========================================================
     // = DEFAULT METHODS =
@@ -90,5 +94,9 @@ public interface StorageService {
 
     default Path bannerDir() {
         return Paths.get(rootDir(), "banners");
+    }
+
+    default Path stagingDir() {
+        return Paths.get(rootDir(), "staging");
     }
 }

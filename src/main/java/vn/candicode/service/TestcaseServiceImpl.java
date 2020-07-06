@@ -65,7 +65,7 @@ public class TestcaseServiceImpl implements TestcaseService {
     @Override
     @Transactional
     public Integer createTestcases(Long challengeId, NewTestcaseListRequest payload, UserPrincipal currentUser) {
-        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchTestcases(challengeId)
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
         if (!challenge.getAuthor().getUserId().equals(currentUser.getUserId())) {

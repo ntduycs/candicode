@@ -18,7 +18,7 @@ public class CandicodeError implements Serializable {
     private final String reason;
     private final String exception;
     private final String path;
-    private final List<Error> errors;
+    private final List<Details> errors;
 
     @Getter
     @AllArgsConstructor
@@ -39,13 +39,21 @@ public class CandicodeError implements Serializable {
         public Map<String, Object> getErrorAttributes(WebRequest webRequest, boolean includeStackTrace) {
             Map<String, Object> defaultAttrs = super.getErrorAttributes(webRequest, INCLUDE_STACKTRACE);
 
+            String reason = (int) defaultAttrs.getOrDefault("status", 500) == 403 ?
+                getForbiddenReason() : (String) defaultAttrs.getOrDefault("message", "Reason unknown");
+
             return Map.of(
                 "code", defaultAttrs.getOrDefault("status", 500),
                 "message", defaultAttrs.getOrDefault("error", "Internal server error"),
-                "reason", defaultAttrs.getOrDefault("message", "Reason unknown"),
+                "reason", reason,
                 "exception", defaultAttrs.getOrDefault("exception", "Exception unknown"),
                 "path", defaultAttrs.getOrDefault("path", "Path unknown")
             );
+        }
+
+        private String getForbiddenReason() {
+            return "Your account cannot access to this resource. Please contact admin to get more details";
+
         }
     }
 }

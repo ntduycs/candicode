@@ -3,9 +3,9 @@ package vn.candicode.controller;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewChallengeRequest;
+import vn.candicode.payload.request.NewChallengeSourceRequest;
 import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.request.UpdateChallengeRequest;
 import vn.candicode.payload.response.ChallengeDetails;
@@ -16,6 +16,9 @@ import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ChallengeService;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,20 +35,22 @@ public class ChallengeController extends Controller {
     }
 
     @PostMapping(path = "challenges/source", produces = {"application/json"})
-    public ResponseEntity<?> uploadChallengeSource(@RequestParam("source") MultipartFile file, @CurrentUser UserPrincipal author) {
-        DirectoryTree tree = challengeService.storeChallengeSource(file, author);
+    public ResponseEntity<?> uploadChallengeSource(@ModelAttribute @Valid NewChallengeSourceRequest payload,
+                                                   @CurrentUser UserPrincipal author) {
+        DirectoryTree tree = challengeService.storeChallengeSource(payload.getSource(), author);
 
         return ResponseEntity.ok(ResponseFactory.build(tree));
     }
 
     @PostMapping(path = "challenges", produces = {"application/json"})
-    public ResponseEntity<?> createChallenge(@ModelAttribute NewChallengeRequest payload, @CurrentUser UserPrincipal author) {
-        Long challengeId = challengeService.createChallenge(payload, author);
+    public ResponseEntity<?> createChallenge(@ModelAttribute @Valid NewChallengeRequest payload, @CurrentUser UserPrincipal author) {
+        Map<String, Object> result = challengeService.createChallenge(payload, author);
 
-        return ResponseEntity.created(getResourcePath(challengeId)).body(ResponseFactory.build(
+        return ResponseEntity.created(getResourcePath((Long) result.get("challengeId"))).body(ResponseFactory.build(
             Map.of(
                 "message", "Created new challenge successfully",
-                "challengeId", challengeId
+                "challengeId", result.get("challengeId"),
+                "errors", result.getOrDefault("errors", new ArrayList<>())
             )
         ));
     }
@@ -76,11 +81,27 @@ public class ChallengeController extends Controller {
     }
 
     @PostMapping(path = "challenges/{id}")
-    public ResponseEntity<?> updateChallenge(@PathVariable("id") Long challengeId, @ModelAttribute UpdateChallengeRequest payload, @CurrentUser UserPrincipal me) {
-        challengeService.updateChallenge(challengeId, payload, me);
+    public ResponseEntity<?> updateChallenge(@PathVariable("id") Long challengeId, @ModelAttribute @Valid UpdateChallengeRequest payload, @CurrentUser UserPrincipal me) {
+        Map<String, Object> response = challengeService.updateChallenge(challengeId, payload, me);
+
+        String message;
+
+        boolean isSuccess = (boolean) response.getOrDefault("success", false);
+
+        @SuppressWarnings("unchecked")
+        List<String> errors = (List<String>) response.getOrDefault("errors", new ArrayList<>());
+
+        if (!isSuccess) {
+            message = "Failed to update challenge";
+        } else if (errors.size() > 0) {
+            message = "Updated challenge partially";
+        } else {
+            message = "Updated challenge successfully";
+        }
 
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
-            "message", "Updated challenge successfully"
+            "message", message,
+            "errors", errors
         )));
     }
 

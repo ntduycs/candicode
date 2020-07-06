@@ -2,12 +2,14 @@ package vn.candicode.payload.request;
 
 import lombok.Getter;
 import lombok.Setter;
+import vn.candicode.payload.request.validator.PasswordConfirm;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class PasswordRequest extends Request {
+@PasswordConfirm
+public class PasswordRequest extends Request implements PasswordConfirmable {
     @NotBlank(message = "Field 'oldPassword' is required but not be given")
     private String oldPassword;
 
@@ -16,4 +18,9 @@ public class PasswordRequest extends Request {
 
     @NotBlank(message = "Field 'confirmPassword' is required but not be given")
     private String confirmPassword;
+
+    @Override
+    public String getPassword() {
+        return newPassword;
+    }
 }

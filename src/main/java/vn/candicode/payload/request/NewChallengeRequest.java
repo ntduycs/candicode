@@ -3,6 +3,7 @@ package vn.candicode.payload.request;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+import vn.candicode.payload.request.validator.Image;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class NewChallengeRequest extends Request {
     @NotBlank(message = "Field 'description is required but not be given")
     private String description;
 
+    @Image
     private MultipartFile banner;
 
     @NotBlank(message = "Field 'language' is required but not be given")

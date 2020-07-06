@@ -39,6 +39,8 @@ public class ChallengeDetails implements Serializable {
 
     private String slug;
 
+    private Boolean available;
+
     public Long getNumAttendees() {
         return numAttendees != null ? numAttendees : 0L;
     }

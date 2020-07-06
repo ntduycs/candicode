@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.candicode.entity.ChallengeCommentEntity;
+import vn.candicode.entity.ChallengeEntity;
 
 import java.util.Optional;
 
@@ -15,4 +16,6 @@ public interface ChallengeCommentRepository extends JpaRepository<ChallengeComme
 
     @Query("SELECT c FROM ChallengeCommentEntity c WHERE c.challenge.challengeId = :id")
     Page<ChallengeCommentEntity> findAllByChallengeId(@Param("id") Long challengeId, Pageable pageable);
+
+    long countByChallenge(ChallengeEntity challenge);
 }

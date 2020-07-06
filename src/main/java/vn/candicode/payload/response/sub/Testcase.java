@@ -13,23 +13,14 @@ public class Testcase implements Serializable {
     private String output;
     private Boolean hidden;
 
-    public Testcase(Long testcaseId, String input, String output, Boolean hidden) {
+    public Testcase(Long testcaseId, String input, String output, Boolean hidden, Boolean displayable) {
         this.testcaseId = testcaseId;
         this.input = input;
         this.hidden = hidden;
-        this.output = hidden ? null : output;
-    }
-
-    public Testcase(Long testcaseId, String input, String output, Boolean hidden, Boolean isOwner) {
-        this.testcaseId = testcaseId;
-        this.input = input;
-        this.hidden = hidden;
-        if (isOwner) {
+        if (displayable || !hidden) {
             this.output = output;
-        } else if (hidden) {
-            this.output = null;
         } else {
-            this.output = output;
+            this.output = null;
         }
     }
 }

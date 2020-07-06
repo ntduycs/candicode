@@ -2,6 +2,7 @@ package vn.candicode.payload.request;
 
 import lombok.Getter;
 import lombok.Setter;
+import vn.candicode.payload.request.validator.PasswordConfirm;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,7 +10,8 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class NewStudentRequest extends Request {
+@PasswordConfirm
+public class NewStudentRequest extends Request implements PasswordConfirmable {
     @NotBlank(message = "Field 'email' is required but not be given")
     @Email
     private String email;

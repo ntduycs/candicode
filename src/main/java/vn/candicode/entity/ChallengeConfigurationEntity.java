@@ -30,7 +30,7 @@ public class ChallengeConfigurationEntity extends Auditable {
     @JoinColumn(name = "language_id", nullable = false, foreignKey = @ForeignKey(name = "language_fk"))
     private LanguageEntity language;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "boolean default false")
     private Boolean enabled = false;
 
     @Column(nullable = false)
