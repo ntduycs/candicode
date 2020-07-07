@@ -24,4 +24,12 @@ public class ExecutionResult implements Serializable {
             ", output='" + output + '\'' +
             '}';
     }
+
+    public static ExecutionResult failure(String language, String error) {
+        return new ExecutionResult(language, error, null, 0, null);
+    }
+
+    public static ExecutionResult failure(String language, String error, Long executionTime) {
+        return new ExecutionResult(language, error, null, executionTime, null);
+    }
 }

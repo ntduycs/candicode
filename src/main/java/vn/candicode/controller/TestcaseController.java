@@ -49,7 +49,6 @@ public class TestcaseController extends Controller {
      * @param challengeId
      * @param payload
      * @param me
-     * @return
      */
     @PostMapping(path = "challenges/{id}/testcases")
     public ResponseEntity<?> createTestcases(@PathVariable("id") Long challengeId, @RequestBody @Valid NewTestcaseListRequest payload, @CurrentUser UserPrincipal me) {

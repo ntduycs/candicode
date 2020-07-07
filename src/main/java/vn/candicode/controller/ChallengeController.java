@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.INSUFFICIENT_STORAGE;
+
 @RestController
 public class ChallengeController extends Controller {
     private final ChallengeService challengeService;
@@ -93,7 +95,12 @@ public class ChallengeController extends Controller {
 
         if (!isSuccess) {
             message = "Failed to update challenge";
-        } else if (errors.size() > 0) {
+            return new ResponseEntity<>(ResponseFactory.build(Map.of(
+                "message", message, "errors", errors)
+            ), INSUFFICIENT_STORAGE);
+        }
+
+        if (errors.size() > 0) {
             message = "Updated challenge partially";
         } else {
             message = "Updated challenge successfully";

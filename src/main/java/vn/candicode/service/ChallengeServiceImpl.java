@@ -69,7 +69,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     /**
      * @param payload challenge payload
      * @param me      challenge owner
-     * @return id of new challenge
+     * @return id of created challenge and error if any
      * @throws BadRequestException  if you're not the owner of this challenge
      * @throws PersistenceException if the challenge has already existing
      */
@@ -453,7 +453,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public void deleteChallenge(Long challengeId, UserPrincipal me) {
-        ChallengeEntity challenge = challengeRepository.findByChallengeIdForDelete(challengeId)
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchAuthor(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
         if (!isMyChallenge(challenge, me) || !me.getAuthorities().contains(new SimpleGrantedAuthority("super admin"))) {

@@ -201,6 +201,37 @@ public class FileUtils {
     }
 
     /**
+     * The destination directory is created if it does not exist. If the destination directory did exist,
+     * then this method merges the source with the destination, with the source taking precedence.
+     *
+     * @param srcDir
+     * @param destDir will be created if not currently exist
+     * @return <ul>
+     * <li>SUCCESS - if no error happened and copied successfully</li>
+     * <li>DIR_NOT_EXIST - if one of two parameters is null or <code>srcDir</code> is not exist</li>
+     * <li>INVALID_FILE_TYPE - if <code>srcDir</code> is not a directory</li>
+     * <li>IO_ERROR - if any other errors happened</li>
+     * </ul>
+     */
+    public static FileOperationResult copyDirectoryToDirectory(File srcDir, File destDir) {
+        if (srcDir == null || !srcDir.exists() || destDir == null) {
+            return FileOperationResult.DIR_NOT_EXIST;
+        }
+
+        if (!srcDir.isDirectory()) {
+            return FileOperationResult.INVALID_FILE_TYPE;
+        }
+
+        try {
+            org.apache.commons.io.FileUtils.copyDirectoryToDirectory(srcDir, destDir);
+            return FileOperationResult.SUCCESS;
+        } catch (IOException e) {
+            log.error("I/O error. Message - {}", e.getLocalizedMessage());
+            return FileOperationResult.IO_ERROR;
+        }
+    }
+
+    /**
      * This method copies the contents of the specified source file to a file of the same name in the specified destination directory.
      * The destination directory is created if it does not exist.
      * If the destination file exists, then this method will overwrite it.

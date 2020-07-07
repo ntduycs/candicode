@@ -17,13 +17,26 @@ import java.util.stream.Collectors;
 public class CodeRunnerServiceImpl implements CodeRunnerService {
     private static final long DEFAULT_TIMEOUT = 3000000000L; // 3s
 
+    private static final List<String> SCRIPTING_LANGUAGES = List.of("python", "js");
+
+    private boolean noNeedToCompile(String language) {
+        return SCRIPTING_LANGUAGES.contains(language.toLowerCase());
+    }
+
     @Override
     public CompileResult compile(File root, String language) {
-        String error = null;
+        if (noNeedToCompile(language)) {
+            return CompileResult.success(language);
+        }
+
+        String error;
 
         ProcessBuilder pp = new ProcessBuilder();
         Process p;
 
+        // ==========================================================
+        // = Grant execution privilege =
+        // ==========================================================
         try {
             p = pp.command("chmod", "+x", "compile.sh")
                 .directory(root)
@@ -31,29 +44,42 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
 
             p.waitFor();
         } catch (IOException | InterruptedException e) {
-            return new CompileResult(language, false, e.getMessage());
+            log.error("Abnormal error happened when run compile task at {} (Execution granting phase, in detail). Message - {}", root.getPath(), e.getMessage());
+            e.printStackTrace();
+            return CompileResult.failure(language, "Internal server error");
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
             error = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
+            log.error("Failed to read error stream when run compile task at {}. Message - {}", root.getPath(), e.getMessage());
             e.printStackTrace();
+            return CompileResult.failure(language, "Internal server error");
         }
 
         if (StringUtils.hasText(error)) {
-            return new CompileResult(language, false, error);
+            return CompileResult.failure(language, error);
         }
 
+        // ==========================================================
+        // = Run compile script =
+        // ==========================================================
         try {
-            p = pp.command("./compile.sh").directory(root).start();
+            p = pp.command("./compile.sh")
+                .directory(root)
+                .start();
         } catch (IOException e) {
-            return new CompileResult(language, false, e.getMessage());
+            log.error("Abnormal error happened when run compile task at {} (Run script phase, in detail). Message - {}", root.getPath(), e.getMessage());
+            e.printStackTrace();
+            return CompileResult.failure(language, "Internal server error");
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
             error = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
+            log.error("Failed to read error stream when run compile task at {}. Message - {}", root.getPath(), e.getMessage());
             e.printStackTrace();
+            return CompileResult.failure(language, "Internal server error");
         }
 
         if (p.isAlive()) {
@@ -61,9 +87,9 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
         }
 
         if (StringUtils.hasText(error)) {
-            return new CompileResult(language, false, error);
+            return CompileResult.failure(language, error);
         } else {
-            return new CompileResult(language, true, null);
+            return CompileResult.success(language);
         }
     }
 
@@ -75,7 +101,7 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
      */
     @Override
     public ExecutionResult run(File root, long clock, String language) {
-        String error = null;
+        String error;
         String output;
         long timeout = (clock > 0 && clock < DEFAULT_TIMEOUT) ? clock : DEFAULT_TIMEOUT;
 
@@ -89,61 +115,74 @@ public class CodeRunnerServiceImpl implements CodeRunnerService {
 
             p.waitFor();
         } catch (IOException | InterruptedException e) {
-            log.error(e.getLocalizedMessage());
-            return new ExecutionResult(language, e.getMessage(), null, 0, null);
+            log.error("Abnormal error happened when run execution task at {} (Granting phase, in detail). Message - {}", root.getPath(), e.getMessage());
+            e.printStackTrace();
+            return ExecutionResult.failure(language, "Internal server error");
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
             error = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
+            log.error("Failed to read error stream when run compile task at {}. Message - {}", root.getPath(), e.getMessage());
             e.printStackTrace();
+            return ExecutionResult.failure(language, "Internal server error");
         }
 
         if (StringUtils.hasText(error)) {
-            return new ExecutionResult(language, error, null, 0, null);
+            return ExecutionResult.failure(language, error);
         }
 
         Stopwatch stopwatch;
         try {
             // Start time counter
             stopwatch = Stopwatch.createStarted();
+
             p = pp.command("./run.sh").directory(root).start();
-            boolean noTimedout = p.waitFor(timeout, TimeUnit.NANOSECONDS);
+            boolean exitNormally = p.waitFor(timeout, TimeUnit.NANOSECONDS);
+
             // Stop time counter
             stopwatch.stop();
 
             // Check process exceeds given time threshold
-            if (!noTimedout) {
+            if (!exitNormally) {
                 if (p.isAlive()) p.destroy();
-                return new ExecutionResult(language, null, "Exceeds the allowed time", clock, null);
+                return ExecutionResult.failure(language, "Timeout error");
             }
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-            return new ExecutionResult(language, e.getMessage(), null, 0, null);
+            log.error("Abnormal error happened when run execution task at {} (Executing phase, in detail). Message - {}", root.getPath(), e.getMessage());
+            e.printStackTrace();
+            return ExecutionResult.failure(language, "Internal server error");
         } catch (InterruptedException e) {
-            log.error(e.getLocalizedMessage());
-            return new ExecutionResult(language, null, e.getMessage(), clock, null);
+            log.error("Interrupted error happened when run execution task at {} (Executing phase, in detail). Message - {}", root.getPath(), e.getMessage());
+            e.printStackTrace();
+            return ExecutionResult.failure(language, "Internal server error");
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
             error = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
+            log.error("Failed to read error stream when run execution task at {}. Message - {}", root.getPath(), e.getMessage());
             e.printStackTrace();
+            return ExecutionResult.failure(language, "Internal server error");
         }
 
         long executionTime = stopwatch.elapsed(TimeUnit.NANOSECONDS);
 
         if (StringUtils.hasText(error)) {
-            return new ExecutionResult(language, error, null, executionTime, null);
+            return ExecutionResult.failure(language, error, executionTime);
         }
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(root, "out.txt"))))) {
+        File out = new File(root, "out.txt");
+        if (!out.exists()) {
+            return ExecutionResult.failure(language, "Cannot read out.txt file. Please verify that your implementation");
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(out)))) {
             output = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-            return new ExecutionResult(language, "No output found", null, executionTime, null);
+            log.error("Abnormally failed to read output file when run execution task at {}. Message - {}", root.getPath(), e.getMessage());
+            e.printStackTrace();
+            return ExecutionResult.failure(language, "Internal server error");
         }
 
         return new ExecutionResult(language, null, null, executionTime, output);

@@ -25,7 +25,7 @@ public class CompileResult implements Serializable {
         return new CompileResult(language, true, null);
     }
 
-    public static CompileResult failure(String language) {
-        return new CompileResult(language, false, "Unknown error");
+    public static CompileResult failure(String language, String error) {
+        return new CompileResult(language, false, error);
     }
 }

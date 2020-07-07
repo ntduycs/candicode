@@ -69,7 +69,7 @@ public class ChallengeEntity extends Auditable {
     private Set<ChallengeCategoryEntity> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ChallengeConfigurationEntity> configurations = new HashSet<>();
+    private List<ChallengeConfigurationEntity> configurations = new ArrayList<>();
 
     @Convert(converter = TagConverter.class)
     private Set<String> tags = new HashSet<>();
@@ -93,9 +93,21 @@ public class ChallengeEntity extends Auditable {
         return contestChallenge;
     }
 
+    public void addTestcases(List<TestcaseEntity> testcases) {
+        for (TestcaseEntity testcase : testcases) {
+            addTestcase(testcase);
+        }
+    }
+
     public void addTestcase(TestcaseEntity testcase) {
         testcases.add(testcase);
         testcase.setChallenge(this);
+    }
+
+    public void removeTestcases(List<TestcaseEntity> testcases) {
+        for (TestcaseEntity testcase : testcases) {
+            removeTestcase(testcase);
+        }
     }
 
     public void removeTestcase(TestcaseEntity testcase) {

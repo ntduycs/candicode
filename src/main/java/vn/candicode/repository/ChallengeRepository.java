@@ -25,12 +25,17 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     @Query("SELECT c FROM ChallengeEntity c " +
         "LEFT JOIN FETCH c.configurations cf JOIN FETCH cf.language " +
         "LEFT JOIN FETCH c.categories ct JOIN FETCH ct.category " +
-        "LEFT JOIN FETCH c.testcases " +
         "WHERE c.challengeId = :id AND c.deleted = false")
     Optional<ChallengeEntity> findByChallengeId(@Param("id") Long challengeId);
 
     @Query("SELECT c FROM ChallengeEntity c JOIN FETCH c.author WHERE c.challengeId = :id")
-    Optional<ChallengeEntity> findByChallengeIdForDelete(@Param("id") Long challengeId);
+    Optional<ChallengeEntity> findByChallengeIdFetchAuthor(@Param("id") Long challengeId);
+
+    /**
+     * This only is used for update purpose
+     */
+    @Query("SELECT c FROM ChallengeEntity c JOIN FETCH c.author JOIN FETCH c.testcases WHERE c.challengeId = :id")
+    Optional<ChallengeEntity> findByChallengeIdFetchAuthorAndTestcases(@Param("id") Long challengeId);
 
     @Query("SELECT c FROM ChallengeEntity c LEFT JOIN FETCH c.categories b LEFT JOIN FETCH b.category WHERE c.challengeId = :challengeId and c.deleted = false")
     Optional<ChallengeEntity> findByChallengeIdFetchCategories(@Param("challengeId") Long challengeId);
@@ -45,4 +50,10 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
 
     @Query("SELECT new vn.candicode.entity.dto.Tag(c.challengeId, c.tags) FROM ChallengeEntity c")
     List<Tag> findAllChallengeTags();
+
+    @Query("SELECT c FROM ChallengeEntity c " +
+        "LEFT JOIN FETCH c.configurations cf JOIN FETCH cf.language " +
+        "JOIN FETCH c.author " +
+        "WHERE c.challengeId = :id AND c.deleted = false")
+    Optional<ChallengeEntity> findByChallengeFetchConfigurationsAndAuthor(@Param("id") Long challengeId);
 }
