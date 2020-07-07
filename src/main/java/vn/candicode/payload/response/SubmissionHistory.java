@@ -27,4 +27,6 @@ public class SubmissionHistory implements Serializable {
     private String createdAt;
 
     private Boolean contestChallenge;
+
+    private String submitAt;
 }

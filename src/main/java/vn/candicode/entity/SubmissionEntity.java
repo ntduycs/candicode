@@ -43,6 +43,12 @@ public class SubmissionEntity extends Auditable {
     @Column(columnDefinition = "integer default 0")
     private Integer totalTestcases = 0;
 
+    @Column(nullable = false)
+    private String authorName;
+
+    @Column(nullable = false)
+    private String submitAt;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     private StudentEntity author;

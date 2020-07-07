@@ -24,7 +24,7 @@ public class SummaryRepositoryImpl implements SummaryRepository {
     @Override
     public Map<Long, Long> countNumCommentsGroupByChallengeId(List<Long> challengeIds) {
         return entityManager.createQuery(
-            "SELECT c.challenge.challengeId as challengeId, count(c) as numComments " +
+            "SELECT c.challenge.challengeId as challengeId, count(c.commentId) as numComments " +
                 "FROM ChallengeCommentEntity c " +
                 "WHERE c.challenge.challengeId IN (:ids) " +
                 "GROUP BY c.challenge.challengeId", Tuple.class)

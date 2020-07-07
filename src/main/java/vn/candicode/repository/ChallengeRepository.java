@@ -23,13 +23,15 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     Page<ChallengeEntity> findAllContestChallengesByAuthorId(@Param("id") Long userId, Pageable pageable);
 
     @Query("SELECT c FROM ChallengeEntity c " +
-        "LEFT JOIN FETCH c.configurations cf JOIN FETCH cf.language " +
         "LEFT JOIN FETCH c.categories ct JOIN FETCH ct.category " +
         "WHERE c.challengeId = :id AND c.deleted = false")
     Optional<ChallengeEntity> findByChallengeId(@Param("id") Long challengeId);
 
     @Query("SELECT c FROM ChallengeEntity c JOIN FETCH c.author WHERE c.challengeId = :id")
     Optional<ChallengeEntity> findByChallengeIdFetchAuthor(@Param("id") Long challengeId);
+
+    @Query("SELECT c FROM ChallengeEntity c JOIN FETCH c.testcases WHERE c.challengeId = :id")
+    Optional<ChallengeEntity> findByChallengeIdFetchTestcases(@Param("id") Long challengeId);
 
     /**
      * This only is used for update purpose

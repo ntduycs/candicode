@@ -16,4 +16,5 @@ public class SubmissionSummary implements Serializable {
     private String compiled; // compile status, 'success' or 'failed'
     private String error; // compile error in detail
     private List<SubmissionDetails> details; // detailed results for each testcases, empty if failed to compile
+    private String submitAt;
 }

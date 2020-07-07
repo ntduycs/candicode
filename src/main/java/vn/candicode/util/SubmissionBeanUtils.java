@@ -11,7 +11,7 @@ public class SubmissionBeanUtils {
         history.setDoneWithin(entity.getDoneWithin());
         history.setExecTime(entity.getExecTime());
         history.setCompiled(entity.getCompiled());
-        history.setAuthor(entity.getAuthor().getFullName());
+        history.setAuthor(entity.getAuthorName());
         history.setChallengeId(entity.getChallenge().getChallengeId());
         history.setChallengeTitle(entity.getChallenge().getTitle());
         history.setPoint(entity.getPoint());
@@ -19,6 +19,7 @@ public class SubmissionBeanUtils {
         history.setTotalTestcases(entity.getTotalTestcases());
         history.setCreatedAt(entity.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         history.setContestChallenge(entity.getChallenge().getContestChallenge());
+        history.setSubmitAt(entity.getSubmitAt());
 
         return history;
     }

@@ -165,7 +165,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     /**
      * @param file must be a zip file
-     * @param me must be not null
+     * @param me   must be not null
      * @return directory tree of submitted source
      * @throws StorageException if has error when parsing
      */
@@ -189,7 +189,6 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     /**
-     *
      * @param pageable paginated parameters
      * @return paginated list of challenges
      */
@@ -214,8 +213,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         summaries.forEach(item -> {
             final long challengeId = item.getChallengeId();
-            item.setNumComments(commentCountMap.get(challengeId));
-            item.setNumAttendees(submissionCountMap.get(challengeId));
+            item.setNumComments(commentCountMap.getOrDefault(challengeId, 0L));
+            item.setNumAttendees(submissionCountMap.getOrDefault(challengeId, 0L));
             item.setLanguages(languageNamesMap.get(challengeId));
             item.setCategories(categoryNamesMap.get(challengeId));
         });
@@ -232,8 +231,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     /**
-     * @param pageable paginated parameters
-     * @param myId must be not null
+     * @param pageable             paginated parameters
+     * @param myId                 must be not null
      * @param wantContestChallenge should load only contest challenge ?
      * @return paginated list of my challenges
      */
@@ -263,8 +262,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         summaries.forEach(item -> {
             final long challengeId = item.getChallengeId();
-            item.setNumComments(commentCountMap.get(challengeId));
-            item.setNumAttendees(submissionCountMap.get(challengeId));
+            item.setNumComments(commentCountMap.getOrDefault(challengeId, 0L));
+            item.setNumAttendees(submissionCountMap.getOrDefault(challengeId, 0L));
             item.setLanguages(languageNamesMap.get(challengeId));
             item.setCategories(categoryNamesMap.get(challengeId));
         });
@@ -447,7 +446,6 @@ public class ChallengeServiceImpl implements ChallengeService {
      *  @param challengeId must be not null
      *
      * @param me used to check if you're the owner of challenge
-     *
      * @throws BadRequestException if you are not the owner of challenge
      */
     @Override

@@ -3,22 +3,25 @@ package vn.candicode.payload.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class NewSubmissionRequest extends Request {
-    @NotNull
+    @NotNull(message = "Field 'compiled' is required but not be given")
     private Boolean compiled;
     private Double doneWithin;
-    @NotNull
+    @NotNull(message = "Field 'executionTime is required but not be given'")
     private Double executionTime;
-    @NotNull
+    @NotNull(message = "Field 'passed' is required but not be given")
     private Integer passed;
-    @NotNull
+    @NotNull(message = "Field 'total' is required but not be given")
     private Integer total;
-    @NotNull
+    @NotBlank(message = "Field 'code' is required but not be given")
     private String code;
-    @NotNull
+    @NotBlank(message = "Field 'language' is required but not be given")
     private String language;
+    @NotBlank(message = "Field 'submitAt' is required but not be given")
+    private String submitAt;
 }
