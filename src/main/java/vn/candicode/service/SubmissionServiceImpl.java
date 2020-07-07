@@ -165,6 +165,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         codeExecResultRepository.save(codeExecResult);
 
+        codeRunnerService.cleanGarbageFiles(new File(rootDir), language);
+
         return SubmissionSummary.builder()
             .compiled("success")
             .error(null)

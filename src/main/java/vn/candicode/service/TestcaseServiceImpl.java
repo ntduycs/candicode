@@ -159,7 +159,7 @@ public class TestcaseServiceImpl implements TestcaseService {
                 String destDir = storageService.resolvePath(configuration.getDirectory(), STAGING, userId);
 
                 compileProcess = CompletableFuture
-                    .runAsync(() -> FileUtils.copyDirectory(new File(srcDir), new File(destDir)))
+                    .runAsync(() -> FileUtils.copyDirectoryToDirectory(new File(srcDir), new File(destDir)))
                     .thenApplyAsync(nil -> codeRunnerService.compile(new File(rootDir), language))
                     .thenAcceptAsync(compileResults::add);
             }

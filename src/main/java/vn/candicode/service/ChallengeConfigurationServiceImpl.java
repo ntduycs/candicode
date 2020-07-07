@@ -28,8 +28,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static vn.candicode.common.FileStorageType.CHALLENGE;
-import static vn.candicode.common.FileStorageType.SUBMISSION;
+import static vn.candicode.common.FileStorageType.*;
 
 @Service
 @Log4j2
@@ -72,17 +71,17 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             throw new ResourceNotFoundException(LanguageEntity.class, "name", payload.getLanguage());
         }
 
-        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+        ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchAuthorAndTestcases(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
-        if (!challenge.getAuthor().getUserId().equals(me.getUserId())) {
+        if (!isMyChallenge(challenge, me)) {
             throw new BadRequestException("You are not the owner of this challenge");
         }
 
         List<TestcaseEntity> testcases = challenge.getTestcases();
         int totalTestcases = testcases.size();
 
-        String srcDir = storageService.resolvePath(payload.getChallengeDir(), CHALLENGE, myId);
+        String srcDir = storageService.resolvePath(payload.getChallengeDir(), STAGING, myId);
         String destDir = storageService.resolvePath(payload.getChallengeDir(), SUBMISSION, myId);
 
         // We will do copy the source to submission folder, so we need to adjust the root dir to reflect it correctly
@@ -155,6 +154,14 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             .build();
     }
 
+    private boolean isMyChallenge(ChallengeEntity challenge, UserPrincipal me) {
+        return challenge.getAuthor().getUserId().equals(me.getUserId());
+    }
+
+    private boolean isMyChallenge(ChallengeConfigurationEntity configuration, UserPrincipal me) {
+        return configuration.getAuthorId().equals(me.getUserId());
+    }
+
     /**
      * Softly delete db record
      *
@@ -169,7 +176,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             .findByChallengeIdAndLanguageName(challengeId, language.toLowerCase())
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", language));
 
-        if (!configuration.getAuthorId().equals(me.getUserId())) {
+        if (!isMyChallenge(configuration, me)) {
             throw new BadRequestException("You are not the owner of this challenge");
         }
 
