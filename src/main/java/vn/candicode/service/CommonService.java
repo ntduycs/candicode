@@ -41,9 +41,9 @@ public class CommonService {
 
     enum Role {
         STUDENT(1, "student", false, true),
-        CHALLENGE_CREATOR(2, "challenge creator", true, true),
-        CONTEST_CREATOR(4, "contest creator", true, true),
-        TUTORIAL_CREATOR(3, "tutorial creator", true, true),
+        CHALLENGE_CREATOR(2, "challenge creator", false, true),
+        CONTEST_CREATOR(4, "contest creator", false, true),
+        TUTORIAL_CREATOR(3, "tutorial creator", false, true),
         ADMIN(5, "admin", true, false),
         SUPER_ADMIN(6, "super admin", true, false),
         ;

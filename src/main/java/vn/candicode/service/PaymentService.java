@@ -9,6 +9,4 @@ public interface PaymentService {
     MomoPaymentInitResponse initPaymentTransaction(MomoPaymentInitRequest payload, UserPrincipal me);
 
     void processPaymentConfirmedTransaction(MomoPaymentConfirmation payload);
-
-    String generatePaymentInfo(String paymentId, String paymentInfo, Integer amount);
 }
