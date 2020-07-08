@@ -3,6 +3,7 @@ package vn.candicode.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.candicode.common.FileOperationResult;
 import vn.candicode.core.CodeRunnerService;
 import vn.candicode.core.CompileResult;
 import vn.candicode.core.ExecutionResult;
@@ -28,7 +29,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static vn.candicode.common.FileStorageType.*;
+import static vn.candicode.common.FileOperationResult.SUCCESS;
+import static vn.candicode.common.FileStorageType.STAGING;
 
 @Service
 @Log4j2
@@ -81,17 +83,15 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         List<TestcaseEntity> testcases = challenge.getTestcases();
         int totalTestcases = testcases.size();
 
-        String srcDir = storageService.resolvePath(payload.getChallengeDir(), STAGING, myId);
-        String destDir = storageService.resolvePath(payload.getChallengeDir(), SUBMISSION, myId);
+        String rootRelativePath = payload.getRunPath().startsWith(File.separator) ?
+            payload.getRunPath().substring(1, payload.getRunPath().lastIndexOf(File.separator)) :
+            payload.getRunPath().substring(0, payload.getRunPath().lastIndexOf(File.separator));
 
-        // We will do copy the source to submission folder, so we need to adjust the root dir to reflect it correctly
-        String rootDir = Paths.get(payload.getRunPath()).getParent().toString().replaceFirst("challenges", "submissions");
+        String rootDir = storageService.resolvePath(payload.getChallengeDir(), STAGING, myId) + File.separator + rootRelativePath;
 
         CompileResult compileResult;
 
         List<SubmissionDetails> submissionDetails = new ArrayList<>();
-
-        FileUtils.copyDirectory(new File(srcDir), new File(destDir));
 
         if (LanguageUtils.requireCompile(language)) {
             compileResult = codeRunnerService.compile(new File(rootDir), language);
@@ -130,19 +130,28 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         if (passedTestcases == totalTestcases) {
             ChallengeConfigurationEntity challengeConfig = new ChallengeConfigurationEntity();
 
-            challengeConfig.setChallenge(challenge);
             challengeConfig.setLanguage(commonService.getLanguages().get(language));
             challengeConfig.setDirectory(payload.getChallengeDir());
-            challengeConfig.setRoot(rootDir);
-            challengeConfig.setPreImplementedFile(storageService.simplifyPath(payload.getImplementedPath(), CHALLENGE, myId));
-            challengeConfig.setNonImplementedFile(storageService.simplifyPath(payload.getNonImplementedPath(), CHALLENGE, myId));
-            challengeConfig.setRunScript(storageService.simplifyPath(payload.getRunPath(), CHALLENGE, myId));
-            challengeConfig.setCompileScript(storageService.simplifyPath(payload.getCompilePath(), CHALLENGE, myId));
+            challengeConfig.setRoot(Paths.get(payload.getRunPath()).getParent().toString().substring(1));
+            challengeConfig.setPreImplementedFile(payload.getImplementedPath().substring(1));
+            challengeConfig.setNonImplementedFile(payload.getNonImplementedPath().substring(1));
+            challengeConfig.setRunScript(payload.getRunPath().substring(1));
+            if (payload.getCompilePath() != null) {
+                challengeConfig.setCompileScript(payload.getCompilePath().substring(1));
+            }
             challengeConfig.setAuthorId(myId);
-
-            challengeConfigurationRepository.save(challengeConfig);
+            challengeConfig.setEnabled(true);
 
             challenge.addConfiguration(challengeConfig);
+
+            File srcDir = new File(storageService.resolvePath(challengeConfig.getDirectory(), STAGING, myId));
+            File challengeDir = new File(storageService.challengeDirFor(myId).toString());
+
+            FileOperationResult result = FileUtils.copyDirectoryToDirectory(srcDir, challengeDir);
+
+            if (!result.equals(SUCCESS)) {
+                log.error("Error when activating challenge with id {}. Message - {}", challengeId, "Cannot copy src to challenge dir");
+            }
         }
 
         return SubmissionSummary.builder()
