@@ -21,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(of = {"name"})
 public class CategoryEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long categoryId;
 
@@ -29,7 +29,7 @@ public class CategoryEntity implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "bigint default 0")
     private Long numUsed = 0L;
 
     public CategoryEntity() {

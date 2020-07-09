@@ -20,7 +20,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(of = {"name"})
 public class RoleEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long roleId;
 

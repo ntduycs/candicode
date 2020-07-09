@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NaturalIdCache
 public class StudentPlanEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long studentPlanId;
 

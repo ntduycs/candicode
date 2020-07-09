@@ -24,7 +24,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"email"}, callSuper = false)
 public class UserEntity extends Auditable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long userId;
 

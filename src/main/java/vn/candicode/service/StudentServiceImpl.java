@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static vn.candicode.service.CommonService.Role.CHALLENGE_CREATOR;
 import static vn.candicode.service.CommonService.Role.getByRoleId;
 
 @Service
@@ -62,6 +63,7 @@ public class StudentServiceImpl implements StudentService {
         student.setLastName(payload.getLastName());
 
         student.addRole(commonService.getStudentRoles().get(Role.STUDENT));
+        student.addRole(commonService.getStudentRoles().get(CHALLENGE_CREATOR));
 
         Long studentId = studentRepository.save(student).getUserId();
 
