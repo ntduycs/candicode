@@ -3,6 +3,7 @@ package vn.candicode.security;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Builder
 @Getter
+@Setter
 @JsonIgnoreProperties({
     "username", "password", "enabled", "entityRef", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "authorities"
 })
@@ -32,7 +34,7 @@ public class UserPrincipal implements UserDetails {
     private final UserEntity entityRef;
 
     private final String slogan;
-    private final String avatar;
+    private String avatar;
     private final String facebook;
     private final String github;
     private final String linkedin;
@@ -49,6 +51,13 @@ public class UserPrincipal implements UserDetails {
             .lastName(user.getLastName())
             .fullName(user.getFullName())
             .enabled(user.isEnabled())
+            .slogan(user.getSlogan())
+            .facebook(user.getFacebook())
+            .github(user.getGithub())
+            .linkedin(user.getLinkedin())
+            .university(user.getUniversity())
+            .company(user.getCompany())
+            .location(user.getLocation())
             .entityRef(user)
             .authorities(roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()))
             .roles(roles)

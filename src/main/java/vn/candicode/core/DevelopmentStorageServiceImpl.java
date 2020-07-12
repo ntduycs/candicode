@@ -1,6 +1,7 @@
 package vn.candicode.core;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,10 +24,11 @@ import static vn.candicode.common.FileAuthor.STUDENT;
 
 @Service
 @Log4j2
-public class StorageServiceImpl implements StorageService {
+@Profile("dev")
+public class DevelopmentStorageServiceImpl implements StorageService {
     private static final Path BASE_ROOT = Paths.get(System.getProperty("user.home"), "Desktop", "Candicode");
 
-    public StorageServiceImpl() throws IOException {
+    public DevelopmentStorageServiceImpl() throws IOException {
         createRequiredDirectories();
     }
 

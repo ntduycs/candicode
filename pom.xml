@@ -22,6 +22,9 @@
         <commons-fileupload.version>1.4</commons-fileupload.version>
         <slugify.version>2.4</slugify.version>
         <datasource-proxy.version>1.6</datasource-proxy.version>
+        <aws-java-sdk.version>1.11.818</aws-java-sdk.version>
+        <aws-lambda-java-core.version>1.2.1</aws-lambda-java-core.version>
+        <aws-lambda-java-events.version>3.1.0</aws-lambda-java-events.version>
     </properties>
 
     <dependencies>
@@ -106,6 +109,12 @@
             <artifactId>datasource-proxy</artifactId>
             <version>${datasource-proxy.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+
 
     </dependencies>
 

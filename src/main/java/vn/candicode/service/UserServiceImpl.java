@@ -204,7 +204,7 @@ public class UserServiceImpl implements UserService {
                 String fullyAvatarPath = storageService.store(payload.getAvatar(), FileStorageType.AVATAR, userId);
                 student.setAvatar(storageService.simplifyPath(fullyAvatarPath, FileStorageType.AVATAR, userId));
             } catch (IOException e) {
-                log.error("Cannot store avatar for user - {}", userId);
+                log.error("Cannot store avatar for user - {}. Message - {}", userId, e.getLocalizedMessage());
             }
         }
     }

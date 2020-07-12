@@ -4,6 +4,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import vn.candicode.common.FileStorageType;
+import vn.candicode.core.StorageService;
 import vn.candicode.entity.UserEntity;
 import vn.candicode.repository.UserRepository;
 
@@ -14,9 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserPrincipalService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final StorageService storageService;
 
-    public UserPrincipalService(UserRepository userRepository) {
+    public UserPrincipalService(UserRepository userRepository, StorageService storageService) {
         this.userRepository = userRepository;
+        this.storageService = storageService;
     }
 
     @Override
@@ -30,6 +34,9 @@ public class UserPrincipalService implements UserDetailsService {
 
         List<String> roles = user.getRoles().stream().map(item -> item.getRole().getName()).collect(Collectors.toList());
 
-        return UserPrincipal.build(user, roles);
+        UserPrincipal principal = UserPrincipal.build(user, roles);
+        principal.setAvatar(storageService.resolvePath(user.getAvatar(), FileStorageType.AVATAR, user.getUserId()));
+
+        return principal;
     }
 }
