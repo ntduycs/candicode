@@ -33,7 +33,7 @@ public class S3ServiceImpl implements S3Service {
     private final TransferManager transferManager;
 
     public S3ServiceImpl() {
-        AWSCredentials credentials = new BasicAWSCredentials("AKIAITHGELRQXO5IGFWQ", "i7B0JhgmOf7jqUJWIDo/rWAYenq8GqitKuCpSN1q");
+        AWSCredentials credentials = new BasicAWSCredentials("fill your access key here", "fill your secret key here");
 
         this.s3Client = AmazonS3ClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(credentials))
