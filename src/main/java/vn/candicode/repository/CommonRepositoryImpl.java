@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
-public class SummaryRepositoryImpl implements SummaryRepository {
+public class CommonRepositoryImpl implements CommonRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public SummaryRepositoryImpl() {
+    public CommonRepositoryImpl() {
     }
 
     @Override

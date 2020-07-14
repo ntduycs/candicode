@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * This repository contain all named query that used when querying on multiple tables
  */
-public interface SummaryRepository {
+public interface CommonRepository {
 
     Map<Long, Long> countNumCommentsGroupByChallengeId(List<Long> challengeIds);
 

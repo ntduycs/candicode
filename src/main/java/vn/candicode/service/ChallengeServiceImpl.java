@@ -48,7 +48,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeCommentRepository challengeCommentRepository;
     private final SubmissionRepository submissionRepository;
-    private final SummaryRepository summaryRepository;
+    private final CommonRepository commonRepository;
 
     private final StorageService storageService;
     private final CommonService commonService;
@@ -56,11 +56,11 @@ public class ChallengeServiceImpl implements ChallengeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigurationRepository challengeConfigurationRepository, ChallengeCommentRepository challengeCommentRepository, SubmissionRepository submissionRepository, LanguageRepository languageRepository, SummaryRepository summaryRepository, StorageService storageService, CommonService commonService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, ChallengeConfigurationRepository challengeConfigurationRepository, ChallengeCommentRepository challengeCommentRepository, SubmissionRepository submissionRepository, LanguageRepository languageRepository, CommonRepository commonRepository, StorageService storageService, CommonService commonService) {
         this.challengeRepository = challengeRepository;
         this.challengeCommentRepository = challengeCommentRepository;
         this.submissionRepository = submissionRepository;
-        this.summaryRepository = summaryRepository;
+        this.commonRepository = commonRepository;
 
         this.storageService = storageService;
         this.commonService = commonService;
@@ -206,10 +206,10 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<Long> challengeIds = summaries.stream().map(ChallengeSummary::getChallengeId).collect(Collectors.toList());
 
-        Map<Long, Long> commentCountMap = summaryRepository.countNumCommentsGroupByChallengeId(challengeIds);
-        Map<Long, Long> submissionCountMap = summaryRepository.countNumSubmissionsGroupByChallengeId(challengeIds);
-        Map<Long, List<String>> languageNamesMap = summaryRepository.findAllLanguagesByChallengeId(challengeIds);
-        Map<Long, List<String>> categoryNamesMap = summaryRepository.findAllCategoriesByChallengeId(challengeIds);
+        Map<Long, Long> commentCountMap = commonRepository.countNumCommentsGroupByChallengeId(challengeIds);
+        Map<Long, Long> submissionCountMap = commonRepository.countNumSubmissionsGroupByChallengeId(challengeIds);
+        Map<Long, List<String>> languageNamesMap = commonRepository.findAllLanguagesByChallengeId(challengeIds);
+        Map<Long, List<String>> categoryNamesMap = commonRepository.findAllCategoriesByChallengeId(challengeIds);
 
         summaries.forEach(item -> {
             final long challengeId = item.getChallengeId();
@@ -255,10 +255,10 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<Long> challengeIds = summaries.stream().map(ChallengeSummary::getChallengeId).collect(Collectors.toList());
 
-        Map<Long, Long> commentCountMap = summaryRepository.countNumCommentsGroupByChallengeId(challengeIds);
-        Map<Long, Long> submissionCountMap = summaryRepository.countNumSubmissionsGroupByChallengeId(challengeIds);
-        Map<Long, List<String>> languageNamesMap = summaryRepository.findAllLanguagesByChallengeId(challengeIds);
-        Map<Long, List<String>> categoryNamesMap = summaryRepository.findAllCategoriesByChallengeId(challengeIds);
+        Map<Long, Long> commentCountMap = commonRepository.countNumCommentsGroupByChallengeId(challengeIds);
+        Map<Long, Long> submissionCountMap = commonRepository.countNumSubmissionsGroupByChallengeId(challengeIds);
+        Map<Long, List<String>> languageNamesMap = commonRepository.findAllLanguagesByChallengeId(challengeIds);
+        Map<Long, List<String>> categoryNamesMap = commonRepository.findAllCategoriesByChallengeId(challengeIds);
 
         summaries.forEach(item -> {
             final long challengeId = item.getChallengeId();

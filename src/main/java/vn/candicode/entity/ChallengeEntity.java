@@ -56,7 +56,7 @@ public class ChallengeEntity extends Auditable {
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "user_fk"))
     private UserEntity author;
 
-    @Column(nullable = false)
+    @Column
     private String authorName;
 
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)

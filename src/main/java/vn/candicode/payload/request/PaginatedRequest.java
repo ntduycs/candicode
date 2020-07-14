@@ -33,5 +33,5 @@ public class PaginatedRequest extends Request {
         return contestChallenge != null ? contestChallenge : false;
     }
 
-    private static final List<String> validDirection = List.of("desc", "asc");
+    protected static final List<String> validDirection = List.of("desc", "asc");
 }
