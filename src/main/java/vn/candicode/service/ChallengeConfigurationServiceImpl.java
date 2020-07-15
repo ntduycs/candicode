@@ -191,6 +191,10 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
 
         configuration.setDeleted(true);
 
+        if (configuration.getChallenge().getConfigurations().stream().noneMatch(cf -> cf.getDeleted() || cf.getEnabled())) {
+            configuration.getChallenge().setAvailable(false);
+        }
+
         return true;
     }
 }

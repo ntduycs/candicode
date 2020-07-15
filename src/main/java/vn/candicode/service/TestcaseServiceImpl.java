@@ -287,6 +287,10 @@ public class TestcaseServiceImpl implements TestcaseService {
             challenge.removeTestcases(removedTestcases);
         }
 
+        if (removedTestcases.size() == currentTestcases) {
+            challenge.setAvailable(false);
+        }
+
         return new Integer[]{removedTestcases.size(), currentTestcases - removedTestcases.size()};
     }
 }
