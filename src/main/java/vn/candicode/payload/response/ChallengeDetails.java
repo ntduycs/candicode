@@ -8,7 +8,7 @@ import vn.candicode.payload.response.sub.TestcaseFormat;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,9 +33,9 @@ public class ChallengeDetails implements Serializable {
 
     private List<Challenge> contents = new ArrayList<>();
     private List<Testcase> testcases = new ArrayList<>();
-    private List<String> languages = new ArrayList<>();
+    private Set<String> languages = new LinkedHashSet<>();
     private List<String> categories = new ArrayList<>();
-    private Set<String> tags = new HashSet<>();
+    private Set<String> tags = new LinkedHashSet<>();
 
     private String slug;
 

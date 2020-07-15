@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
-import vn.candicode.converter.TagConverter;
+import vn.candicode.converter.StringToListConverter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -35,7 +35,7 @@ public class ContestEntity extends Auditable {
     @Column(nullable = false)
     private String title;
 
-    @Convert(converter = TagConverter.class)
+    @Convert(converter = StringToListConverter.class)
     private Set<String> tags = new HashSet<>();
 
     @Column

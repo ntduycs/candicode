@@ -27,6 +27,7 @@ public class ChallengeBeanUtils {
         summary.setSlug(SLUGIFY.slugify(entity.getTitle()));
         summary.setTags(entity.getTags());
         summary.setAvailable(entity.getAvailable());
+        summary.setLanguages(entity.getLanguages());
 
         return summary;
     }
@@ -52,7 +53,7 @@ public class ChallengeBeanUtils {
         details.setDescription(entity.getDescription());
         details.setTcInputFormat(new TestcaseFormat(RegexUtils.resolveRegex(entity.getInputFormat())));
         details.setTcOutputFormat(new TestcaseFormat(RegexUtils.resolveRegex(entity.getOutputFormat())));
-        details.setLanguages(entity.getConfigurations().stream().map(c -> c.getLanguage().getName()).collect(Collectors.toList()));
+        details.setLanguages(entity.getLanguages());
 
         return details;
     }

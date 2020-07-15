@@ -143,6 +143,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             challengeConfig.setEnabled(true);
 
             challenge.addConfiguration(challengeConfig);
+            challenge.getLanguages().add(language);
 
             File srcDir = new File(storageService.resolvePath(challengeConfig.getDirectory(), STAGING, myId));
             File challengeDir = new File(storageService.challengeDirFor(myId).toString());
@@ -190,6 +191,8 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         }
 
         configuration.setDeleted(true);
+
+        configuration.getChallenge().getLanguages().remove(language.toLowerCase());
 
         if (configuration.getChallenge().getConfigurations().stream().noneMatch(cf -> cf.getDeleted() || cf.getEnabled())) {
             configuration.getChallenge().setAvailable(false);

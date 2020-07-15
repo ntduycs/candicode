@@ -2,6 +2,7 @@ package vn.candicode.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.NewChallengeRequest;
 import vn.candicode.payload.request.UpdateChallengeRequest;
 import vn.candicode.payload.response.ChallengeDetails;
@@ -34,12 +35,12 @@ public interface ChallengeService {
     PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable);
 
     /**
-     * @param pageable
-     * @param myId
-     * @param wantContestChallenge should load only contest challenges ?
+     * //     * @param pageable
+     *
+     * @param myId //     * @param wantContestChallenge should load only contest challenges ?
      * @return paginated list of my challenges
      */
-    PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId, Boolean wantContestChallenge);
+    PaginatedResponse<ChallengeSummary> getMyChallengeList(ChallengePaginatedRequest criteria, Long myId);
 
     /**
      * @param challengeId

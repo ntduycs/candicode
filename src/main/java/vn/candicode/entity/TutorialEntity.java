@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
-import vn.candicode.converter.TagConverter;
+import vn.candicode.converter.StringToListConverter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -50,7 +50,7 @@ public class TutorialEntity extends Auditable {
     @JoinColumn(name = "author_id", nullable = false)
     private UserEntity author;
 
-    @Convert(converter = TagConverter.class)
+    @Convert(converter = StringToListConverter.class)
     private Set<String> tags = new HashSet<>();
 
     @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true)

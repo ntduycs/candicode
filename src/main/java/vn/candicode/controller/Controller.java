@@ -34,7 +34,7 @@ public abstract class Controller {
         return PageRequest.of(page - 1, size, sortConfig);
     }
 
-    protected Pageable getPaginationConfig(PaginatedRequest payload) {
+    public static Pageable getPaginationConfig(PaginatedRequest payload) {
         if (payload.getPage() < 1) payload.setPage(1);
         if (payload.getSize() < 1) payload.setSize(10);
 

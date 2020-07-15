@@ -67,7 +67,7 @@ public class ChallengeController extends Controller {
     public ResponseEntity<?> getMyChallengeList(@ModelAttribute ChallengePaginatedRequest payload, @CurrentUser UserPrincipal me) {
         Pageable pageable = getPaginationConfig(payload);
 
-        PaginatedResponse<ChallengeSummary> items = challengeService.getMyChallengeList(pageable, me.getUserId(), payload.getContestChallenge());
+        PaginatedResponse<ChallengeSummary> items = challengeService.getMyChallengeList(payload, me.getUserId());
 
         return ResponseEntity.ok(ResponseFactory.build(items));
     }

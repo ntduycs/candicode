@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,9 +21,9 @@ public class ChallengeSummary implements Serializable {
     private String createdAt;
     private String updatedAt;
 
-    private List<String> languages = new ArrayList<>();
+    private Set<String> languages = new LinkedHashSet<>();
     private List<String> categories = new ArrayList<>();
-    private Set<String> tags = new HashSet<>();
+    private Set<String> tags = new LinkedHashSet<>();
 
     private Long numComments;
     private Long numAttendees;

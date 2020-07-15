@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
-import vn.candicode.converter.TagConverter;
+import vn.candicode.converter.StringToListConverter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -71,7 +71,7 @@ public class ChallengeEntity extends Auditable {
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChallengeConfigurationEntity> configurations = new ArrayList<>();
 
-    @Convert(converter = TagConverter.class)
+    @Convert(converter = StringToListConverter.class)
     private Set<String> tags = new HashSet<>();
 
     @Column(nullable = false)
@@ -88,6 +88,9 @@ public class ChallengeEntity extends Auditable {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted = false;
+
+    @Convert(converter = StringToListConverter.class)
+    private Set<String> languages = new LinkedHashSet<>();
 
     public boolean isContestChallenge() {
         return contestChallenge;

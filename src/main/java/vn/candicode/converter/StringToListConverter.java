@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Converter
-public class TagConverter implements AttributeConverter<Set<String>, String> {
+public class StringToListConverter implements AttributeConverter<Set<String>, String> {
     @Override
     public String convertToDatabaseColumn(Set<String> strings) {
         return strings != null ? Joiner.on(",").join(strings) : null;

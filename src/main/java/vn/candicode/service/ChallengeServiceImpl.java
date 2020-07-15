@@ -15,6 +15,7 @@ import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
+import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.NewChallengeRequest;
 import vn.candicode.payload.request.UpdateChallengeRequest;
 import vn.candicode.payload.response.ChallengeDetails;
@@ -109,6 +110,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
         challenge.setTags(payload.getTags());
         challenge.setContestChallenge(payload.getContestChallenge());
+        challenge.setLanguages(Set.of(payload.getLanguage()));
 
         if (payload.getCategories() != null) {
             payload.getCategories().stream()
@@ -208,14 +210,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         Map<Long, Long> commentCountMap = commonRepository.countNumCommentsGroupByChallengeId(challengeIds);
         Map<Long, Long> submissionCountMap = commonRepository.countNumSubmissionsGroupByChallengeId(challengeIds);
-        Map<Long, List<String>> languageNamesMap = commonRepository.findAllLanguagesByChallengeId(challengeIds);
         Map<Long, List<String>> categoryNamesMap = commonRepository.findAllCategoriesByChallengeId(challengeIds);
 
         summaries.forEach(item -> {
             final long challengeId = item.getChallengeId();
             item.setNumComments(commentCountMap.getOrDefault(challengeId, 0L));
             item.setNumAttendees(submissionCountMap.getOrDefault(challengeId, 0L));
-            item.setLanguages(languageNamesMap.get(challengeId));
             item.setCategories(categoryNamesMap.get(challengeId));
         });
 
@@ -238,13 +238,8 @@ public class ChallengeServiceImpl implements ChallengeService {
      */
     @Transactional(readOnly = true)
     @Override
-    public PaginatedResponse<ChallengeSummary> getMyChallengeList(Pageable pageable, Long myId, Boolean wantContestChallenge) {
-        Page<ChallengeEntity> items;
-        if (wantContestChallenge) {
-            items = challengeRepository.findAllContestChallengesByAuthorId(myId, pageable);
-        } else {
-            items = challengeRepository.findAllByAuthorId(myId, pageable);
-        }
+    public PaginatedResponse<ChallengeSummary> getMyChallengeList(ChallengePaginatedRequest criteria, Long myId) {
+        Page<ChallengeEntity> items = commonRepository.findAllByAuthorId(myId, criteria);
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
 
@@ -257,14 +252,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         Map<Long, Long> commentCountMap = commonRepository.countNumCommentsGroupByChallengeId(challengeIds);
         Map<Long, Long> submissionCountMap = commonRepository.countNumSubmissionsGroupByChallengeId(challengeIds);
-        Map<Long, List<String>> languageNamesMap = commonRepository.findAllLanguagesByChallengeId(challengeIds);
         Map<Long, List<String>> categoryNamesMap = commonRepository.findAllCategoriesByChallengeId(challengeIds);
 
         summaries.forEach(item -> {
             final long challengeId = item.getChallengeId();
             item.setNumComments(commentCountMap.getOrDefault(challengeId, 0L));
             item.setNumAttendees(submissionCountMap.getOrDefault(challengeId, 0L));
-            item.setLanguages(languageNamesMap.get(challengeId));
             item.setCategories(categoryNamesMap.get(challengeId));
         });
 
