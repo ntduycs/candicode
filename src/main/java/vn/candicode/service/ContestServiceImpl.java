@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.candicode.common.EntityConstants;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.exception.BadRequestException;
@@ -76,7 +75,6 @@ public class ContestServiceImpl implements ContestService {
             contest.setTags(payload.getTags());
             contest.setContent(payload.getContent());
             contest.setAvailable(false); // a contest that has no round was considered as not available
-            contest.setStatus(EntityConstants.CONTEST_INCOMING);
 
             contestRepository.save(contest);
 

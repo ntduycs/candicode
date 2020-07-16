@@ -10,7 +10,12 @@ import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestRound;
 import vn.candicode.payload.response.ContestSummary;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
+
+import static vn.candicode.common.EntityConstants.*;
 
 public class ContestBeanUtils {
     private static final Slugify SLUGIFY = new Slugify();
@@ -25,7 +30,7 @@ public class ContestBeanUtils {
         summary.setTags(contest.getTags());
         summary.setTitle(contest.getTitle());
         summary.setSlug(SLUGIFY.slugify(contest.getTitle()));
-        summary.setStatus(contest.getStatus());
+        summary.setStatus(getContestStatus(contest));
         summary.setAuthor(contest.getAuthorName());
         summary.setAvailable(contest.getAvailable());
         summary.setMaxRegister(contest.getMaxRegister());
@@ -44,7 +49,7 @@ public class ContestBeanUtils {
         details.setTags(contest.getTags());
         details.setTitle(contest.getTitle());
         details.setSlug(SLUGIFY.slugify(contest.getTitle()));
-        details.setStatus(contest.getStatus());
+        details.setStatus(getContestStatus(contest));
         details.setAvailable(contest.getAvailable());
         details.setMaxRegister(contest.getMaxRegister());
         details.setContent(contest.getContent());
@@ -81,5 +86,30 @@ public class ContestBeanUtils {
         details.setSlug(SLUGIFY.slugify(challenge.getTitle()));
 
         return details;
+    }
+
+    private static String getContestStatus(ContestEntity contest) {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<ContestRoundEntity> rounds = contest.getRounds();
+        Optional<LocalDateTime> startDate = rounds.stream()
+            .map(ContestRoundEntity::getStartsAt)
+            .min(LocalDateTime::compareTo);
+
+        Optional<LocalDateTime> endDate = rounds.stream()
+            .map(round -> round.getStartsAt().plusMinutes(round.getDuration()))
+            .max(LocalDateTime::compareTo);
+
+        if (startDate.isPresent() && endDate.isPresent()) {
+            if (now.isAfter(endDate.get())) {
+                return CONTEST_FINISHED;
+            } else if (startDate.get().isAfter(now)) {
+                return CONTEST_INCOMING;
+            } else {
+                return CONTEST_ONGOING;
+            }
+        } else {
+            return CONTEST_INCOMING;
+        }
     }
 }
