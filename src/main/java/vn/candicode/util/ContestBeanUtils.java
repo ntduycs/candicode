@@ -10,7 +10,6 @@ import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestRound;
 import vn.candicode.payload.response.ContestSummary;
 
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class ContestBeanUtils {
@@ -26,7 +25,7 @@ public class ContestBeanUtils {
         summary.setTags(contest.getTags());
         summary.setTitle(contest.getTitle());
         summary.setSlug(SLUGIFY.slugify(contest.getTitle()));
-        summary.setStatus("ongoing");
+        summary.setStatus(contest.getStatus());
         summary.setAuthor(contest.getAuthorName());
         summary.setAvailable(contest.getAvailable());
         summary.setMaxRegister(contest.getMaxRegister());
@@ -45,7 +44,7 @@ public class ContestBeanUtils {
         details.setTags(contest.getTags());
         details.setTitle(contest.getTitle());
         details.setSlug(SLUGIFY.slugify(contest.getTitle()));
-        details.setStatus("ongoing");
+        details.setStatus(contest.getStatus());
         details.setAvailable(contest.getAvailable());
         details.setMaxRegister(contest.getMaxRegister());
         details.setContent(contest.getContent());
@@ -82,9 +81,5 @@ public class ContestBeanUtils {
         details.setSlug(SLUGIFY.slugify(challenge.getTitle()));
 
         return details;
-    }
-
-    private static String contestStatus(LocalDateTime regDeadline) {
-        return null;
     }
 }

@@ -71,6 +71,8 @@ public class ContestEntity extends Auditable {
 
     private String authorName;
 
+    private String status;
+
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestRoundEntity> rounds = new ArrayList<>();
 

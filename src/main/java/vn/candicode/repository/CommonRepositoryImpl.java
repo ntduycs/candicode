@@ -573,6 +573,10 @@ public class CommonRepositoryImpl implements CommonRepository {
 
         StringBuilder whereClause = new StringBuilder(" WHERE c.author.userId = :authorId ");
 
+        if (StringUtils.hasText(criteria.getStatus())) {
+            whereClause.append(" AND LOWER(c.status) = LOWER(:status) ");
+        }
+
         List<String> tags = new ArrayList<>();
         int numTags = 0;
         if (StringUtils.hasText(criteria.getTag())) {
@@ -612,6 +616,10 @@ public class CommonRepositoryImpl implements CommonRepository {
         TypedQuery<ContestEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), ContestEntity.class);
 
         query.setParameter("authorId", authorId);
+
+        if (StringUtils.hasText(criteria.getStatus())) {
+            query.setParameter("status", criteria.getStatus());
+        }
 
         if (StringUtils.hasText(criteria.getTitle())) {
             query.setParameter("title", criteria.getTitle());
@@ -668,6 +676,10 @@ public class CommonRepositoryImpl implements CommonRepository {
             whereClause.append(" AND LOWER(c.authorName) LIKE CONCAT('%', LOWER(:authorName), '%') ");
         }
 
+        if (StringUtils.hasText(criteria.getStatus())) {
+            whereClause.append(" AND LOWER(c.status) = LOWER(:status) ");
+        }
+
         List<String> tags = new ArrayList<>();
         int numTags = 0;
         if (StringUtils.hasText(criteria.getTag())) {
@@ -708,6 +720,10 @@ public class CommonRepositoryImpl implements CommonRepository {
 
         if (StringUtils.hasText(criteria.getAuthor())) {
             query.setParameter("authorName", criteria.getAuthor());
+        }
+
+        if (StringUtils.hasText(criteria.getStatus())) {
+            query.setParameter("status", criteria.getStatus());
         }
 
         if (StringUtils.hasText(criteria.getTitle())) {
