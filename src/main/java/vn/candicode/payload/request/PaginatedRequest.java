@@ -1,6 +1,7 @@
 package vn.candicode.payload.request;
 
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class PaginatedRequest extends Request {
     }
 
     public String getSort() {
-        return sort == null ? "createdAt" : sort;
+        return !StringUtils.hasText(sort) ? "createdAt" : sort;
     }
 
     public String getDirection() {

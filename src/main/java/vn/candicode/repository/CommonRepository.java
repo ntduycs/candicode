@@ -21,4 +21,6 @@ public interface CommonRepository {
     Map<Long, List<String>> findAllCategoriesByChallengeId(List<Long> challengeIds);
 
     Page<ChallengeEntity> findAllByAuthorId(Long authorId, ChallengePaginatedRequest criteria);
+
+    Page<ChallengeEntity> findAll(ChallengePaginatedRequest criteria);
 }

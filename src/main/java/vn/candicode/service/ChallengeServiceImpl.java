@@ -2,7 +2,6 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,13 +190,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     /**
-     * @param pageable paginated parameters
+     * @param criteria paginated and filtering parameters
      * @return paginated list of challenges
      */
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable) {
-        Page<ChallengeEntity> items = challengeRepository.findAllThatIsNotContestChallenge(pageable);
+    public PaginatedResponse<ChallengeSummary> getChallengeList(ChallengePaginatedRequest criteria) {
+        Page<ChallengeEntity> items = commonRepository.findAll(criteria);
 
         List<ChallengeSummary> summaries = items.map(ChallengeBeanUtils::summarize).getContent();
 
@@ -231,9 +230,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     /**
-     * @param pageable             paginated parameters
-     * @param myId                 must be not null
-     * @param wantContestChallenge should load only contest challenge ?
+     * @param criteria paginated and filtering parameters
+     * @param myId     must be not null
      * @return paginated list of my challenges
      */
     @Transactional(readOnly = true)

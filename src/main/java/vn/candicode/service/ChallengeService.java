@@ -1,6 +1,5 @@
 package vn.candicode.service;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.NewChallengeRequest;
@@ -29,10 +28,10 @@ public interface ChallengeService {
     DirectoryTree storeChallengeSource(MultipartFile file, UserPrincipal author);
 
     /**
-     * @param pageable
+     * @param criteria
      * @return paginated list of challenges
      */
-    PaginatedResponse<ChallengeSummary> getChallengeList(Pageable pageable);
+    PaginatedResponse<ChallengeSummary> getChallengeList(ChallengePaginatedRequest criteria);
 
     /**
      * //     * @param pageable
