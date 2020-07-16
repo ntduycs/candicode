@@ -7,7 +7,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import vn.candicode.controller.Controller;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.ContestEntity;
+import vn.candicode.entity.TutorialEntity;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
+import vn.candicode.payload.request.ContestPaginatedRequest;
+import vn.candicode.payload.request.TutorialPaginatedRequest;
 import vn.candicode.util.DatetimeUtils;
 
 import javax.persistence.*;
@@ -355,11 +359,387 @@ public class CommonRepositoryImpl implements CommonRepository {
 
         List<ChallengeEntity> result = query.getResultList();
 
-        Collections.sort(result, (thisChallenge, thatChallenge) -> {
+        result.sort((thisChallenge, thatChallenge) -> {
             try {
                 Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
                 Object thisValue = getter.invoke(thisChallenge, null);
                 Object thatValue = getter.invoke(thatChallenge, null);
+
+                if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
+                    int comparisionResult = thisValue.toString().compareTo(thatValue.toString());
+                    return criteria.getDirection().equals("desc") ?
+                        -comparisionResult :
+                        comparisionResult;
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
+            return 0;
+        });
+
+        return new PageImpl<>(result, Controller.getPaginationConfig(criteria), countQuery.getSingleResult());
+    }
+
+    @Override
+    public Page<TutorialEntity> findAllByAuthorId(Long authorId, TutorialPaginatedRequest criteria) {
+        String selectClause = " SELECT c FROM TutorialEntity c ";
+
+        StringBuilder whereClause = new StringBuilder(" WHERE c.author.userId = :authorId ");
+
+        List<String> tags = new ArrayList<>();
+        int numTags = 0;
+        if (StringUtils.hasText(criteria.getTag())) {
+            tags = Arrays.stream(criteria.getTag().split(","))
+                .map(lang -> lang.trim().toLowerCase())
+                .collect(Collectors.toList());
+
+            numTags = tags.size();
+
+            if (tags.size() > 0) {
+                whereClause.append(" AND ( ");
+                StringBuilder orClause = new StringBuilder();
+                for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
+                    if (orClause.length() == 0) {
+                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    } else {
+                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    }
+                }
+                whereClause.append(orClause);
+                whereClause.append(" ) ");
+            }
+        }
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+        }
+
+        if (criteria.getStart() != null && criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) BETWEEN TRUNC(:start) AND TRUNC(:end) ");
+        } else if (criteria.getStart() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) >= TRUNC(:start) ");
+        } else if (criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) <= TRUNC(:end) ");
+        }
+
+        TypedQuery<TutorialEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), TutorialEntity.class);
+
+        query.setParameter("authorId", authorId);
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            query.setParameter("title", criteria.getTitle());
+        }
+
+        for (int i = 0; i < numTags; i++) {
+            query.setParameter("tag" + i, tags.get(i));
+        }
+
+        if (criteria.getStart() != null) {
+            Date startDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getStart()));
+            query.setParameter("start", startDate, TemporalType.DATE);
+        }
+
+        if (criteria.getEnd() != null) {
+            Date endDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getEnd()));
+            query.setParameter("end", endDate, TemporalType.DATE);
+        }
+
+        query.setMaxResults(criteria.getSize());
+        query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.tutorialId) FROM TutorialEntity c", Long.class);
+
+        List<TutorialEntity> result = query.getResultList();
+
+        result.sort((thisTutorial, thatTutorial) -> {
+            try {
+                Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
+                Object thisValue = getter.invoke(thisTutorial, null);
+                Object thatValue = getter.invoke(thatTutorial, null);
+
+                if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
+                    int comparisionResult = thisValue.toString().compareTo(thatValue.toString());
+                    return criteria.getDirection().equals("desc") ?
+                        -comparisionResult :
+                        comparisionResult;
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
+            return 0;
+        });
+
+        return new PageImpl<>(result, Controller.getPaginationConfig(criteria), countQuery.getSingleResult());
+    }
+
+    @Override
+    public Page<TutorialEntity> findAll(TutorialPaginatedRequest criteria) {
+        String selectClause = " SELECT c FROM TutorialEntity c ";
+
+        StringBuilder whereClause = new StringBuilder(" WHERE TRUE = TRUE ");
+
+        if (StringUtils.hasText(criteria.getAuthor())) {
+            whereClause.append(" AND LOWER(c.authorName) LIKE CONCAT('%', LOWER(:authorName), '%') ");
+        }
+
+        List<String> tags = new ArrayList<>();
+        int numTags = 0;
+        if (StringUtils.hasText(criteria.getTag())) {
+            tags = Arrays.stream(criteria.getTag().split(","))
+                .map(lang -> lang.trim().toLowerCase())
+                .collect(Collectors.toList());
+
+            numTags = tags.size();
+
+            if (tags.size() > 0) {
+                whereClause.append(" AND ( ");
+                StringBuilder orClause = new StringBuilder();
+                for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
+                    if (orClause.length() == 0) {
+                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    } else {
+                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    }
+                }
+                whereClause.append(orClause);
+                whereClause.append(" ) ");
+            }
+        }
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+        }
+
+        if (criteria.getStart() != null && criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) BETWEEN TRUNC(:start) AND TRUNC(:end) ");
+        } else if (criteria.getStart() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) >= TRUNC(:start) ");
+        } else if (criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) <= TRUNC(:end) ");
+        }
+
+        TypedQuery<TutorialEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), TutorialEntity.class);
+
+        if (StringUtils.hasText(criteria.getAuthor())) {
+            query.setParameter("authorName", criteria.getAuthor());
+        }
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            query.setParameter("title", criteria.getTitle());
+        }
+
+        for (int i = 0; i < numTags; i++) {
+            query.setParameter("tag" + i, tags.get(i));
+        }
+
+        if (criteria.getStart() != null) {
+            Date startDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getStart()));
+            query.setParameter("start", startDate, TemporalType.DATE);
+        }
+
+        if (criteria.getEnd() != null) {
+            Date endDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getEnd()));
+            query.setParameter("end", endDate, TemporalType.DATE);
+        }
+
+        query.setMaxResults(criteria.getSize());
+        query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.tutorialId) FROM TutorialEntity c", Long.class);
+
+        List<TutorialEntity> result = query.getResultList();
+
+        result.sort((thisTutorial, thatTutorial) -> {
+            try {
+                Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
+                Object thisValue = getter.invoke(thisTutorial, null);
+                Object thatValue = getter.invoke(thatTutorial, null);
+
+                if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
+                    int comparisionResult = thisValue.toString().compareTo(thatValue.toString());
+                    return criteria.getDirection().equals("desc") ?
+                        -comparisionResult :
+                        comparisionResult;
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
+            return 0;
+        });
+
+        return new PageImpl<>(result, Controller.getPaginationConfig(criteria), countQuery.getSingleResult());
+    }
+
+    @Override
+    public Page<ContestEntity> findAllByAuthorId(Long authorId, ContestPaginatedRequest criteria) {
+        String selectClause = " SELECT c FROM ContestEntity c ";
+
+        StringBuilder whereClause = new StringBuilder(" WHERE c.author.userId = :authorId ");
+
+        List<String> tags = new ArrayList<>();
+        int numTags = 0;
+        if (StringUtils.hasText(criteria.getTag())) {
+            tags = Arrays.stream(criteria.getTag().split(","))
+                .map(lang -> lang.trim().toLowerCase())
+                .collect(Collectors.toList());
+
+            numTags = tags.size();
+
+            if (tags.size() > 0) {
+                whereClause.append(" AND ( ");
+                StringBuilder orClause = new StringBuilder();
+                for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
+                    if (orClause.length() == 0) {
+                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    } else {
+                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    }
+                }
+                whereClause.append(orClause);
+                whereClause.append(" ) ");
+            }
+        }
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+        }
+
+        if (criteria.getStart() != null && criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) BETWEEN TRUNC(:start) AND TRUNC(:end) ");
+        } else if (criteria.getStart() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) >= TRUNC(:start) ");
+        } else if (criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) <= TRUNC(:end) ");
+        }
+
+        TypedQuery<ContestEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), ContestEntity.class);
+
+        query.setParameter("authorId", authorId);
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            query.setParameter("title", criteria.getTitle());
+        }
+
+        for (int i = 0; i < numTags; i++) {
+            query.setParameter("tag" + i, tags.get(i));
+        }
+
+        if (criteria.getStart() != null) {
+            Date startDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getStart()));
+            query.setParameter("start", startDate, TemporalType.DATE);
+        }
+
+        if (criteria.getEnd() != null) {
+            Date endDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getEnd()));
+            query.setParameter("end", endDate, TemporalType.DATE);
+        }
+
+        query.setMaxResults(criteria.getSize());
+        query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.contestId) FROM ContestEntity c", Long.class);
+
+        List<ContestEntity> result = query.getResultList();
+
+        result.sort((thisTutorial, thatTutorial) -> {
+            try {
+                Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
+                Object thisValue = getter.invoke(thisTutorial, null);
+                Object thatValue = getter.invoke(thatTutorial, null);
+
+                if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
+                    int comparisionResult = thisValue.toString().compareTo(thatValue.toString());
+                    return criteria.getDirection().equals("desc") ?
+                        -comparisionResult :
+                        comparisionResult;
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
+            return 0;
+        });
+
+        return new PageImpl<>(result, Controller.getPaginationConfig(criteria), countQuery.getSingleResult());
+    }
+
+    @Override
+    public Page<ContestEntity> findAll(ContestPaginatedRequest criteria) {
+        String selectClause = " SELECT c FROM ContestEntity c ";
+
+        StringBuilder whereClause = new StringBuilder(" WHERE TRUE = TRUE ");
+
+        if (StringUtils.hasText(criteria.getAuthor())) {
+            whereClause.append(" AND LOWER(c.authorName) LIKE CONCAT('%', LOWER(:authorName), '%') ");
+        }
+
+        List<String> tags = new ArrayList<>();
+        int numTags = 0;
+        if (StringUtils.hasText(criteria.getTag())) {
+            tags = Arrays.stream(criteria.getTag().split(","))
+                .map(lang -> lang.trim().toLowerCase())
+                .collect(Collectors.toList());
+
+            numTags = tags.size();
+
+            if (tags.size() > 0) {
+                whereClause.append(" AND ( ");
+                StringBuilder orClause = new StringBuilder();
+                for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
+                    if (orClause.length() == 0) {
+                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    } else {
+                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                    }
+                }
+                whereClause.append(orClause);
+                whereClause.append(" ) ");
+            }
+        }
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+        }
+
+        if (criteria.getStart() != null && criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) BETWEEN TRUNC(:start) AND TRUNC(:end) ");
+        } else if (criteria.getStart() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) >= TRUNC(:start) ");
+        } else if (criteria.getEnd() != null) {
+            whereClause.append(" AND TRUNC(c.createdAt) <= TRUNC(:end) ");
+        }
+
+        TypedQuery<ContestEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), ContestEntity.class);
+
+        if (StringUtils.hasText(criteria.getAuthor())) {
+            query.setParameter("authorName", criteria.getAuthor());
+        }
+
+        if (StringUtils.hasText(criteria.getTitle())) {
+            query.setParameter("title", criteria.getTitle());
+        }
+
+        for (int i = 0; i < numTags; i++) {
+            query.setParameter("tag" + i, tags.get(i));
+        }
+
+        if (criteria.getStart() != null) {
+            Date startDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getStart()));
+            query.setParameter("start", startDate, TemporalType.DATE);
+        }
+
+        if (criteria.getEnd() != null) {
+            Date endDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getEnd()));
+            query.setParameter("end", endDate, TemporalType.DATE);
+        }
+
+        query.setMaxResults(criteria.getSize());
+        query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.contestId) FROM ContestEntity c", Long.class);
+
+        List<ContestEntity> result = query.getResultList();
+
+        result.sort((thisContest, thatContest) -> {
+            try {
+                Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
+                Object thisValue = getter.invoke(thisContest, null);
+                Object thatValue = getter.invoke(thatContest, null);
 
                 if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
                     int comparisionResult = thisValue.toString().compareTo(thatValue.toString());

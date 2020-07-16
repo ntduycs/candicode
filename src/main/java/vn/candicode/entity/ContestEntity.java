@@ -69,6 +69,8 @@ public class ContestEntity extends Auditable {
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "user_fk"))
     private UserEntity author;
 
+    private String authorName;
+
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestRoundEntity> rounds = new ArrayList<>();
 

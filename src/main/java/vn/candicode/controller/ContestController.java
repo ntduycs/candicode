@@ -1,11 +1,10 @@
 package vn.candicode.controller;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
+import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.NewContestRequest;
-import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
 import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
@@ -77,19 +76,15 @@ public class ContestController extends Controller {
     }
 
     @GetMapping(path = "contests", produces = {"application/json"})
-    public ResponseEntity<?> getContestLists(@ModelAttribute PaginatedRequest payload) {
-        Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
-
-        PaginatedResponse<ContestSummary> summaries = contestService.getContestList(pageable);
+    public ResponseEntity<?> getContestLists(@ModelAttribute ContestPaginatedRequest payload) {
+        PaginatedResponse<ContestSummary> summaries = contestService.getContestList(payload);
 
         return ResponseEntity.ok(ResponseFactory.build(summaries));
     }
 
     @GetMapping(path = "contests/me", produces = {"application/json"})
-    public ResponseEntity<?> getMyContestLists(@ModelAttribute PaginatedRequest payload, @CurrentUser UserPrincipal me) {
-        Pageable pageable = getPaginationConfig(payload.getPage(), payload.getSize(), payload.getSort(), payload.getDirection());
-
-        PaginatedResponse<ContestSummary> summaries = contestService.getMyContestList(pageable, me.getUserId());
+    public ResponseEntity<?> getMyContestLists(@ModelAttribute ContestPaginatedRequest payload, @CurrentUser UserPrincipal me) {
+        PaginatedResponse<ContestSummary> summaries = contestService.getMyContestList(payload, me.getUserId());
 
         return ResponseEntity.ok(ResponseFactory.build(summaries));
     }

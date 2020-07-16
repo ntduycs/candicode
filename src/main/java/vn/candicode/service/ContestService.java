@@ -1,6 +1,6 @@
 package vn.candicode.service;
 
-import org.springframework.data.domain.Pageable;
+import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
 import vn.candicode.payload.response.ContestDetails;
@@ -32,17 +32,17 @@ public interface ContestService {
     void removeContest(Long contestId, UserPrincipal me);
 
     /**
-     * @param pageable
+     * @param payload
      * @return paginated list of contests
      */
-    PaginatedResponse<ContestSummary> getContestList(Pageable pageable);
+    PaginatedResponse<ContestSummary> getContestList(ContestPaginatedRequest payload);
 
     /**
-     * @param pageable
+     * @param payload
      * @param myId
      * @return paginated list of my contests
      */
-    PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId);
+    PaginatedResponse<ContestSummary> getMyContestList(ContestPaginatedRequest payload, Long myId);
 
     ContestDetails getContestDetails(Long contestId);
 }

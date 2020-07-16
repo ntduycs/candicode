@@ -50,6 +50,8 @@ public class TutorialEntity extends Auditable {
     @JoinColumn(name = "author_id", nullable = false)
     private UserEntity author;
 
+    private String authorName;
+
     @Convert(converter = StringToListConverter.class)
     private Set<String> tags = new HashSet<>();
 

@@ -27,7 +27,7 @@ public class ContestBeanUtils {
         summary.setTitle(contest.getTitle());
         summary.setSlug(SLUGIFY.slugify(contest.getTitle()));
         summary.setStatus("ongoing");
-        summary.setAuthor(contest.getAuthor().getFullName());
+        summary.setAuthor(contest.getAuthorName());
         summary.setAvailable(contest.getAvailable());
         summary.setMaxRegister(contest.getMaxRegister());
 
@@ -37,7 +37,7 @@ public class ContestBeanUtils {
     public static ContestDetails details(ContestEntity contest) {
         ContestDetails details = new ContestDetails();
 
-        details.setAuthor(contest.getAuthor().getFullName());
+        details.setAuthor(contest.getAuthorName());
         details.setContestId(contest.getContestId());
         details.setBanner(contest.getBanner());
         details.setDescription(contest.getDescription());

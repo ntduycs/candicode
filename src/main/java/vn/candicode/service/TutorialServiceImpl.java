@@ -2,7 +2,6 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.core.StorageService;
@@ -11,10 +10,12 @@ import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewTutorialRequest;
+import vn.candicode.payload.request.TutorialPaginatedRequest;
 import vn.candicode.payload.request.UpdateTutorialRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.TutorialDetails;
 import vn.candicode.payload.response.TutorialSummary;
+import vn.candicode.repository.CommonRepository;
 import vn.candicode.repository.TutorialRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.TutorialBeanUtils;
@@ -31,12 +32,14 @@ import static vn.candicode.common.FileStorageType.BANNER;
 @Log4j2
 public class TutorialServiceImpl implements TutorialService {
     private final TutorialRepository tutorialRepository;
+    private final CommonRepository commonRepository;
 
     private final StorageService storageService;
     private final CommonService commonService;
 
-    public TutorialServiceImpl(TutorialRepository tutorialRepository, StorageService storageService, CommonService commonService) {
+    public TutorialServiceImpl(TutorialRepository tutorialRepository, CommonRepository commonRepository, StorageService storageService, CommonService commonService) {
         this.tutorialRepository = tutorialRepository;
+        this.commonRepository = commonRepository;
         this.storageService = storageService;
         this.commonService = commonService;
     }
@@ -60,6 +63,7 @@ public class TutorialServiceImpl implements TutorialService {
         TutorialEntity tutorial = new TutorialEntity();
 
         tutorial.setAuthor(me.getEntityRef());
+        tutorial.setAuthorName(me.getFullName());
         tutorial.setBanner(storageService.simplifyPath(bannerPath, BANNER, me.getUserId()));
         tutorial.setBrieflyContent(payload.getDescription());
         tutorial.setContent(payload.getContent());
@@ -82,13 +86,13 @@ public class TutorialServiceImpl implements TutorialService {
     }
 
     /**
-     * @param pageable
+     * @param criteria
      * @return paginated list of tutorials
      */
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<TutorialSummary> getTutorialList(Pageable pageable) {
-        Page<TutorialEntity> items = tutorialRepository.findAll(pageable);
+    public PaginatedResponse<TutorialSummary> getTutorialList(TutorialPaginatedRequest criteria) {
+        Page<TutorialEntity> items = commonRepository.findAll(criteria);
 
         List<TutorialSummary> summaries = items.map(TutorialBeanUtils::summarize).getContent();
 
@@ -104,14 +108,14 @@ public class TutorialServiceImpl implements TutorialService {
     }
 
     /**
-     * @param pageable
+     * @param criteria
      * @param myId
      * @return paginated list of my tutorials
      */
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<TutorialSummary> getMyTutorialList(Pageable pageable, Long myId) {
-        Page<TutorialEntity> items = tutorialRepository.findAllByAuthorId(myId, pageable);
+    public PaginatedResponse<TutorialSummary> getMyTutorialList(TutorialPaginatedRequest criteria, Long myId) {
+        Page<TutorialEntity> items = commonRepository.findAllByAuthorId(myId, criteria);
 
         List<TutorialSummary> summaries = items.map(TutorialBeanUtils::summarize).getContent();
 

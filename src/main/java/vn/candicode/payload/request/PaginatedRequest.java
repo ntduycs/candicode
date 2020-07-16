@@ -12,8 +12,6 @@ public class PaginatedRequest extends Request {
     private String sort;
     private String direction;
 
-    private Boolean contestChallenge;
-
     public Integer getPage() {
         return page == null || page <= 0 ? 1 : page;
     }
@@ -28,10 +26,6 @@ public class PaginatedRequest extends Request {
 
     public String getDirection() {
         return direction == null || !validDirection.contains(direction) ? "desc" : direction;
-    }
-
-    public Boolean getContestChallenge() {
-        return contestChallenge != null ? contestChallenge : false;
     }
 
     protected static final List<String> validDirection = List.of("desc", "asc");

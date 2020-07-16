@@ -13,4 +13,9 @@ public class ChallengePaginatedRequest extends PaginatedRequest {
     private Integer start;
     private Integer end;
     private String level;
+    private Boolean contestChallenge;
+
+    public Boolean getContestChallenge() {
+        return contestChallenge != null ? contestChallenge : false;
+    }
 }

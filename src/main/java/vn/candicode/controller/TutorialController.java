@@ -1,11 +1,10 @@
 package vn.candicode.controller;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewTutorialRequest;
-import vn.candicode.payload.request.PaginatedRequest;
+import vn.candicode.payload.request.TutorialPaginatedRequest;
 import vn.candicode.payload.request.UpdateTutorialRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.TutorialDetails;
@@ -65,19 +64,15 @@ public class TutorialController extends Controller {
     }
 
     @GetMapping(path = "tutorials")
-    public ResponseEntity<?> getTutorialList(@ModelAttribute PaginatedRequest payload) {
-        Pageable pageable = getPaginationConfig(payload);
-
-        PaginatedResponse<TutorialSummary> items = tutorialService.getTutorialList(pageable);
+    public ResponseEntity<?> getTutorialList(@ModelAttribute TutorialPaginatedRequest payload) {
+        PaginatedResponse<TutorialSummary> items = tutorialService.getTutorialList(payload);
 
         return ResponseEntity.ok(ResponseFactory.build(items));
     }
 
     @GetMapping(path = "tutorials/me")
-    public ResponseEntity<?> getMyTutorials(@ModelAttribute PaginatedRequest payload, @CurrentUser UserPrincipal me) {
-        Pageable pageable = getPaginationConfig(payload);
-
-        PaginatedResponse<TutorialSummary> items = tutorialService.getMyTutorialList(pageable, me.getUserId());
+    public ResponseEntity<?> getMyTutorials(@ModelAttribute TutorialPaginatedRequest payload, @CurrentUser UserPrincipal me) {
+        PaginatedResponse<TutorialSummary> items = tutorialService.getMyTutorialList(payload, me.getUserId());
 
         return ResponseEntity.ok(ResponseFactory.build(items));
     }

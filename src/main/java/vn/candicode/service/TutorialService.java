@@ -1,7 +1,7 @@
 package vn.candicode.service;
 
-import org.springframework.data.domain.Pageable;
 import vn.candicode.payload.request.NewTutorialRequest;
+import vn.candicode.payload.request.TutorialPaginatedRequest;
 import vn.candicode.payload.request.UpdateTutorialRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.TutorialDetails;
@@ -17,17 +17,17 @@ public interface TutorialService {
     Long createTutorial(NewTutorialRequest payload, UserPrincipal me);
 
     /**
-     * @param pageable
+     * @param criteria
      * @return paginated list of tutorials
      */
-    PaginatedResponse<TutorialSummary> getTutorialList(Pageable pageable);
+    PaginatedResponse<TutorialSummary> getTutorialList(TutorialPaginatedRequest criteria);
 
     /**
-     * @param pageable
+     * @param criteria
      * @param myId
      * @return paginated list of my tutorials
      */
-    PaginatedResponse<TutorialSummary> getMyTutorialList(Pageable pageable, Long myId);
+    PaginatedResponse<TutorialSummary> getMyTutorialList(TutorialPaginatedRequest criteria, Long myId);
 
     /**
      * @param tutorialId

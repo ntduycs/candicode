@@ -2,7 +2,11 @@ package vn.candicode.repository;
 
 import org.springframework.data.domain.Page;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.ContestEntity;
+import vn.candicode.entity.TutorialEntity;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
+import vn.candicode.payload.request.ContestPaginatedRequest;
+import vn.candicode.payload.request.TutorialPaginatedRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -23,4 +27,12 @@ public interface CommonRepository {
     Page<ChallengeEntity> findAllByAuthorId(Long authorId, ChallengePaginatedRequest criteria);
 
     Page<ChallengeEntity> findAll(ChallengePaginatedRequest criteria);
+
+    Page<TutorialEntity> findAllByAuthorId(Long authorId, TutorialPaginatedRequest criteria);
+
+    Page<TutorialEntity> findAll(TutorialPaginatedRequest criteria);
+
+    Page<ContestEntity> findAllByAuthorId(Long authorId, ContestPaginatedRequest criteria);
+
+    Page<ContestEntity> findAll(ContestPaginatedRequest criteria);
 }

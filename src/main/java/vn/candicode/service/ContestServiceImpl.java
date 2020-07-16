@@ -2,7 +2,6 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +11,15 @@ import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.exception.StorageException;
+import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
 import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
 import vn.candicode.payload.response.PaginatedResponse;
-import vn.candicode.repository.ChallengeRepository;
+import vn.candicode.repository.CommonRepository;
 import vn.candicode.repository.ContestRegistrationRepository;
 import vn.candicode.repository.ContestRepository;
-import vn.candicode.repository.ContestRoundRepository;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.ContestBeanUtils;
 import vn.candicode.util.DatetimeUtils;
@@ -36,14 +35,14 @@ import static vn.candicode.common.FileStorageType.BANNER;
 @Log4j2
 public class ContestServiceImpl implements ContestService {
     private final ContestRepository contestRepository;
-    private final ContestRoundRepository contestRoundRepository;
+    private final CommonRepository commonRepository;
     private final ContestRegistrationRepository contestRegistrationRepository;
 
     private final StorageService storageService;
 
-    public ContestServiceImpl(ContestRepository contestRepository, ContestRoundRepository contestRoundRepository, ChallengeRepository challengeRepository, ContestRegistrationRepository contestRegistrationRepository, StorageService storageService) {
+    public ContestServiceImpl(ContestRepository contestRepository, CommonRepository commonRepository, ContestRegistrationRepository contestRegistrationRepository, StorageService storageService) {
         this.contestRepository = contestRepository;
-        this.contestRoundRepository = contestRoundRepository;
+        this.commonRepository = commonRepository;
         this.contestRegistrationRepository = contestRegistrationRepository;
         this.storageService = storageService;
     }
@@ -69,6 +68,7 @@ public class ContestServiceImpl implements ContestService {
             contest.setTitle(payload.getTitle());
             contest.setBanner(bannerPath);
             contest.setAuthor(author.getEntityRef());
+            contest.setAuthorName(author.getFullName());
             contest.setDescription(payload.getDescription());
             contest.setMaxRegister(payload.getMaxRegister());
             contest.setRegistrationDeadline(LocalDateTime.parse(payload.getRegistrationDeadline(), DatetimeUtils.JSON_DATETIME_FORMAT));
@@ -156,13 +156,13 @@ public class ContestServiceImpl implements ContestService {
     }
 
     /**
-     * @param pageable
+     * @param payload
      * @return paginated list of contests
      */
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<ContestSummary> getContestList(Pageable pageable) {
-        Page<ContestEntity> items = contestRepository.findAllAvailableContests(pageable);
+    public PaginatedResponse<ContestSummary> getContestList(ContestPaginatedRequest payload) {
+        Page<ContestEntity> items = commonRepository.findAll(payload);
 
         List<ContestSummary> summaries = items.map(ContestBeanUtils::summarize).getContent();
 
@@ -178,14 +178,14 @@ public class ContestServiceImpl implements ContestService {
     }
 
     /**
-     * @param pageable
+     * @param payload
      * @param myId
      * @return paginated list of my contests
      */
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<ContestSummary> getMyContestList(Pageable pageable, Long myId) {
-        Page<ContestEntity> items = contestRepository.findAllByAuthorId(myId, pageable);
+    public PaginatedResponse<ContestSummary> getMyContestList(ContestPaginatedRequest payload, Long myId) {
+        Page<ContestEntity> items = commonRepository.findAllByAuthorId(myId, payload);
 
         List<ContestSummary> summaries = items.map(ContestBeanUtils::summarize).getContent();
 

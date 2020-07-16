@@ -11,7 +11,7 @@ public class TutorialBeanUtils {
         TutorialSummary summary = new TutorialSummary();
 
         summary.setTitle(entity.getTitle());
-        summary.setAuthor(entity.getAuthor().getFullName());
+        summary.setAuthor(entity.getAuthorName());
         summary.setBanner(entity.getBanner());
         summary.setCreatedAt(entity.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         summary.setDescription(entity.getBrieflyContent());
@@ -29,7 +29,7 @@ public class TutorialBeanUtils {
         TutorialDetails details = new TutorialDetails();
 
         details.setTitle(entity.getTitle());
-        details.setAuthor(entity.getAuthor().getFullName());
+        details.setAuthor(entity.getAuthorName());
         details.setBanner(entity.getBanner());
         details.setCreatedAt(entity.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         details.setDescription(entity.getBrieflyContent());
