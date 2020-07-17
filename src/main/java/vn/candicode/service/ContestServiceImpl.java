@@ -208,7 +208,13 @@ public class ContestServiceImpl implements ContestService {
 
         ContestDetails contestDetails = ContestBeanUtils.details(contest);
 
-        UserPrincipal me = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal me;
+
+        try {
+            me = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (ClassCastException e) {
+            me = null;
+        }
 
         if (me == null) {
             contestDetails.setEnrolled(false);

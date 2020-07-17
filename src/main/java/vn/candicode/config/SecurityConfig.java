@@ -90,7 +90,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers(POST, "/contests", "/contests/*").hasAnyAuthority("contest creator", "admin")
             .antMatchers(DELETE, "/contests/*").hasAnyAuthority("contest creator", "admin")
-            .antMatchers(GET, "/contests", "contests/*").permitAll()
+            .antMatchers(GET, "/contests", "/contests/*").permitAll()
 
             .antMatchers(POST, "/contests/*/rounds").hasAnyAuthority("contest creator", "admin")
             .antMatchers(DELETE, "/contests/*/rounds").hasAnyAuthority("contest creator", "admin")

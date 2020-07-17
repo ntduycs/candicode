@@ -77,6 +77,7 @@ public class StudentServiceImpl implements StudentService {
      * @param payload
      */
     @Override
+    @Transactional
     public void updateRole(Long studentId, UpdateStudentRoleRequest payload, UserPrincipal me) {
         StudentEntity student = studentRepository.findByUserIdFetchRoles(studentId)
             .orElseThrow(() -> new ResourceNotFoundException(StudentEntity.class, "id", studentId));

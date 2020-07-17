@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewStudentRequest;
 import vn.candicode.payload.request.PasswordRequest;
+import vn.candicode.payload.request.UpdateStudentRoleRequest;
 import vn.candicode.payload.request.UpdateUserProfileRequest;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
@@ -51,9 +52,11 @@ public class StudentController extends Controller {
     }
 
     @PutMapping(path = "students/{id}/roles")
-    public ResponseEntity<?> updateStudentRole(@PathVariable("id") Long studentId) {
+    public ResponseEntity<?> updateStudentRole(@PathVariable("id") Long studentId, @RequestBody UpdateStudentRoleRequest payload, @CurrentUser UserPrincipal admin) {
+        studentService.updateRole(studentId, payload, admin);
+
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
-            "message", "This feature is coming soon. Please integrate this with Momo implementation"
+            "message", "Updated student roles successfully"
         )));
     }
 
