@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import vn.candicode.payload.ResponseFactory;
 import vn.candicode.payload.request.NewAdminRequest;
 import vn.candicode.payload.request.UpdateAdminRoleRequest;
+import vn.candicode.payload.request.UserPaginatedRequest;
+import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.UserSummary;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.AdminService;
@@ -53,5 +56,12 @@ public class AdminController extends Controller {
         return ResponseEntity.ok(ResponseFactory.build(Map.of(
             "message", "Updated role(s) successfully"
         )));
+    }
+
+    @GetMapping(path = "admins/students")
+    public ResponseEntity<?> getStudentList(@ModelAttribute UserPaginatedRequest payload, @CurrentUser UserPrincipal admin) {
+        PaginatedResponse<UserSummary> items = adminService.getStudentList(payload, admin);
+
+        return ResponseEntity.ok(ResponseFactory.build(items));
     }
 }

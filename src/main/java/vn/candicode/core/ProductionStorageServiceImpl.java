@@ -10,7 +10,7 @@ import vn.candicode.common.FileStorageType;
 import vn.candicode.payload.response.CCDirectory;
 import vn.candicode.payload.response.CCFile;
 import vn.candicode.payload.response.CCRegularFile;
-import vn.candicode.util.FileUtils;
+import vn.candicode.util.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,9 +27,11 @@ import static vn.candicode.common.FileAuthor.STUDENT;
 @Log4j2
 @Profile("prod")
 public class ProductionStorageServiceImpl implements StorageService {
-    private static final Path EC2_BASE_ROOT = Paths.get("/home/ec2-user");
-    private static final Path S3_BASE_ROOT = Paths.get("https://candicode.s3-ap-southeast-1.amazonaws.com");
-    private static final String S3_BUCKET = "candicode";
+    //    private static final Path BASE_ROOT = Paths.get("/home/ec2-user");
+    private static final Path BASE_ROOT = Paths.get(System.getProperty("user.home"), "Desktop", "Candicode");
+    //    private static final Path S3_BASE_ROOT = Paths.get("https://candicode.s3-ap-southeast-1.amazonaws.com");
+    private static final Path S3_BASE_ROOT = Paths.get("https://candicode-binh.s3-ap-southeast-1.amazonaws.com");
+    private static final String S3_BUCKET = "candicode-binh";
 
     private final S3Service s3Service;
 
@@ -37,6 +39,11 @@ public class ProductionStorageServiceImpl implements StorageService {
         this.s3Service = s3Service;
 
         createRequiredDirectories();
+
+        ChallengeBeanUtils.setStorageService(this);
+        TutorialBeanUtils.setStorageService(this);
+        ContestBeanUtils.setStorageService(this);
+        UserBeanUtils.setStorageService(this);
     }
 
     private void createRequiredDirectories() throws IOException {
@@ -60,7 +67,6 @@ public class ProductionStorageServiceImpl implements StorageService {
             if (!Files.exists(stagingDir())) {
                 Files.createDirectories(stagingDir());
             }
-
         } catch (IOException e) {
             log.error("Cannot init the required directories. Message - {}", e.getLocalizedMessage());
             throw e;
@@ -72,7 +78,7 @@ public class ProductionStorageServiceImpl implements StorageService {
 
     @Override
     public String rootDir() {
-        return EC2_BASE_ROOT.toString();
+        return BASE_ROOT.toString();
     }
 
     /**

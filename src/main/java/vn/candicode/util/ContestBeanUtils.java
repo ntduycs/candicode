@@ -1,6 +1,8 @@
 package vn.candicode.util;
 
 import com.github.slugify.Slugify;
+import vn.candicode.common.FileStorageType;
+import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.ContestChallengeEntity;
 import vn.candicode.entity.ContestEntity;
@@ -20,11 +22,13 @@ import static vn.candicode.common.EntityConstants.*;
 public class ContestBeanUtils {
     private static final Slugify SLUGIFY = new Slugify();
 
+    private static StorageService storageService;
+
     public static ContestSummary summarize(ContestEntity contest) {
         ContestSummary summary = new ContestSummary();
 
         summary.setContestId(contest.getContestId());
-        summary.setBanner(contest.getBanner());
+        summary.setBanner(storageService.resolvePath(contest.getBanner(), FileStorageType.BANNER, contest.getAuthor().getUserId()));
         summary.setDescription(contest.getDescription());
         summary.setRegistrationDeadline(contest.getRegistrationDeadline().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         summary.setTags(contest.getTags());
@@ -43,7 +47,7 @@ public class ContestBeanUtils {
 
         details.setAuthor(contest.getAuthorName());
         details.setContestId(contest.getContestId());
-        details.setBanner(contest.getBanner());
+        details.setBanner(storageService.resolvePath(contest.getBanner(), FileStorageType.BANNER, contest.getAuthor().getUserId()));
         details.setDescription(contest.getDescription());
         details.setRegistrationDeadline(contest.getRegistrationDeadline().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         details.setTags(contest.getTags());
@@ -111,5 +115,9 @@ public class ContestBeanUtils {
         } else {
             return CONTEST_INCOMING;
         }
+    }
+
+    public static void setStorageService(StorageService service) {
+        storageService = service;
     }
 }

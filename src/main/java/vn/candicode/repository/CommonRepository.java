@@ -3,10 +3,12 @@ package vn.candicode.repository;
 import org.springframework.data.domain.Page;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.ContestEntity;
+import vn.candicode.entity.StudentEntity;
 import vn.candicode.entity.TutorialEntity;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.TutorialPaginatedRequest;
+import vn.candicode.payload.request.UserPaginatedRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -34,5 +36,7 @@ public interface CommonRepository {
 
     Page<ContestEntity> findAllByAuthorId(Long authorId, ContestPaginatedRequest criteria);
 
-    Page<ContestEntity> findAll(ContestPaginatedRequest criteria);
+    Page<ContestEntity> findAll(ContestPaginatedRequest criteria, boolean isAdmin);
+
+    Page<StudentEntity> findAll(UserPaginatedRequest criteria);
 }

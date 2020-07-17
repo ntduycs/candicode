@@ -2,9 +2,7 @@ package vn.candicode.aws;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -33,10 +31,8 @@ public class S3ServiceImpl implements S3Service {
     private final TransferManager transferManager;
 
     public S3ServiceImpl() {
-        AWSCredentials credentials = new BasicAWSCredentials("", "");
-
         this.s3Client = AmazonS3ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            .withCredentials(new ProfileCredentialsProvider("candicodes3"))
             .withRegion(Regions.AP_SOUTHEAST_1)
             .build();
 

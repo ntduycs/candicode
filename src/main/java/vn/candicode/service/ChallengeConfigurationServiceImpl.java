@@ -128,9 +128,16 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         int passedTestcases = submissionDetails.stream().filter(SubmissionDetails::getPassed).mapToInt(item -> 1).sum();
 
         if (passedTestcases == totalTestcases) {
-            ChallengeConfigurationEntity challengeConfig = new ChallengeConfigurationEntity();
+            ChallengeConfigurationEntity challengeConfig;
 
-            challengeConfig.setLanguage(commonService.getLanguages().get(language));
+            challengeConfig = challengeConfigurationRepository.findByChallengeIdAndLanguageName(challengeId, language)
+                .orElse(new ChallengeConfigurationEntity());
+
+            if (challengeConfig.getChallenge() == null) {
+                challengeConfig.setLanguage(commonService.getLanguages().get(language));
+                challengeConfig.setAuthorId(myId);
+            }
+
             challengeConfig.setDirectory(payload.getChallengeDir());
             challengeConfig.setRoot(Paths.get(payload.getRunPath()).getParent().toString().substring(1));
             challengeConfig.setPreImplementedFile(payload.getImplementedPath().substring(1));
@@ -139,8 +146,9 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             if (payload.getCompilePath() != null) {
                 challengeConfig.setCompileScript(payload.getCompilePath().substring(1));
             }
-            challengeConfig.setAuthorId(myId);
+
             challengeConfig.setEnabled(true);
+            challengeConfig.setDeleted(false);
 
             challenge.addConfiguration(challengeConfig);
             challenge.getLanguages().add(language);
@@ -182,6 +190,9 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
     @Override
     @Transactional
     public Boolean removeSupportedLanguage(Long challengeId, String language, UserPrincipal me) {
+        ChallengeEntity challenge = challengeRepository.findByChallengeId(challengeId)
+            .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
+
         ChallengeConfigurationEntity configuration = challengeConfigurationRepository
             .findByChallengeIdAndLanguageName(challengeId, language.toLowerCase())
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "languageName", language));
@@ -191,12 +202,15 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         }
 
         configuration.setDeleted(true);
+        configuration.setEnabled(false);
 
-        configuration.getChallenge().getLanguages().remove(language.toLowerCase());
+        challenge.getLanguages().remove(language.toLowerCase());
 
-        if (configuration.getChallenge().getConfigurations().stream().noneMatch(cf -> cf.getDeleted() || cf.getEnabled())) {
-            configuration.getChallenge().setAvailable(false);
+        if (configuration.getChallenge().getConfigurations().stream().noneMatch(cf -> !cf.getDeleted() || cf.getEnabled())) {
+            challenge.setAvailable(false);
         }
+
+        challengeRepository.save(challenge);
 
         return true;
     }

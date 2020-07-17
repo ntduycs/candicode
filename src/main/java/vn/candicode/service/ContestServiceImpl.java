@@ -161,8 +161,8 @@ public class ContestServiceImpl implements ContestService {
      */
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<ContestSummary> getContestList(ContestPaginatedRequest payload) {
-        Page<ContestEntity> items = commonRepository.findAll(payload);
+    public PaginatedResponse<ContestSummary> getContestList(ContestPaginatedRequest payload, boolean isAdmin) {
+        Page<ContestEntity> items = commonRepository.findAll(payload, isAdmin);
 
         List<ContestSummary> summaries = items.map(ContestBeanUtils::summarize).getContent();
 

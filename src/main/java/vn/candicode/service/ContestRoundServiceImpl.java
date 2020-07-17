@@ -132,15 +132,20 @@ public class ContestRoundServiceImpl implements ContestRoundService {
     public void removeRound(Long contestId, List<Long> roundIds, UserPrincipal me) {
         List<ContestRoundEntity> rounds = contestRoundRepository.findAllByContestIdAndRoundIds(contestId, roundIds);
 
-        if (rounds.size() > 0) {
-            ContestRoundEntity firstRound = rounds.get(0);
+        ContestEntity contest = contestRepository.findByContestId(contestId)
+            .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
-            if (!firstRound.getContest().getAuthor().getUserId().equals(me.getUserId())) {
+        if (rounds.size() > 0) {
+            if (!contest.getAuthor().getUserId().equals(me.getUserId())) {
                 throw new BadRequestException("You are not the owner of this contest");
             }
 
             for (ContestRoundEntity round : rounds) {
                 round.setDeleted(true);
+            }
+
+            if (rounds.stream().allMatch(ContestRoundEntity::getDeleted)) {
+                contest.setAvailable(false);
             }
         }
     }

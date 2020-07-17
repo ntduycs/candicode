@@ -35,7 +35,7 @@ public interface ContestService {
      * @param payload
      * @return paginated list of contests
      */
-    PaginatedResponse<ContestSummary> getContestList(ContestPaginatedRequest payload);
+    PaginatedResponse<ContestSummary> getContestList(ContestPaginatedRequest payload, boolean isAdmin);
 
     /**
      * @param payload

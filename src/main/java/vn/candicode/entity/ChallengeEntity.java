@@ -146,8 +146,10 @@ public class ChallengeEntity extends Auditable {
     }
 
     public void addConfiguration(ChallengeConfigurationEntity configuration) {
-        this.configurations.add(configuration);
-        configuration.setChallenge(this);
+        if (configuration.getChallenge() == null) {
+            this.configurations.add(configuration);
+            configuration.setChallenge(this);
+        }
     }
 
     public void setMaxPoint(String level) {

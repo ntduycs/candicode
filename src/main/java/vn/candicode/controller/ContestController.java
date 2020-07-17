@@ -12,6 +12,7 @@ import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ContestService;
+import vn.candicode.util.SecurityUtils;
 
 import java.util.Map;
 
@@ -76,8 +77,8 @@ public class ContestController extends Controller {
     }
 
     @GetMapping(path = "contests", produces = {"application/json"})
-    public ResponseEntity<?> getContestLists(@ModelAttribute ContestPaginatedRequest payload) {
-        PaginatedResponse<ContestSummary> summaries = contestService.getContestList(payload);
+    public ResponseEntity<?> getContestLists(@ModelAttribute ContestPaginatedRequest payload, @CurrentUser UserPrincipal user) {
+        PaginatedResponse<ContestSummary> summaries = contestService.getContestList(payload, SecurityUtils.isAdmin(user));
 
         return ResponseEntity.ok(ResponseFactory.build(summaries));
     }

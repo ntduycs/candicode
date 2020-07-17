@@ -59,8 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(POST, "/students").anonymous()
             .antMatchers(PUT, "/students/*/roles").hasAnyAuthority("admin")
 
-            .antMatchers(POST, "/admins").hasAnyAuthority("super admin", "manage admin")
-            .antMatchers(PUT, "/admins/*/roles").hasAnyAuthority("super admin", "manage admin")
+            .antMatchers(POST, "/admins").hasAnyAuthority("super admin")
+            .antMatchers(PUT, "/admins/*/roles").hasAnyAuthority("super admin")
+            .antMatchers(GET, "/admins/students").hasAnyAuthority("admin", "super admin")
 
             .antMatchers(POST, "/challenges", "/challenges/*").hasAnyAuthority("challenge creator", "admin")
             .antMatchers(DELETE, "/challenges/*").hasAnyAuthority("challenge creator", "admin")
@@ -71,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(POST, "/challenges/*/languages").hasAnyAuthority("challenge creator", "admin")
             .antMatchers(DELETE, "/challenges/*/languages").hasAnyAuthority("challenge creator", "admin")
 
-            .antMatchers(POST, "/challenges/*/submissions").hasAuthority("student")
+            .antMatchers(POST, "/challenges/*/submissions").authenticated()
             .antMatchers(GET, "/challenges/*/submissions").permitAll()
 
             .antMatchers(POST, "/challenges/*/testcases").hasAnyAuthority("challenge creator", "admin")
@@ -81,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers(POST, "/tutorials", "/tutorials/*").hasAnyAuthority("tutorial creator", "admin")
             .antMatchers(DELETE, "/tutorials/*").hasAnyAuthority("tutorial creator", "admin")
-            .antMatchers(GET, "/tutorials", "tutorials/*").permitAll()
+            .antMatchers(GET, "/tutorials", "/tutorials/*").permitAll()
 
             .antMatchers(GET, "/tutorials/*/comments").permitAll()
 
@@ -102,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(DELETE, "/categories").hasAuthority("admin")
             .antMatchers(GET, "/categories").permitAll()
 
-            .antMatchers(POST, "/profiles").hasAuthority("student")
+            .antMatchers(POST, "/profiles").authenticated()
 
             .antMatchers(POST, "/plans/confirm").permitAll()
 

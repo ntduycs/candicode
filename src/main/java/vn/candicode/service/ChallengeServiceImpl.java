@@ -109,7 +109,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
         challenge.setTags(payload.getTags());
         challenge.setContestChallenge(payload.getContestChallenge());
-        challenge.setLanguages(Set.of(payload.getLanguage()));
+        challenge.setLanguages(Set.of(payload.getLanguage().toLowerCase()));
 
         if (payload.getCategories() != null) {
             payload.getCategories().stream()
@@ -281,7 +281,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
         // Only return unavailable challenge for its owner
-        if (!challenge.getAvailable() && (me == null || !isMyChallenge(challenge, me))) {
+        if (!challenge.getAvailable() && !isMyChallenge(challenge, me)) {
             throw new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId);
         }
 
@@ -296,19 +296,21 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<Challenge> challengeContents = new ArrayList<>();
         for (ChallengeConfigurationEntity configuration : challenge.getConfigurations()) {
-            String nonImplementedFile;
-            String relativePath = configuration.getDirectory() + File.separator + configuration.getNonImplementedFile();
-            if (!configuration.getEnabled()) {
-                nonImplementedFile = storageService.resolvePath(relativePath, STAGING, challenge.getAuthor().getUserId());
-            } else {
-                nonImplementedFile = storageService.resolvePath(relativePath, CHALLENGE, challenge.getAuthor().getUserId());
+            if (!configuration.getDeleted()) {
+                String nonImplementedFile;
+                String relativePath = configuration.getDirectory() + File.separator + configuration.getNonImplementedFile();
+                if (!configuration.getEnabled()) {
+                    nonImplementedFile = storageService.resolvePath(relativePath, STAGING, challenge.getAuthor().getUserId());
+                } else {
+                    nonImplementedFile = storageService.resolvePath(relativePath, CHALLENGE, challenge.getAuthor().getUserId());
+                }
+
+                CompletableFuture<Void> readProcess = CompletableFuture
+                    .supplyAsync(() -> FileUtils.readFileToString(new File(nonImplementedFile)))
+                    .thenAcceptAsync(content -> challengeContents.add(new Challenge(configuration.getLanguage().getName(), content)));
+
+                readChallengeContentProcesses.put(configuration.getLanguage().getName(), readProcess);
             }
-
-            CompletableFuture<Void> readProcess = CompletableFuture
-                .supplyAsync(() -> FileUtils.readFileToString(new File(nonImplementedFile)))
-                .thenAcceptAsync(content -> challengeContents.add(new Challenge(configuration.getLanguage().getName(), content)));
-
-            readChallengeContentProcesses.put(configuration.getLanguage().getName(), readProcess);
         }
 
         try {
@@ -330,7 +332,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     private boolean isMyChallenge(ChallengeEntity challenge, UserPrincipal me) {
-        return challenge.getAuthor().getUserId().equals(me.getUserId());
+        return me != null && challenge.getAuthor().getUserId().equals(me.getUserId());
     }
 
     private boolean isVipUser(UserPrincipal me) {
@@ -413,7 +415,9 @@ public class ChallengeServiceImpl implements ChallengeService {
             try {
                 if (payload.getBanner() != null && !payload.getBanner().isEmpty()) {
                     String bannerPath = storageService.store(payload.getBanner(), BANNER, me.getUserId());
-                    storageService.delete(challenge.getBanner(), BANNER, me.getUserId());
+                    if (challenge.getBanner() != null) {
+                        storageService.delete(challenge.getBanner(), BANNER, me.getUserId());
+                    }
                     challenge.setBanner(storageService.simplifyPath(bannerPath, BANNER, me.getUserId()));
                 }
             } catch (IOException e) {
@@ -445,7 +449,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeEntity challenge = challengeRepository.findByChallengeIdFetchAuthor(challengeId)
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeEntity.class, "id", challengeId));
 
-        if (!isMyChallenge(challenge, me) || !me.getAuthorities().contains(new SimpleGrantedAuthority("super admin"))) {
+        if (!isMyChallenge(challenge, me) && !me.getAuthorities().contains(new SimpleGrantedAuthority("super admin"))) {
             throw new BadRequestException("You are not the owner of this challenge");
         }
 

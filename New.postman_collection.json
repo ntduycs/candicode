@@ -5,20 +5,47 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Login Student",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\":\"student1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+        {
+            "name": "Login Student Basic",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"email\":\"basic@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/auth/login",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Login Admin Super",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"email\":\"superadmin@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
 					"raw": "{{host}}/auth/login",
 					"host": [
@@ -32,20 +59,20 @@
 			},
 			"response": []
 		},
-		{
-			"name": "Login Admin",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\":\"admin1@gmail.com\",\n\t\"password\":\"candicode\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+        {
+            "name": "Login Admin Normal",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"email\":\"admin@gmail.com\",\n\t\"password\":\"candicode\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
 					"raw": "{{host}}/auth/login",
 					"host": [
@@ -65,11 +92,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{superadmin}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "GET",
@@ -96,14 +123,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\":\"student2@gmail.com\",\n\t\"password\":\"candicode\",\n\t\"confirmPassword\":\"candicode\",\n\t\"firstName\":\"Student\",\n\t\"lastName\":\"2\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"email\":\"premium@gmail.com\",\n\t\"password\":\"candicode\",\n\t\"confirmPassword\":\"candicode\",\n\t\"firstName\":\"Student\",\n\t\"lastName\":\"Premium\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
 					"raw": "{{host}}/students",
 					"host": [
@@ -122,49 +149,85 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjI2NzM1LCJleHAiOjE1OTQ0OTA3MzV9.JhunneHnOZzJ4tY2OuCn_k3S51ygb5huyPY1jqX3Dw8TatGV55TeUvlQFvZJSWJxhPt9moOMJ5wezRRoUSw2Jw",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admin}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"roles\": [2,4,5,6]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"roles\": [1,2,3,4]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/students/1/roles",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"students",
-						"1",
-						"roles"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Challenge: Upload",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
-							"type": "string"
-						}
+                    "raw": "{{host}}/students/5/roles",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "students",
+                        "5",
+                        "roles"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Student: Upgrade Plan",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjI2NzM1LCJleHAiOjE1OTQ0OTA3MzV9.JhunneHnOZzJ4tY2OuCn_k3S51ygb5huyPY1jqX3Dw8TatGV55TeUvlQFvZJSWJxhPt9moOMJ5wezRRoUSw2Jw",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"roles\": [2,4,5,6]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/plans",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "plans"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Challenge: Upload",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
@@ -198,11 +261,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI4NDA1MDAsImV4cCI6MTU5MzcwNDUwMH0.uYwEaadsqz8-D7xiddZbzNoJ5e5GN3jxZWYNWGPFj22LVxBbuJYr2EjVeNaVI7bEaHo9IBow3i9G9yv7sMr1Gg",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
@@ -210,51 +273,51 @@
 				"body": {
 					"mode": "formdata",
 					"formdata": [
-						{
-							"key": "title",
-							"value": "Hihi challenge",
-							"type": "text"
-						},
+                        {
+                            "key": "title",
+                            "value": "Hihi challenge ok",
+                            "type": "text"
+                        },
 						{
 							"key": "level",
 							"value": "Easy",
 							"type": "text"
 						},
-						{
-							"key": "description",
-							"value": "Sample description 1",
-							"type": "text"
-						},
-						{
-							"key": "language",
-							"value": "cpp",
-							"type": "text"
-						},
+                        {
+                            "key": "description",
+                            "value": "Sample description",
+                            "type": "text"
+                        },
+                        {
+                            "key": "language",
+                            "value": "java",
+                            "type": "text"
+                        },
 						{
 							"key": "banner",
 							"type": "file",
 							"src": "/Users/ntduycs/Pictures/me.JPG"
 						},
-						{
-							"key": "runPath",
-							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/run.sh",
-							"type": "text"
-						},
-						{
-							"key": "compilePath",
-							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/compile.sh",
-							"type": "text"
-						},
-						{
-							"key": "implementedPath",
-							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/hihi.cpp",
-							"type": "text"
-						},
-						{
-							"key": "nonImplementedPath",
-							"value": "/Users/ntduycs/Desktop/Candicode/challenges/1/200627023025-1-1/c++/hihchallenge.cpp",
-							"type": "text"
-						},
+                        {
+                            "key": "runPath",
+                            "value": "/Candicode_v4/run.sh",
+                            "type": "text"
+                        },
+                        {
+                            "key": "compilePath",
+                            "value": "/Candicode_v4/compile.sh",
+                            "type": "text"
+                        },
+                        {
+                            "key": "implementedPath",
+                            "value": "/Candicode_v4/Hihi.java",
+                            "type": "text"
+                        },
+                        {
+                            "key": "nonImplementedPath",
+                            "value": "/Candicode_v4/HihiChallenge.java",
+                            "type": "text"
+                        },
 						{
 							"key": "tcInputFormat",
 							"value": "string",
@@ -265,11 +328,11 @@
 							"value": "string",
 							"type": "text"
 						},
-						{
-							"key": "challengeDir",
-							"value": "200627023025-1-1",
-							"type": "text"
-						},
+                        {
+                            "key": "challengeDir",
+                            "value": "200711042022-5-2",
+                            "type": "text"
+                        },
 						{
 							"key": "categories",
 							"value": "algorithm",
@@ -298,20 +361,27 @@
 			"name": "Challenge: Details",
 			"request": {
 				"auth": {
-					"type": "noauth"
-				},
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "{{admin}}",
+                            "type": "string"
+                        }
+                    ]
+                },
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/challenges/46",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46"
-					]
-				}
+                    "raw": "{{host}}/challenges/6",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "6"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -324,26 +394,29 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/challenges?title=abc&author=abc&tag=bach-khoa,b,c&language=java,python&start&end=&page&size&sort&direction&level",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges"
-					],
-					"query": [
-						{
-							"key": "title",
-							"value": "abc"
-						},
-						{
-							"key": "author",
-							"value": "abc"
-						},
-						{
-							"key": "tag",
-							"value": "bach-khoa,b,c"
-						},
+                    "raw": "{{host}}/challenges?language=java,python&start&end=&page&size&sort&direction",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges"
+                    ],
+                    "query": [
+                        {
+                            "key": "title",
+                            "value": "abc",
+                            "disabled": true
+                        },
+                        {
+                            "key": "author",
+                            "value": "abc",
+                            "disabled": true
+                        },
+                        {
+                            "key": "tag",
+                            "value": "bach-khoa,b,c",
+                            "disabled": true
+                        },
 						{
 							"key": "language",
 							"value": "java,python"
@@ -378,10 +451,11 @@
 							"value": null,
 							"description": "defailt is desc if not present (desc or asc)"
 						},
-						{
-							"key": "level",
-							"value": null
-						}
+                        {
+                            "key": "level",
+                            "value": null,
+                            "disabled": true
+                        }
 					]
 				}
 			},
@@ -393,66 +467,81 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admin}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/challenges/me?title=abc&author=abc&tag=bach-khoa,b,c&language=java,python&start=&end=&page=&size=&sort=&direction=",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"me"
-					],
-					"query": [
-						{
-							"key": "title",
-							"value": "abc"
-						},
-						{
-							"key": "author",
-							"value": "abc"
-						},
-						{
-							"key": "tag",
-							"value": "bach-khoa,b,c"
-						},
-						{
-							"key": "language",
-							"value": "java,python"
-						},
-						{
-							"key": "start",
-							"value": ""
-						},
-						{
-							"key": "end",
-							"value": ""
-						},
-						{
-							"key": "page",
-							"value": ""
-						},
-						{
-							"key": "size",
-							"value": ""
-						},
-						{
-							"key": "sort",
-							"value": ""
-						},
-						{
-							"key": "direction",
-							"value": ""
-						}
-					]
+                    "raw": "{{host}}/challenges/me",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "me"
+                    ],
+                    "query": [
+                        {
+                            "key": "title",
+                            "value": "a",
+                            "disabled": true
+                        },
+                        {
+                            "key": "author",
+                            "value": "per",
+                            "disabled": true
+                        },
+                        {
+                            "key": "tag",
+                            "value": "xyz",
+                            "disabled": true
+                        },
+                        {
+                            "key": "language",
+                            "value": "python,java",
+                            "disabled": true
+                        },
+                        {
+                            "key": "start",
+                            "value": "",
+                            "disabled": true
+                        },
+                        {
+                            "key": "end",
+                            "value": "",
+                            "disabled": true
+                        },
+                        {
+                            "key": "page",
+                            "value": "",
+                            "disabled": true
+                        },
+                        {
+                            "key": "size",
+                            "value": "",
+                            "disabled": true
+                        },
+                        {
+                            "key": "sort",
+                            "value": "createdAt",
+                            "disabled": true
+                        },
+                        {
+                            "key": "direction",
+                            "value": "asc",
+                            "disabled": true
+                        },
+                        {
+                            "key": "contestChallenge",
+                            "value": "true",
+                            "disabled": true
+                        }
+                    ]
 				}
 			},
 			"response": []
@@ -463,11 +552,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admintoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
@@ -475,11 +564,11 @@
 				"body": {
 					"mode": "formdata",
 					"formdata": [
-						{
-							"key": "title",
-							"value": "Edited Challenge xyz",
-							"type": "text"
-						},
+                        {
+                            "key": "title",
+                            "value": "Challenge 1",
+                            "type": "text"
+                        },
 						{
 							"key": "description",
 							"value": "Edited Description",
@@ -501,37 +590,32 @@
 							"type": "text"
 						},
 						{
-							"key": "tags",
-							"value": "c",
-							"type": "text"
-						},
-						{
 							"key": "categories",
 							"value": "database",
 							"type": "text"
 						},
-						{
-							"key": "categories",
-							"value": "data structure 12 ",
-							"type": "text"
-						},
-						{
-							"key": "banner",
-							"type": "file",
-							"src": "/Users/ntduycs/Pictures/intellij-bg.jpg"
-						}
+                        {
+                            "key": "categories",
+                            "value": "data structure",
+                            "type": "text"
+                        },
+                        {
+                            "key": "banner",
+                            "type": "file",
+                            "src": "/Users/ntduycs/Pictures/me.JPG"
+                        }
 					]
 				},
 				"url": {
-					"raw": "{{host}}/challenges/28",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"28"
-					]
-				}
+                    "raw": "{{host}}/challenges/25",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -541,25 +625,25 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admintoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/challenges/24",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"24"
-					]
-				}
+                    "raw": "{{host}}/challenges/25",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -569,35 +653,35 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admintoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"language\":\"Java\",\n\t\"challengeDir\": \"200627033107-1-1\",\n\t\"runPath\": \"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/run.sh\",\n\t\"compilePath\": \"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/compile.sh\",\n\t\"implementedPath\":\"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/Hihi.java\",\n\t\"nonImplementedPath\":\"/Users/ntduycs/Desktop/Candicode/challenges/1/200627033107-1-1/Candicode_v4/HihiChallenge.java\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"language\":\"cpp\",\n\t\"challengeDir\": \"200708215812-5-5\",\n\t\"runPath\": \"/c++/run.sh\",\n\t\"compilePath\": \"/c++/compile.sh\",\n\t\"implementedPath\":\"/c++/hihi.cpp\",\n\t\"nonImplementedPath\":\"/c++/hihchallenge.cpp\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/challenges/46/languages",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46",
-						"languages"
-					]
-				}
+                    "raw": "{{host}}/challenges/25/languages",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25",
+                        "languages"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -788,35 +872,35 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MjE5NzIsImV4cCI6MTU5NDQ4NTk3Mn0.ghnZqvi9EDh3iQV1uDjK8tybNMjTChwxnqyhzijW0cJn1EvkHsLoxDO8W_-ZTz8duLiMn7qTL3N2dNgxdnTHtg",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"language\":\"cpp\",\n\t\"code\":\"void doSomething() {\\n    // Fill your code here ...\\n}\",\n\t\"doneWithin\": \"\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"language\":\"java\",\n\t\"code\":\"public class Hihi {\\n    public void doSomething() {\\n        return;\\n    }\\n}\",\n\t\"doneWithin\": \"\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/challenges/46/score",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46",
-						"score"
-					]
-				}
+                    "raw": "{{host}}/challenges/9/score",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "9",
+                        "score"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -826,35 +910,35 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"compiled\": \"success or failed\",\n\t\"doneWithin\": null,\n\t\"executionTime\": \"\",\n\t\"passed\": 23,\n\t\"total\": 30,\n\t\"code\": \"\",\n\t\"language\": \"\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"compiled\": true,\n\t\"doneWithin\": 0,\n\t\"executionTime\": 86936423.5,\n\t\"passed\": 2,\n\t\"total\": 2,\n\t\"code\": \"public class Hihi {\\n    public void doSomething() {\\n        return;\\n    }\\n}\",\n\t\"language\": \"java\",\n\t\"submitAt\":\"2020-07-07 23:43:27.883\"\n\n}\t",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/challenges/46/submissions",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46",
-						"submissions"
-					]
-				}
+                    "raw": "{{host}}/challenges/25/submissions",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25",
+                        "submissions"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -864,11 +948,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "GET",
@@ -890,28 +974,21 @@
 			"name": "Submission: by challenge_id",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMxOTE4MjAsImV4cCI6MTU5NDA1NTgyMH0.ViZSIWIzCr8AfIKmwA60vtt6h1FieXhu3Xmqe2h5EXFLq3kCWCPma0ldZcMEzii2Hfv37jJaph_gSm7g_E1FhA",
-							"type": "string"
-						}
-					]
-				},
+                    "type": "noauth"
+                },
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/challenges/46/submissions",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46",
-						"submissions"
-					]
-				}
+                    "raw": "{{host}}/challenges/25/submissions",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25",
+                        "submissions"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -952,35 +1029,35 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"hello world\",\n\t\t\t\"output\":\"hello world\",\n\t\t\t\"hidden\":true\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"1 + 2 = 3\",\n\t\t\t\"output\":\"1 + 2 = 3\"\n\t\t}\n\t]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"hello world\",\n\t\t\t\"output\":\"hello world\",\n\t\t\t\"hidden\":true\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"1 + 2 = 3\",\n\t\t\t\"output\":\"1 + 2 = 3\",\n\t\t\t\"hidden\": false\n\t\t}\n\t]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/challenges/46/testcases",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46",
-						"testcases"
-					]
-				}
+                    "raw": "{{host}}/challenges/9/testcases",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "9",
+                        "testcases"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -990,35 +1067,35 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admintoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "DELETE",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"testcaseIds\": [20,21]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"testcaseIds\": [30]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/challenges/16/testcases",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"16",
-						"testcases"
-					]
-				}
+                    "raw": "{{host}}/challenges/25/testcases",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25",
+                        "testcases"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -1028,35 +1105,35 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admintoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 18,\n\t\t\t\"input\": \"[12,2,3]\",\n\t\t\t\"output\": \"[2,3,12]\",\n\t\t\t\"hidden\": false\n\t\t},\n\t\t{\n\t\t\t\"testcaseId\": 19,\n\t\t\t\"input\": \"[2,3,10,11]\",\n\t\t\t\"output\": \"[2,3,10,11]\",\n\t\t\t\"hidden\": true\n\t\t}\t\n\t]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                    "mode": "raw",
+                    "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 30,\n\t\t\t\"input\": \"anhyeu\",\n\t\t\t\"output\": \"anhyeu\",\n\t\t\t\"hidden\": false\n\t\t}\n\t]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
-					"raw": "{{host}}/challenges/16/testcases",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"16",
-						"testcases"
-					]
-				}
+                    "raw": "{{host}}/challenges/25/testcases",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "25",
+                        "testcases"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -1066,11 +1143,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTI5Mjk0MDksImV4cCI6MTU5Mzc5MzQwOX0.qcgE_J112T9HI3gDmNXcfAwNOaL2zO-1gr4CrlYG0ZlK1cQCWLWLiMZpzkg_B75xjHvOkRYMSN7oYYDAsgGPhQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
@@ -1085,17 +1162,17 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/challenges/46/testcases/verification",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"challenges",
-						"46",
-						"testcases",
-						"verification"
-					]
-				}
+                    "raw": "{{host}}/challenges/9/testcases/verification",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "challenges",
+                        "9",
+                        "testcases",
+                        "verification"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -1269,27 +1346,20 @@
 			"name": "Tutorial: Details",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-							"type": "string"
-						}
-					]
-				},
+                    "type": "noauth"
+                },
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/tutorials/100",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"tutorials",
-						"100"
-					]
-				}
+                    "raw": "{{host}}/tutorials/8",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "tutorials",
+                        "8"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -1367,11 +1437,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTMyNjczMTksImV4cCI6MTU5NDEzMTMxOX0.iITvJ_2EIB2lIN9_21tM7SDemyy_JDuxaRLOrDei8nRUejOh4P3oitdrfJ05RbLSB3avljdgOBvgEZUP5AaLDA",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{admin}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "GET",
@@ -1854,11 +1924,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM2MTkyOTcsImV4cCI6MTU5NDQ4MzI5N30.Jr3PgSv6iHMOhUm2lNUSI7SSOvHnS1YjKD0vT5XI8l2xwARu18bhWo6hLU3rvmTb0G4YvzXgvM3HoKbFEvM5DQ",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzODA4NjgyLCJleHAiOjE1OTQ2NzI2ODJ9.ZFcOoIp3OHegZ5x2jDu1vsNSi3p9jvpDvTIy1ldhMTg5ufJ3QLuFzIUQEYTscrgNGMmEr4mI-nz0iUxYikCIJw",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "GET",
@@ -2102,17 +2172,6 @@
 			"response": []
 		},
 		{
-			"name": "Search",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Round: create",
 			"request": {
 				"auth": {
@@ -2253,26 +2312,97 @@
 				"url": {
 					"raw": "{{host}}/admins",
 					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"admins"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Admin: Update Roles",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
-							"type": "string"
-						}
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "admins"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Admin: List Students",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "{{admin}}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"email\":\"admin2@gmail.com\",\n    \"password\":\"candicode\",\n    \"confirmPassword\":\"candicode\",\n    \"firstName\":\"Admin\",\n    \"lastName\":\"2\",\n    \"roles\": [7]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/admins/students?plan&firstName&lastName&page&size&sort&direction",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "admins",
+                        "students"
+                    ],
+                    "query": [
+                        {
+                            "key": "plan",
+                            "value": null,
+                            "description": "one of list {basic, standard, premium}"
+                        },
+                        {
+                            "key": "firstName",
+                            "value": null
+                        },
+                        {
+                            "key": "lastName",
+                            "value": null
+                        },
+                        {
+                            "key": "page",
+                            "value": null
+                        },
+                        {
+                            "key": "size",
+                            "value": null
+                        },
+                        {
+                            "key": "sort",
+                            "value": null
+                        },
+                        {
+                            "key": "direction",
+                            "value": null
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Admin: Update Roles",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "PUT",
@@ -2335,11 +2465,11 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM4MDg2NjIsImV4cCI6MTU5NDY3MjY2Mn0.v0vHGisGSFEndCBA9ayr1uH-EALJRjn9fvy9PtP29bA7k-1jfTszNWb_V4YXBwwjXOFCLHkXAdnNNEMKH6ao_w",
-							"type": "string"
-						}
+                        {
+                            "key": "token",
+                            "value": "{{superadmin}}",
+                            "type": "string"
+                        }
 					]
 				},
 				"method": "POST",
@@ -2347,21 +2477,16 @@
 				"body": {
 					"mode": "formdata",
 					"formdata": [
-						{
-							"key": "firstName",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "lastName",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "slogan",
-							"value": "I love you",
-							"type": "text"
-						},
+                        {
+                            "key": "firstName",
+                            "value": "Duy",
+                            "type": "text"
+                        },
+                        {
+                            "key": "lastName",
+                            "value": "Nguyen Thanh",
+                            "type": "text"
+                        },
 						{
 							"key": "facebook",
 							"value": "",
@@ -2382,22 +2507,27 @@
 							"value": "",
 							"type": "text"
 						},
-						{
-							"key": "company",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "university",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "avatar",
-							"type": "file",
-							"src": "/Users/ntduycs/Pictures/me.JPG"
-						}
-					]
+                        {
+                            "key": "company",
+                            "value": "Apple Inc.",
+                            "type": "text"
+                        },
+                        {
+                            "key": "university",
+                            "value": "Bach Khoa University",
+                            "type": "text"
+                        },
+                        {
+                            "key": "avatar",
+                            "type": "file",
+                            "src": "/Users/ntduycs/Pictures/me.JPG"
+                        },
+                        {
+                            "key": "slogan",
+                            "value": "Candicode is the best",
+                            "type": "text"
+                        }
+                    ]
 				},
 				"url": {
 					"raw": "{{host}}/profiles",
@@ -2414,17 +2544,27 @@
 		{
 			"name": "User: Password",
 			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"oldPassword\":\"\",\n    \"newPassword\":\"\",\n    \"confirmPassword\":\"\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM4MDg2NjIsImV4cCI6MTU5NDY3MjY2Mn0.v0vHGisGSFEndCBA9ayr1uH-EALJRjn9fvy9PtP29bA7k-1jfTszNWb_V4YXBwwjXOFCLHkXAdnNNEMKH6ao_w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"oldPassword\":\"candicodde\",\n    \"newPassword\":\"khongco123\",\n    \"confirmPassword\":\"khongco123\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
 				"url": {
 					"raw": "{{host}}/password",
 					"host": [
@@ -2476,29 +2616,108 @@
 		{
 			"name": "Like/Dislike",
 			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"type\": \"challenge or tutorial\",\n    \"id\": 1,\n    \"like\": true\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{host}}/reaction",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"reaction"
-					]
-				}
-			},
-			"response": []
-		}
-	],
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50MUBnbWFpbC5jb20iLCJpYXQiOjE1OTM4MDg2NjIsImV4cCI6MTU5NDY3MjY2Mn0.v0vHGisGSFEndCBA9ayr1uH-EALJRjn9fvy9PtP29bA7k-1jfTszNWb_V4YXBwwjXOFCLHkXAdnNNEMKH6ao_w",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"type\": \"challenge\",\n    \"id\": 46,\n    \"like\": true\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/reaction",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "reaction"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Momo",
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"partnerCode\": \"MOMOXQPA20200705\",\n    \"accessKey\": \"BPTBjabbbIuCldLl\",\n    \"requestId\": \"3add82e6-99a3-49e3-bf6e-c99b1919e68b\",\n    \"amount\": \"80000\",\n    \"orderId\": \"abc\",\n    \"orderInfo\": \"Upgrade student plan using Momo payment gateway\",\n    \"returnUrl\": \"https://www.google.com/\",\n    \"notifyUrl\": \"https://77bd96b4e2cf.ap.ngrok.io/api/plans/confirm\",\n    \"requestType\": \"captureMoMoWallet\",\n    \"signature\": \"f2c31b963eaae4dfd6c7f0d1265d0773827dd9ffbda2ca0e8d88e66afd4adbae\",\n    \"extraData\": \"nothing\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "https://test-payment.momo.vn/gw_payment/transactionProcessor",
+                    "protocol": "https",
+                    "host": [
+                        "test-payment",
+                        "momo",
+                        "vn"
+                    ],
+                    "path": [
+                        "gw_payment",
+                        "transactionProcessor"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "User: Upgrade Plan",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "{{studenttoken}}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"plan\": \"standard\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/plans",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "plans"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
 	"protocolProfileBehavior": {}
 }

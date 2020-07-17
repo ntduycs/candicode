@@ -8,10 +8,12 @@ import org.springframework.util.StringUtils;
 import vn.candicode.controller.Controller;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.ContestEntity;
+import vn.candicode.entity.StudentEntity;
 import vn.candicode.entity.TutorialEntity;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.TutorialPaginatedRequest;
+import vn.candicode.payload.request.UserPaginatedRequest;
 import vn.candicode.util.DatetimeUtils;
 
 import javax.persistence.*;
@@ -667,10 +669,15 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     @Override
-    public Page<ContestEntity> findAll(ContestPaginatedRequest criteria) {
+    public Page<ContestEntity> findAll(ContestPaginatedRequest criteria, boolean isAdmin) {
         String selectClause = " SELECT c FROM ContestEntity c ";
 
-        StringBuilder whereClause = new StringBuilder(" WHERE TRUE = TRUE ");
+        StringBuilder whereClause = new StringBuilder();
+        if (isAdmin) {
+            whereClause.append(" WHERE TRUE = TRUE ");
+        } else {
+            whereClause.append(" WHERE c.available = TRUE ");
+        }
 
         if (StringUtils.hasText(criteria.getAuthor())) {
             whereClause.append(" AND LOWER(c.authorName) LIKE CONCAT('%', LOWER(:authorName), '%') ");
@@ -756,6 +763,67 @@ public class CommonRepositoryImpl implements CommonRepository {
                 Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
                 Object thisValue = getter.invoke(thisContest, null);
                 Object thatValue = getter.invoke(thatContest, null);
+
+                if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
+                    int comparisionResult = thisValue.toString().compareTo(thatValue.toString());
+                    return criteria.getDirection().equals("desc") ?
+                        -comparisionResult :
+                        comparisionResult;
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
+            return 0;
+        });
+
+        return new PageImpl<>(result, Controller.getPaginationConfig(criteria), countQuery.getSingleResult());
+    }
+
+    @Override
+    public Page<StudentEntity> findAll(UserPaginatedRequest criteria) {
+        String selectClause = " SELECT c FROM StudentEntity c ";
+
+        StringBuilder whereClause = new StringBuilder();
+
+        whereClause.append(" WHERE TRUE = TRUE ");
+
+        if (StringUtils.hasText(criteria.getPlan())) {
+            whereClause.append(" AND LOWER(c.studentPlan.name) = :plan ");
+        }
+
+        if (StringUtils.hasText(criteria.getFirstName())) {
+            whereClause.append(" AND LOWER(c.firstName) LIKE CONCAT('%', LOWER(:firstName), '%') ");
+        }
+
+        if (StringUtils.hasText(criteria.getLastName())) {
+            whereClause.append(" AND LOWER(c.lastName) = LOWER(:lastName) ");
+        }
+
+        TypedQuery<StudentEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), StudentEntity.class);
+
+        if (StringUtils.hasText(criteria.getPlan())) {
+            query.setParameter("plan", criteria.getPlan());
+        }
+
+        if (StringUtils.hasText(criteria.getFirstName())) {
+            query.setParameter("firstName", criteria.getFirstName());
+        }
+
+        if (StringUtils.hasText(criteria.getLastName())) {
+            query.setParameter("lastName", criteria.getLastName());
+        }
+
+        query.setMaxResults(criteria.getSize());
+        query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.userId) FROM StudentEntity c", Long.class);
+
+        List<StudentEntity> result = query.getResultList();
+
+        result.sort((thisStudent, thatStudent) -> {
+            try {
+                Method getter = ChallengeEntity.class.getMethod(getGetterFromAttribute(criteria.getSort()));
+                Object thisValue = getter.invoke(thisStudent, null);
+                Object thatValue = getter.invoke(thatStudent, null);
 
                 if (thisValue.getClass().isPrimitive() || thisValue instanceof String || thisValue instanceof LocalDateTime) {
                     int comparisionResult = thisValue.toString().compareTo(thatValue.toString());

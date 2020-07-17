@@ -38,7 +38,7 @@ public class MomoPaymentServiceImpl implements PaymentService {
     private static final String MOMO_SECRET_KEY = "6Fd30surzrCdvFZUobyEID0SvP9ZzJlj";
     private static final String MOMO_REQUEST_TYPE = "captureMoMoWallet";
     private static final String MOMO_RETURN_URL = "https://candicode.d1ta5379515jc6.amplifyapp.com/profile";
-    private static final String MOMO_NOTIFY_URL = "https://candicode.ap-southeast-1.elasticbeanstalk.com/api/plans/confirm";
+    private static final String MOMO_NOTIFY_URL = "https://22b2ff4f9065.ap.ngrok.io/api/plans/confirm";
     private static final String MOMO_PAYMENT_ENDPOINT = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
 
     private final CommonService commonService;

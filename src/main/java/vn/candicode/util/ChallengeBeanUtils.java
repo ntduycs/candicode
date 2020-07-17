@@ -1,6 +1,8 @@
 package vn.candicode.util;
 
 import com.github.slugify.Slugify;
+import vn.candicode.common.FileStorageType;
+import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 public class ChallengeBeanUtils {
     private static final Slugify SLUGIFY = new Slugify();
 
+    private static StorageService storageService;
+
     public static ChallengeSummary summarize(ChallengeEntity entity) {
         ChallengeSummary summary = new ChallengeSummary();
 
@@ -19,7 +23,7 @@ public class ChallengeBeanUtils {
         summary.setUpdatedAt(entity.getUpdatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         summary.setCreatedAt(entity.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         summary.setChallengeId(entity.getChallengeId());
-        summary.setBanner(entity.getBanner());
+        summary.setBanner(storageService.resolvePath(entity.getBanner(), FileStorageType.BANNER, entity.getAuthor().getUserId()));
         summary.setAuthor(entity.getAuthorName());
         summary.setTitle(entity.getTitle());
         summary.setLevel(entity.getLevel());
@@ -40,7 +44,7 @@ public class ChallengeBeanUtils {
         details.setUpdatedAt(entity.getUpdatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         details.setCreatedAt(entity.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         details.setChallengeId(entity.getChallengeId());
-        details.setBanner(entity.getBanner());
+        details.setBanner(storageService.resolvePath(entity.getBanner(), FileStorageType.BANNER, entity.getAuthor().getUserId()));
         details.setAuthor(entity.getAuthorName());
         details.setTitle(entity.getTitle());
         details.setLevel(entity.getLevel());
@@ -56,5 +60,9 @@ public class ChallengeBeanUtils {
         details.setLanguages(entity.getLanguages());
 
         return details;
+    }
+
+    public static void setStorageService(StorageService service) {
+        storageService = service;
     }
 }
