@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class NewSubmissionRequest extends Request {
     @NotNull(message = "Field 'compiled' is required but not be given")
-    private Boolean compiled;
+    private String compiled;
     private Double doneWithin;
     @NotNull(message = "Field 'executionTime is required but not be given'")
     private Double executionTime;

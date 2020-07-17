@@ -195,7 +195,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         SubmissionEntity submission = new SubmissionEntity();
 
-        submission.setCompiled(payload.getCompiled());
+        submission.setCompiled(payload.getCompiled().equalsIgnoreCase("success"));
         submission.setDoneWithin(payload.getDoneWithin());
         submission.setExecTime(payload.getExecutionTime());
         submission.setPoint(payload.getPassed() / payload.getTotal() * challenge.getMaxPoint());
@@ -212,7 +212,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     private boolean validateSubmission(CodeExecResultEntity submissionResult, NewSubmissionRequest submissionRequest) {
-        return submissionResult.getCompiled().equals(submissionRequest.getCompiled()) &&
+        return submissionResult.getCompiled().equals(submissionRequest.getCompiled().equalsIgnoreCase("success")) &&
             submissionResult.getDoneWithin().equals(submissionRequest.getDoneWithin()) &&
             submissionResult.getExecTime().equals(submissionRequest.getExecutionTime()) &&
             submissionResult.getPassedTestcases().equals(submissionRequest.getPassed()) &&

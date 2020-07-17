@@ -46,19 +46,19 @@
                         }
                     }
                 },
-				"url": {
-					"raw": "{{host}}/auth/login",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"auth",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
+                "url": {
+                    "raw": "{{host}}/auth/login",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
         {
             "name": "Login Admin Normal",
             "request": {
@@ -73,16 +73,16 @@
                         }
                     }
                 },
-				"url": {
-					"raw": "{{host}}/auth/login",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"auth",
-						"login"
-					]
-				}
+                "url": {
+                    "raw": "{{host}}/auth/login",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "login"
+                    ]
+                }
 			},
 			"response": []
 		},
@@ -97,7 +97,7 @@
                             "value": "{{superadmin}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "GET",
 				"header": [],
@@ -117,12 +117,12 @@
 		{
 			"name": "Student: Create",
 			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"email\":\"premium@gmail.com\",\n\t\"password\":\"candicode\",\n\t\"confirmPassword\":\"candicode\",\n\t\"firstName\":\"Student\",\n\t\"lastName\":\"Premium\"\n}",
                     "options": {
@@ -131,16 +131,16 @@
                         }
                     }
                 },
-				"url": {
-					"raw": "{{host}}/students",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"students"
-					]
-				}
-			},
+                "url": {
+                    "raw": "{{host}}/students",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "students"
+                    ]
+                }
+            },
 			"response": []
 		},
 		{
@@ -154,11 +154,11 @@
                             "value": "{{admin}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"roles\": [1,2,3,4]\n}",
                     "options": {
@@ -167,7 +167,7 @@
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/students/5/roles",
                     "host": [
                         "{{host}}"
@@ -228,16 +228,16 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "source",
-							"type": "file",
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "source",
+                            "type": "file",
 							"src": "/Users/ntduycs/Desktop/Candicode_v4.zip"
 						}
 					]
@@ -266,7 +266,7 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "POST",
 				"header": [],
@@ -278,11 +278,11 @@
                             "value": "Hihi challenge ok",
                             "type": "text"
                         },
-						{
-							"key": "level",
-							"value": "Easy",
-							"type": "text"
-						},
+                        {
+                            "key": "level",
+                            "value": "Easy",
+                            "type": "text"
+                        },
                         {
                             "key": "description",
                             "value": "Sample description",
@@ -293,11 +293,11 @@
                             "value": "java",
                             "type": "text"
                         },
-						{
-							"key": "banner",
-							"type": "file",
-							"src": "/Users/ntduycs/Pictures/me.JPG"
-						},
+                        {
+                            "key": "banner",
+                            "type": "file",
+                            "src": "/Users/ntduycs/Pictures/me.JPG"
+                        },
                         {
                             "key": "runPath",
                             "value": "/Candicode_v4/run.sh",
@@ -318,31 +318,31 @@
                             "value": "/Candicode_v4/HihiChallenge.java",
                             "type": "text"
                         },
-						{
-							"key": "tcInputFormat",
-							"value": "string",
-							"type": "text"
-						},
-						{
-							"key": "tcOutputFormat",
-							"value": "string",
-							"type": "text"
-						},
+                        {
+                            "key": "tcInputFormat",
+                            "value": "string",
+                            "type": "text"
+                        },
+                        {
+                            "key": "tcOutputFormat",
+                            "value": "string",
+                            "type": "text"
+                        },
                         {
                             "key": "challengeDir",
                             "value": "200711042022-5-2",
                             "type": "text"
                         },
-						{
-							"key": "categories",
-							"value": "algorithm",
-							"type": "text"
-						},
-						{
-							"key": "categories",
-							"value": "database",
-							"type": "text"
-						}
+                        {
+                            "key": "categories",
+                            "value": "algorithm",
+                            "type": "text"
+                        },
+                        {
+                            "key": "categories",
+                            "value": "database",
+                            "type": "text"
+                        }
 					]
 				},
 				"url": {
@@ -360,7 +360,7 @@
 		{
 			"name": "Challenge: Details",
 			"request": {
-				"auth": {
+                "auth": {
                     "type": "bearer",
                     "bearer": [
                         {
@@ -370,9 +370,9 @@
                         }
                     ]
                 },
-				"method": "GET",
-				"header": [],
-				"url": {
+                "method": "GET",
+                "header": [],
+                "url": {
                     "raw": "{{host}}/challenges/6",
                     "host": [
                         "{{host}}"
@@ -417,16 +417,16 @@
                             "value": "bach-khoa,b,c",
                             "disabled": true
                         },
-						{
-							"key": "language",
-							"value": "java,python"
-						},
-						{
-							"key": "start",
-							"value": null,
-							"description": "get all if not present"
-						},
-						{
+                        {
+                            "key": "language",
+                            "value": "java,python"
+                        },
+                        {
+                            "key": "start",
+                            "value": null,
+                            "description": "get all if not present"
+                        },
+                        {
 							"key": "end",
 							"value": "",
 							"description": "default by now if not present"
@@ -441,22 +441,22 @@
 							"value": null,
 							"description": "defailt is 10 if not present"
 						},
-						{
-							"key": "sort",
-							"value": null,
-							"description": "default is createdAt if not present"
-						},
-						{
-							"key": "direction",
-							"value": null,
-							"description": "defailt is desc if not present (desc or asc)"
-						},
+                        {
+                            "key": "sort",
+                            "value": null,
+                            "description": "default is createdAt if not present"
+                        },
+                        {
+                            "key": "direction",
+                            "value": null,
+                            "description": "defailt is desc if not present (desc or asc)"
+                        },
                         {
                             "key": "level",
                             "value": null,
                             "disabled": true
                         }
-					]
+                    ]
 				}
 			},
 			"response": []
@@ -472,7 +472,7 @@
                             "value": "{{admin}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "GET",
 				"header": [],
@@ -542,7 +542,7 @@
                             "disabled": true
                         }
                     ]
-				}
+                }
 			},
 			"response": []
 		},
@@ -557,7 +557,7 @@
                             "value": "{{admintoken}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "POST",
 				"header": [],
@@ -569,31 +569,31 @@
                             "value": "Challenge 1",
                             "type": "text"
                         },
-						{
-							"key": "description",
-							"value": "Edited Description",
-							"type": "text"
-						},
-						{
-							"key": "level",
-							"value": "Hard",
-							"type": "text"
-						},
+                        {
+                            "key": "description",
+                            "value": "Edited Description",
+                            "type": "text"
+                        },
+                        {
+                            "key": "level",
+                            "value": "Hard",
+                            "type": "text"
+                        },
 						{
 							"key": "tags",
 							"value": "a",
 							"type": "text"
 						},
-						{
-							"key": "tags",
-							"value": "b",
-							"type": "text"
-						},
-						{
-							"key": "categories",
-							"value": "database",
-							"type": "text"
-						},
+                        {
+                            "key": "tags",
+                            "value": "b",
+                            "type": "text"
+                        },
+                        {
+                            "key": "categories",
+                            "value": "database",
+                            "type": "text"
+                        },
                         {
                             "key": "categories",
                             "value": "data structure",
@@ -604,7 +604,7 @@
                             "type": "file",
                             "src": "/Users/ntduycs/Pictures/me.JPG"
                         }
-					]
+                    ]
 				},
 				"url": {
                     "raw": "{{host}}/challenges/25",
@@ -630,7 +630,7 @@
                             "value": "{{admintoken}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "DELETE",
 				"header": [],
@@ -658,11 +658,11 @@
                             "value": "{{admintoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"language\":\"cpp\",\n\t\"challengeDir\": \"200708215812-5-5\",\n\t\"runPath\": \"/c++/run.sh\",\n\t\"compilePath\": \"/c++/compile.sh\",\n\t\"implementedPath\":\"/c++/hihi.cpp\",\n\t\"nonImplementedPath\":\"/c++/hihchallenge.cpp\"\n}",
                     "options": {
@@ -671,7 +671,7 @@
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/challenges/25/languages",
                     "host": [
                         "{{host}}"
@@ -877,11 +877,11 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"language\":\"java\",\n\t\"code\":\"public class Hihi {\\n    public void doSomething() {\\n        return;\\n    }\\n}\",\n\t\"doneWithin\": \"\"\n}",
                     "options": {
@@ -890,7 +890,7 @@
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/challenges/9/score",
                     "host": [
                         "{{host}}"
@@ -915,20 +915,20 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
                     "mode": "raw",
-                    "raw": "{\n\t\"compiled\": true,\n\t\"doneWithin\": 0,\n\t\"executionTime\": 86936423.5,\n\t\"passed\": 2,\n\t\"total\": 2,\n\t\"code\": \"public class Hihi {\\n    public void doSomething() {\\n        return;\\n    }\\n}\",\n\t\"language\": \"java\",\n\t\"submitAt\":\"2020-07-07 23:43:27.883\"\n\n}\t",
+                    "raw": "{\n\t\"compiled\": \"success\",\n\t\"doneWithin\": 0,\n\t\"executionTime\": 86936423.5,\n\t\"passed\": 2,\n\t\"total\": 2,\n\t\"code\": \"public class Hihi {\\n    public void doSomething() {\\n        return;\\n    }\\n}\",\n\t\"language\": \"java\",\n\t\"submitAt\":\"2020-07-07 23:43:27.883\"\n\n}\t",
                     "options": {
                         "raw": {
                             "language": "json"
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/challenges/25/submissions",
                     "host": [
                         "{{host}}"
@@ -953,7 +953,7 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "GET",
 				"header": [],
@@ -973,12 +973,12 @@
 		{
 			"name": "Submission: by challenge_id",
 			"request": {
-				"auth": {
+                "auth": {
                     "type": "noauth"
                 },
-				"method": "GET",
-				"header": [],
-				"url": {
+                "method": "GET",
+                "header": [],
+                "url": {
                     "raw": "{{host}}/challenges/25/submissions",
                     "host": [
                         "{{host}}"
@@ -1034,11 +1034,11 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"input\":\"hello world\",\n\t\t\t\"output\":\"hello world\",\n\t\t\t\"hidden\":true\n\t\t}, \n\t\t{\n\t\t\t\"input\":\"1 + 2 = 3\",\n\t\t\t\"output\":\"1 + 2 = 3\",\n\t\t\t\"hidden\": false\n\t\t}\n\t]\n}",
                     "options": {
@@ -1047,7 +1047,7 @@
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/challenges/9/testcases",
                     "host": [
                         "{{host}}"
@@ -1072,11 +1072,11 @@
                             "value": "{{admintoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"testcaseIds\": [30]\n}",
                     "options": {
@@ -1085,7 +1085,7 @@
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/challenges/25/testcases",
                     "host": [
                         "{{host}}"
@@ -1110,11 +1110,11 @@
                             "value": "{{admintoken}}",
                             "type": "string"
                         }
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
                     "mode": "raw",
                     "raw": "{\n\t\"testcases\": [\n\t\t{\n\t\t\t\"testcaseId\": 30,\n\t\t\t\"input\": \"anhyeu\",\n\t\t\t\"output\": \"anhyeu\",\n\t\t\t\"hidden\": false\n\t\t}\n\t]\n}",
                     "options": {
@@ -1123,7 +1123,7 @@
                         }
                     }
                 },
-				"url": {
+                "url": {
                     "raw": "{{host}}/challenges/25/testcases",
                     "host": [
                         "{{host}}"
@@ -1148,7 +1148,7 @@
                             "value": "{{studenttoken}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "POST",
 				"header": [],
@@ -1345,12 +1345,12 @@
 		{
 			"name": "Tutorial: Details",
 			"request": {
-				"auth": {
+                "auth": {
                     "type": "noauth"
                 },
-				"method": "GET",
-				"header": [],
-				"url": {
+                "method": "GET",
+                "header": [],
+                "url": {
                     "raw": "{{host}}/tutorials/8",
                     "host": [
                         "{{host}}"
@@ -1442,7 +1442,7 @@
                             "value": "{{admin}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "GET",
 				"header": [],
@@ -1929,7 +1929,7 @@
                             "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzODA4NjgyLCJleHAiOjE1OTQ2NzI2ODJ9.ZFcOoIp3OHegZ5x2jDu1vsNSi3p9jvpDvTIy1ldhMTg5ufJ3QLuFzIUQEYTscrgNGMmEr4mI-nz0iUxYikCIJw",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "GET",
 				"header": [],
@@ -2302,16 +2302,16 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\":\"admin2@gmail.com\",\n    \"password\":\"candicode\",\n    \"confirmPassword\":\"candicode\",\n    \"firstName\":\"Admin\",\n    \"lastName\":\"2\",\n    \"roles\": [7]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{host}}/admins",
-					"host": [
+                    "raw": "{\n    \"email\":\"admin2@gmail.com\",\n    \"password\":\"candicode\",\n    \"confirmPassword\":\"candicode\",\n    \"firstName\":\"Admin\",\n    \"lastName\":\"2\",\n    \"roles\": [7]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/admins",
+                    "host": [
                         "{{host}}"
                     ],
                     "path": [
@@ -2403,16 +2403,16 @@
                             "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZ21haWwuY29tIiwiaWF0IjoxNTkzNjIxOTYzLCJleHAiOjE1OTQ0ODU5NjN9.UPgUhSxZtxK8ajJlm5hVPVXACCX7588I8VyMxXuAWXWiuw88cUYRFTdfCg9XPoxqixAhXerL9Tkl1sDV0S6TBQ",
                             "type": "string"
                         }
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"roles\": [2]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"roles\": [2]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
 						}
 					}
 				},
@@ -2470,7 +2470,7 @@
                             "value": "{{superadmin}}",
                             "type": "string"
                         }
-					]
+                    ]
 				},
 				"method": "POST",
 				"header": [],
@@ -2487,26 +2487,26 @@
                             "value": "Nguyen Thanh",
                             "type": "text"
                         },
-						{
-							"key": "facebook",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "github",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "linkedin",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "location",
-							"value": "",
-							"type": "text"
-						},
+                        {
+                            "key": "facebook",
+                            "value": "",
+                            "type": "text"
+                        },
+                        {
+                            "key": "github",
+                            "value": "",
+                            "type": "text"
+                        },
+                        {
+                            "key": "linkedin",
+                            "value": "",
+                            "type": "text"
+                        },
+                        {
+                            "key": "location",
+                            "value": "",
+                            "type": "text"
+                        },
                         {
                             "key": "company",
                             "value": "Apple Inc.",
@@ -2565,16 +2565,16 @@
                         }
                     }
                 },
-				"url": {
-					"raw": "{{host}}/password",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"password"
-					]
-				}
-			},
+                "url": {
+                    "raw": "{{host}}/password",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "password"
+                    ]
+                }
+            },
 			"response": []
 		},
 		{
@@ -2606,16 +2606,16 @@
 						{
 							"key": "size",
 							"value": "10",
-							"description": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Like/Dislike",
-			"request": {
+                            "description": "10"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Like/Dislike",
+            "request": {
                 "auth": {
                     "type": "bearer",
                     "bearer": [
@@ -2719,5 +2719,5 @@
             "response": []
         }
     ],
-	"protocolProfileBehavior": {}
+    "protocolProfileBehavior": {}
 }
