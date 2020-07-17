@@ -72,7 +72,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(POST, "/challenges/*/languages").hasAnyAuthority("challenge creator", "admin")
             .antMatchers(DELETE, "/challenges/*/languages").hasAnyAuthority("challenge creator", "admin")
 
-            .antMatchers(POST, "/challenges/*/submissions").authenticated()
+            .antMatchers(POST, "/challenges/*/score").authenticated()
+
+            .antMatchers(POST, "/challenges/*/submissions").hasAuthority("student")
             .antMatchers(GET, "/challenges/*/submissions").permitAll()
 
             .antMatchers(POST, "/challenges/*/testcases").hasAnyAuthority("challenge creator", "admin")

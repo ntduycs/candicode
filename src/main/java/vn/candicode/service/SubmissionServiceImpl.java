@@ -213,7 +213,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     private boolean validateSubmission(CodeExecResultEntity submissionResult, NewSubmissionRequest submissionRequest) {
         return submissionResult.getCompiled().equals(submissionRequest.getCompiled().equalsIgnoreCase("success")) &&
-            submissionResult.getDoneWithin().equals(submissionRequest.getDoneWithin()) &&
+            (submissionRequest.getDoneWithin() == null || submissionResult.getDoneWithin().equals(submissionRequest.getDoneWithin())) &&
             submissionResult.getExecTime().equals(submissionRequest.getExecutionTime()) &&
             submissionResult.getPassedTestcases().equals(submissionRequest.getPassed()) &&
             submissionResult.getTotalTestcases().equals(submissionRequest.getTotal());
