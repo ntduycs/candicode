@@ -28,7 +28,7 @@ public class SubmissionEntity extends Auditable {
     private Double execTime; // in nanoseconds
 
     @Column(nullable = false)
-    private Integer point;
+    private Long point;
 
     @Column(nullable = false)
     @Lob
@@ -58,5 +58,7 @@ public class SubmissionEntity extends Auditable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChallengeEntity challenge;
 
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "language_id", nullable = false)
+    private LanguageEntity language;
 }

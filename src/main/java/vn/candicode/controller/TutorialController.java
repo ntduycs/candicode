@@ -34,7 +34,8 @@ public class TutorialController extends Controller {
         Long tutorialId = tutorialService.createTutorial(payload, me);
 
         return ResponseEntity.created(getResourcePath(tutorialId)).body(ResponseFactory.build(Map.of(
-            "message", "Created tutorial successfully"
+            "message", "Created tutorial successfully",
+            "tutorialId", tutorialId
         )));
     }
 

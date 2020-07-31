@@ -23,5 +23,5 @@ public interface AdminService {
      */
     void updateRole(Long adminId, UpdateAdminRoleRequest payload, UserPrincipal currentUser);
 
-    PaginatedResponse<UserSummary> getStudentList(UserPaginatedRequest payload, UserPrincipal admin);
+    PaginatedResponse<UserSummary> getUserList(UserPaginatedRequest payload, UserPrincipal admin);
 }

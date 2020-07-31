@@ -19,7 +19,7 @@ public class ChallengeDetails implements Serializable {
     private String title;
     private String description;
     private String level;
-    private Integer point;
+    private Long point;
     private String author;
     private String banner;
     private String createdAt;

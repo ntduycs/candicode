@@ -8,8 +8,10 @@ import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.sub.Leader;
 import vn.candicode.security.UserPrincipal;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ChallengeService {
@@ -47,6 +49,8 @@ public interface ChallengeService {
      * @return details of challenge with given id
      */
     ChallengeDetails getChallengeDetails(Long challengeId, UserPrincipal me);
+
+    List<Leader> getChallengeLeaders(Long challengeId);
 
     /**
      * Only author can edit challenge

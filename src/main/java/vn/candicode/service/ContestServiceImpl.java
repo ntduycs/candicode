@@ -16,6 +16,7 @@ import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
 import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
+import vn.candicode.payload.response.IncomingContest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.repository.CommonRepository;
 import vn.candicode.repository.ContestRegistrationRepository;
@@ -28,6 +29,7 @@ import javax.persistence.EntityExistsException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static vn.candicode.common.FileStorageType.BANNER;
 
@@ -66,7 +68,7 @@ public class ContestServiceImpl implements ContestService {
             ContestEntity contest = new ContestEntity();
 
             contest.setTitle(payload.getTitle());
-            contest.setBanner(bannerPath);
+            contest.setBanner(storageService.simplifyPath(bannerPath, BANNER, author.getUserId()));
             contest.setAuthor(author.getEntityRef());
             contest.setAuthorName(author.getFullName());
             contest.setDescription(payload.getDescription());
@@ -124,7 +126,7 @@ public class ContestServiceImpl implements ContestService {
         }
 
         if (bannerPath != null) {
-            contest.setBanner(bannerPath);
+            contest.setBanner(storageService.simplifyPath(bannerPath, BANNER, author.getUserId()));
         }
 
         contest.setDescription(payload.getDescription());
@@ -222,6 +224,23 @@ public class ContestServiceImpl implements ContestService {
             contestDetails.setEnrolled(contestRegistrationRepository.findByContestIdAndStudentId(contestId, me.getUserId()) != null);
         }
 
+        if (commonRepository.isFinish(contestId)) {
+            contestDetails.getLeaders().addAll(commonRepository.getLeaders(contestId));
+        }
+
         return contestDetails;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<IncomingContest> getRegisteredIncomingContests(Long userId) {
+        List<ContestEntity> incomingContests = commonRepository.getRegisteredIncomingContests(userId);
+
+        List<IncomingContest> ret = incomingContests.stream()
+            .map(ContestBeanUtils::toIncomingContest)
+            .sorted((o1, o2) -> (int) (o1.getIncoming() - o2.getIncoming()))
+            .collect(Collectors.toList());
+
+        return ret;
     }
 }

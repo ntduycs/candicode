@@ -20,6 +20,7 @@ public class SubmissionBeanUtils {
         history.setCreatedAt(entity.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
         history.setContestChallenge(entity.getChallenge().getContestChallenge());
         history.setSubmitAt(entity.getSubmitAt());
+        history.setLanguage(entity.getLanguage().getName());
 
         return history;
     }

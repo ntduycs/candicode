@@ -25,5 +25,7 @@ public class ContestRegistrationServiceImpl implements ContestRegistrationServic
             .orElseThrow(() -> new ResourceNotFoundException(ContestEntity.class, "id", contestId));
 
         contest.addRegistration((StudentEntity) me.getEntityRef());
+
+        log.info("New student has registered the contest with id - {}", contestId);
     }
 }

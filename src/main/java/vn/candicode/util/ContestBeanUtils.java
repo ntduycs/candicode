@@ -7,13 +7,12 @@ import vn.candicode.entity.ChallengeEntity;
 import vn.candicode.entity.ContestChallengeEntity;
 import vn.candicode.entity.ContestEntity;
 import vn.candicode.entity.ContestRoundEntity;
-import vn.candicode.payload.response.ContestChallenge;
-import vn.candicode.payload.response.ContestDetails;
-import vn.candicode.payload.response.ContestRound;
-import vn.candicode.payload.response.ContestSummary;
+import vn.candicode.payload.response.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,10 +56,11 @@ public class ContestBeanUtils {
         details.setAvailable(contest.getAvailable());
         details.setMaxRegister(contest.getMaxRegister());
         details.setContent(contest.getContent());
+        details.setCreatedAt(contest.getCreatedAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
 
-        for (ContestRoundEntity contestRound : contest.getRounds()) {
-            details.getRounds().add(details(contestRound));
-        }
+        contest.getRounds().sort(Comparator.comparing(ContestRoundEntity::getStartsAt));
+
+        contest.getRounds().forEach(contestRound -> details.getRounds().add(details(contestRound)));
 
         return details;
     }
@@ -119,5 +119,21 @@ public class ContestBeanUtils {
 
     public static void setStorageService(StorageService service) {
         storageService = service;
+    }
+
+    public static IncomingContest toIncomingContest(ContestEntity entity) {
+        IncomingContest ret = new IncomingContest();
+
+        ret.setContestId(entity.getContestId());
+        ret.setName(entity.getTitle());
+        ret.setBanner(storageService.resolvePath(entity.getBanner(), FileStorageType.BANNER, entity.getAuthor().getUserId()));
+
+        List<ContestRoundEntity> rounds = entity.getRounds();
+
+        rounds.sort(Comparator.comparing(ContestRoundEntity::getStartsAt));
+
+        ret.setIncoming(Duration.between(LocalDateTime.now(), rounds.get(0).getStartsAt()).toMinutes());
+
+        return ret;
     }
 }

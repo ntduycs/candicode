@@ -58,9 +58,9 @@ public class AdminController extends Controller {
         )));
     }
 
-    @GetMapping(path = "admins/students")
+    @GetMapping(path = "admins/users")
     public ResponseEntity<?> getStudentList(@ModelAttribute UserPaginatedRequest payload, @CurrentUser UserPrincipal admin) {
-        PaginatedResponse<UserSummary> items = adminService.getStudentList(payload, admin);
+        PaginatedResponse<UserSummary> items = adminService.getUserList(payload, admin);
 
         return ResponseEntity.ok(ResponseFactory.build(items));
     }

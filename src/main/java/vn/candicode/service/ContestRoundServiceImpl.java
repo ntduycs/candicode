@@ -145,6 +145,7 @@ public class ContestRoundServiceImpl implements ContestRoundService {
             }
 
             if (rounds.stream().allMatch(ContestRoundEntity::getDeleted)) {
+                log.info("All rounds have been deleted. Contest was made to be unavailable");
                 contest.setAvailable(false);
             }
         }

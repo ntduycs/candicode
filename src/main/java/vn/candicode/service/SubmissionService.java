@@ -8,6 +8,8 @@ import vn.candicode.payload.response.SubmissionHistory;
 import vn.candicode.payload.response.SubmissionSummary;
 import vn.candicode.security.UserPrincipal;
 
+import java.util.List;
+
 public interface SubmissionService {
     /**
      * @param challengeId
@@ -26,7 +28,11 @@ public interface SubmissionService {
      */
     PaginatedResponse<SubmissionHistory> getMySubmissionHistory(Pageable pageable, UserPrincipal me);
 
-    PaginatedResponse<SubmissionHistory> getSubmissionsByChallenge(Pageable pageable, Long challengeId);
+    PaginatedResponse<SubmissionHistory> getSubmissionsByChallengeAndUser(Pageable pageable, Long challengeId, UserPrincipal user);
 
     PaginatedResponse<SubmissionHistory> getSubmissionsByContestRound(Pageable pageable, Long roundId);
+
+    List<SubmissionHistory> getRecentSubmissionByUserId(Long userId);
+
+    String getSubmittedCode(Long submissionId, UserPrincipal me);
 }

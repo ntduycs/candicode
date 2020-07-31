@@ -5,8 +5,11 @@ import vn.candicode.payload.request.NewContestRequest;
 import vn.candicode.payload.request.UpdateContestRequest;
 import vn.candicode.payload.response.ContestDetails;
 import vn.candicode.payload.response.ContestSummary;
+import vn.candicode.payload.response.IncomingContest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.security.UserPrincipal;
+
+import java.util.List;
 
 public interface ContestService {
     /**
@@ -45,4 +48,6 @@ public interface ContestService {
     PaginatedResponse<ContestSummary> getMyContestList(ContestPaginatedRequest payload, Long myId);
 
     ContestDetails getContestDetails(Long contestId);
+
+    List<IncomingContest> getRegisteredIncomingContests(Long userId);
 }

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -24,21 +25,23 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
 
     private final SecurityTokenProvider tokenProvider;
     private final UserPrincipalService userPrincipalService;
+    private final PasswordEncoder passwordEncoder;
 
     private final List<String> GET_URI_WHITELIST = List.of("/api/tags", "/api/categories");
 
-    public SecurityTokenFilter(SecurityTokenProvider tokenProvider, UserPrincipalService userPrincipalService) {
+    public SecurityTokenFilter(SecurityTokenProvider tokenProvider, UserPrincipalService userPrincipalService, PasswordEncoder passwordEncoder) {
         this.tokenProvider = tokenProvider;
         this.userPrincipalService = userPrincipalService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        final String token = tokenProvider.getToken(httpServletRequest);
+        final String[] token = tokenProvider.getToken(httpServletRequest);
 
         try {
-            if (StringUtils.hasText(token) && tokenProvider.validated(token)) {
-                String tokenSubject = tokenProvider.getSubject(token);
+            if (StringUtils.hasText(token[0]) && tokenProvider.validated(token[0])) {
+                String tokenSubject = tokenProvider.getSubject(token[0]);
 
                 UserDetails details = userPrincipalService.loadUserByEmail(tokenSubject);
 

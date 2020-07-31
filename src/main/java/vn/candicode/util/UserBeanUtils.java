@@ -3,6 +3,7 @@ package vn.candicode.util;
 import vn.candicode.common.FileStorageType;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.StudentEntity;
+import vn.candicode.entity.UserEntity;
 import vn.candicode.payload.response.UserDetails;
 import vn.candicode.payload.response.UserSummary;
 
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 public class UserBeanUtils {
     private static StorageService storageService;
 
-    public static UserSummary summarize(StudentEntity student) {
+    public static UserSummary summarize(UserEntity student) {
         UserSummary summary = new UserSummary();
 
         summary.setAvatar(storageService.resolvePath(student.getAvatar(), FileStorageType.AVATAR, student.getUserId()));
@@ -19,7 +20,11 @@ public class UserBeanUtils {
         summary.setFirstName(student.getFirstName());
         summary.setLastName(student.getLastName());
         summary.setUserId(student.getUserId());
-        summary.setPlan(student.getStudentPlan().getName());
+        summary.setType("admin");
+        if (student instanceof StudentEntity) {
+            summary.setPlan(((StudentEntity) student).getStudentPlan().getName());
+            summary.setType("student");
+        }
         summary.setRoles(student.getRoles().stream().map(e -> e.getRole().getName()).collect(Collectors.toList()));
 
         return summary;

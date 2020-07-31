@@ -44,7 +44,7 @@ public class ChallengeEntity extends Auditable {
     private String banner;
 
     @Column
-    private Integer maxPoint;
+    private Long maxPoint;
 
     @Column(nullable = false)
     private String inputFormat;
@@ -155,16 +155,16 @@ public class ChallengeEntity extends Auditable {
     public void setMaxPoint(String level) {
         switch (level) {
             case "easy":
-                this.maxPoint = 100;
+                this.maxPoint = 100L;
                 break;
             case "moderate":
-                this.maxPoint = 200;
+                this.maxPoint = 200L;
                 break;
             case "hard":
-                this.maxPoint = 300;
+                this.maxPoint = 300L;
                 break;
             default:
-                this.maxPoint = -1;
+                this.maxPoint = -1L;
         }
     }
 }

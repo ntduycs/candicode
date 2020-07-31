@@ -2,6 +2,7 @@ package vn.candicode.service;
 
 import vn.candicode.payload.request.NewStudentRequest;
 import vn.candicode.payload.request.UpdateStudentRoleRequest;
+import vn.candicode.payload.response.UserProfile;
 import vn.candicode.security.UserPrincipal;
 
 import java.io.IOException;
@@ -22,4 +23,6 @@ public interface StudentService {
      * @param payload
      */
     void updateRole(Long studentId, UpdateStudentRoleRequest payload, UserPrincipal me);
+
+    UserProfile getStudentProfile(Long studentId);
 }

@@ -8,5 +8,5 @@ import lombok.Setter;
 public class UserPaginatedRequest extends PaginatedRequest {
     private String firstName;
     private String lastName;
-    private String plan;
+    private String type;
 }

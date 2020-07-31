@@ -2,6 +2,9 @@ package vn.candicode.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +13,7 @@ import vn.candicode.common.EntityConstants;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.ChallengeConfigurationEntity;
 import vn.candicode.entity.ChallengeEntity;
+import vn.candicode.entity.SubmissionEntity;
 import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
@@ -22,12 +26,10 @@ import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.sub.Challenge;
+import vn.candicode.payload.response.sub.Leader;
 import vn.candicode.repository.*;
 import vn.candicode.security.UserPrincipal;
-import vn.candicode.util.ChallengeBeanUtils;
-import vn.candicode.util.FileUtils;
-import vn.candicode.util.RegexUtils;
-import vn.candicode.util.TestcaseBeanUtils;
+import vn.candicode.util.*;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -161,6 +163,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         response.put("challengeId", challenge.getChallengeId());
 
+        log.info("New challenge was created with id - {}", challenge.getChallengeId());
+
         return response;
     }
 
@@ -181,6 +185,8 @@ public class ChallengeServiceImpl implements ChallengeService {
             DirectoryTree tree = new DirectoryTree();
             tree.setChallengeDir(challengeDirname);
             tree.setChildren(storageService.parse(tempChallengeDir, challengeDirname));
+
+            log.info("Stored challenge source at - {}. User ID - {}", challengeDirname, me.getUserId());
 
             return tree;
         } catch (IOException e) {
@@ -337,6 +343,20 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private boolean isVipUser(UserPrincipal me) {
         return me.getAuthorities().contains(new SimpleGrantedAuthority("challenge creator"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Leader> getChallengeLeaders(Long challengeId) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "point"));
+
+        Page<SubmissionEntity> result = submissionRepository.getHighestScoreSubmissionByChallengeId(challengeId, pageable);
+
+        List<Leader> leaders = result.getContent().stream().map(LeaderBeanUtils::toLeader).collect(Collectors.toList());
+
+        leaders.forEach(leader -> leader.setAvatar(storageService.resolvePath(leader.getAvatar(), AVATAR, leader.getUserId())));
+
+        return leaders;
     }
 
     /**

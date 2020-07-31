@@ -15,7 +15,7 @@ public class SubmissionHistory implements Serializable {
 
     private Boolean compiled;
 
-    private Integer point;
+    private Long point;
     private String author; // author's full name
 
     private Double execTime; // in nanoseconds
@@ -29,4 +29,6 @@ public class SubmissionHistory implements Serializable {
     private Boolean contestChallenge;
 
     private String submitAt;
+
+    private String language;
 }

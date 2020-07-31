@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.common.FileAuthor;
 import vn.candicode.core.StorageService;
 import vn.candicode.entity.AdminEntity;
-import vn.candicode.entity.StudentEntity;
+import vn.candicode.entity.UserEntity;
 import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.PersistenceException;
 import vn.candicode.exception.ResourceNotFoundException;
@@ -83,6 +83,8 @@ public class AdminServiceImpl implements AdminService {
 
         storageService.initDirectoriesForUser(adminId, FileAuthor.ADMIN);
 
+        log.info("Account was created with id - {}", adminId);
+
         return adminId;
     }
 
@@ -97,6 +99,7 @@ public class AdminServiceImpl implements AdminService {
             .orElseThrow(() -> new ResourceNotFoundException(AdminEntity.class, "id", adminId));
 
         if (payload.getRoles() == null || payload.getRoles().isEmpty()) {
+            log.warn("No role(s) was included in the request. Ignored it");
             return;
         }
 
@@ -119,8 +122,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<UserSummary> getStudentList(UserPaginatedRequest payload, UserPrincipal admin) {
-        Page<StudentEntity> items = commonRepository.findAll(payload);
+    public PaginatedResponse<UserSummary> getUserList(UserPaginatedRequest payload, UserPrincipal admin) {
+        Page<UserEntity> items = commonRepository.findAll(payload);
 
         List<UserSummary> summaries = items.map(UserBeanUtils::summarize).getContent();
 

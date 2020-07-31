@@ -1,14 +1,12 @@
 package vn.candicode.repository;
 
 import org.springframework.data.domain.Page;
-import vn.candicode.entity.ChallengeEntity;
-import vn.candicode.entity.ContestEntity;
-import vn.candicode.entity.StudentEntity;
-import vn.candicode.entity.TutorialEntity;
+import vn.candicode.entity.*;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.TutorialPaginatedRequest;
 import vn.candicode.payload.request.UserPaginatedRequest;
+import vn.candicode.payload.response.sub.Leader;
 
 import java.util.List;
 import java.util.Map;
@@ -38,5 +36,13 @@ public interface CommonRepository {
 
     Page<ContestEntity> findAll(ContestPaginatedRequest criteria, boolean isAdmin);
 
-    Page<StudentEntity> findAll(UserPaginatedRequest criteria);
+    Page<UserEntity> findAll(UserPaginatedRequest criteria);
+
+    boolean isFinish(Long contestId);
+
+    List<Leader> getLeaders(Long contestId);
+
+    List<SubmissionEntity> getRecentSubmissionsByUserId(Long userId);
+
+    List<ContestEntity> getRegisteredIncomingContests(Long userId);
 }

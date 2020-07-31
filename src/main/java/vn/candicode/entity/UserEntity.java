@@ -1,6 +1,5 @@
 package vn.candicode.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -21,7 +20,6 @@ import java.util.List;
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @NaturalIdCache
-@EqualsAndHashCode(of = {"email"}, callSuper = false)
 public class UserEntity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,4 +81,20 @@ public class UserEntity extends Auditable {
     private String company;
     private String university;
     private String avatar;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity)) return false;
+
+        UserEntity that = (UserEntity) o;
+
+        // remember to use *getters*
+        return getUserId().equals(that.getUserId()) && getEmail().equals(that.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return getUserId().hashCode();
+    }
 }

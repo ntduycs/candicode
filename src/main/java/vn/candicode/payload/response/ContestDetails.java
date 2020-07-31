@@ -2,6 +2,7 @@ package vn.candicode.payload.response;
 
 import lombok.Getter;
 import lombok.Setter;
+import vn.candicode.payload.response.sub.Leader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,4 +35,8 @@ public class ContestDetails implements Serializable {
     private List<ContestRound> rounds = new ArrayList<>();
 
     private Boolean enrolled;
+
+    private List<Leader> leaders = new ArrayList<>();
+
+    private String createdAt;
 }

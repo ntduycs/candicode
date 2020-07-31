@@ -8,7 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.candicode.entity.UserEntity;
+import vn.candicode.payload.response.IncomingContest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +43,11 @@ public class UserPrincipal implements UserDetails {
     private final String location;
     private final String company;
     private final String university;
+
+    // The incoming contests that user has registered, max size = 10
+    private final List<IncomingContest> incomingContests = new ArrayList<>(10);
+
+    private Long gainedPoint;
 
     public static UserPrincipal build(UserEntity user, List<String> roles) {
         return UserPrincipal.builder()

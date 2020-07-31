@@ -48,11 +48,20 @@ public class SubmissionController extends Controller {
         return ResponseEntity.ok(ResponseFactory.build(mySubmissions));
     }
 
+    @GetMapping(path = "submissions/{id}")
+    public ResponseEntity<?> getSubmission(@PathVariable("id") Long submissionId, @CurrentUser UserPrincipal me) {
+        String submittedCode = submissionService.getSubmittedCode(submissionId, me);
+
+        return ResponseEntity.ok(ResponseFactory.build(Map.of(
+            "code", submittedCode
+        )));
+    }
+
     @GetMapping(path = "challenges/{id}/submissions")
-    public ResponseEntity<?> getChallengeSubmissionList(@ModelAttribute PaginatedRequest payload, @PathVariable("id") Long challengeId) {
+    public ResponseEntity<?> getChallengeSubmissionList(@ModelAttribute PaginatedRequest payload, @PathVariable("id") Long challengeId, @CurrentUser UserPrincipal user) {
         Pageable pageable = getPaginationConfig(payload);
 
-        PaginatedResponse<SubmissionHistory> challengeSubmissions = submissionService.getSubmissionsByChallenge(pageable, challengeId);
+        PaginatedResponse<SubmissionHistory> challengeSubmissions = submissionService.getSubmissionsByChallengeAndUser(pageable, challengeId, user);
 
         return ResponseEntity.ok(ResponseFactory.build(challengeSubmissions));
     }

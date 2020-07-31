@@ -2,7 +2,8 @@ package vn.candicode.aws;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -12,6 +13,8 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.google.common.base.Joiner;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import vn.candicode.exception.S3Exception;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
+@Profile("prod")
 public class S3ServiceImpl implements S3Service {
     private static final long MULTIPART_UPLOAD_THRESHOLD = 5 * 1024 * 1025;
     private static final int MAX_UPLOAD_THREADS = 10;
@@ -30,9 +34,9 @@ public class S3ServiceImpl implements S3Service {
     private final AmazonS3 s3Client;
     private final TransferManager transferManager;
 
-    public S3ServiceImpl() {
+    public S3ServiceImpl(@Value("${s3.secret-key}") String secretKey, @Value("${s3.access-key}") String accessKey) {
         this.s3Client = AmazonS3ClientBuilder.standard()
-            .withCredentials(new ProfileCredentialsProvider("candicodes3"))
+            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
             .withRegion(Regions.AP_SOUTHEAST_1)
             .build();
 

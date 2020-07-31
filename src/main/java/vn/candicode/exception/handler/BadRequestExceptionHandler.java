@@ -1,5 +1,6 @@
 package vn.candicode.exception.handler;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,12 +30,15 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestControllerAdvice
+@Log4j2
 public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
         @NonNull MethodArgumentNotValidException exception, @NonNull HttpHeaders headers,
         @NonNull HttpStatus status, @NonNull WebRequest request) {
+
+        log.error(exception.getLocalizedMessage());
 
         final List<Details> detailErrors = new ArrayList<>();
         for (final FieldError error : exception.getBindingResult().getFieldErrors()) {
@@ -65,6 +69,8 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @NonNull
     protected ResponseEntity<Object> handleBindException(@NonNull BindException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
+        log.error(ex.getLocalizedMessage());
+
         final List<Details> detailErrors = new ArrayList<>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
             String reason;
@@ -102,6 +108,7 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
     @NonNull
     protected ResponseEntity<Object> handleTypeMismatch(
         TypeMismatchException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
 
         CandicodeError error = CandicodeError.builder()
             .code(400)
@@ -123,6 +130,7 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
     @NonNull
     protected ResponseEntity<Object> handleMissingServletRequestParameter(
         MissingServletRequestParameterException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
 
         CandicodeError error = CandicodeError.builder()
             .code(400)
@@ -143,6 +151,7 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
     @NonNull
     protected ResponseEntity<Object> handleMissingServletRequestPart(
         MissingServletRequestPartException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
 
         CandicodeError error = CandicodeError.builder()
             .code(400)
@@ -163,6 +172,7 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
     @NonNull
     protected ResponseEntity<Object> handleMissingPathVariable(
         MissingPathVariableException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
 
         CandicodeError error = CandicodeError.builder()
             .code(400)
@@ -181,6 +191,7 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
 
         CandicodeError error = CandicodeError.builder()
             .code(400)
@@ -199,6 +210,7 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ConstraintViolationException.class})
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
 
         final List<Details> errors = new ArrayList<>();
         for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -222,6 +234,8 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     protected ResponseEntity<?> handlePersistenceException(BadRequestException exception, WebRequest webRequest) {
+        log.error(exception.getLocalizedMessage());
+
         CandicodeError error = CandicodeError.builder()
             .code(400)
             .message("Bad request")
@@ -235,6 +249,8 @@ public class BadRequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     protected ResponseEntity<?> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, WebRequest request) {
+        log.error(ex.getLocalizedMessage());
+
         CandicodeError error = CandicodeError.builder()
             .code(400)
             .message("Bad request")

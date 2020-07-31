@@ -38,6 +38,8 @@ public class ProductionStorageServiceImpl implements StorageService {
     public ProductionStorageServiceImpl(S3Service s3Service) throws IOException {
         this.s3Service = s3Service;
 
+        log.info("S3 Connection info: {}", s3Service.getS3Client().getS3AccountOwner().getDisplayName());
+
         createRequiredDirectories();
 
         ChallengeBeanUtils.setStorageService(this);

@@ -18,10 +18,7 @@ import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionDetails;
 import vn.candicode.payload.response.SubmissionHistory;
 import vn.candicode.payload.response.SubmissionSummary;
-import vn.candicode.repository.ChallengeConfigurationRepository;
-import vn.candicode.repository.ChallengeRepository;
-import vn.candicode.repository.CodeExecResultRepository;
-import vn.candicode.repository.SubmissionRepository;
+import vn.candicode.repository.*;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.DatetimeUtils;
 import vn.candicode.util.FileUtils;
@@ -32,6 +29,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static vn.candicode.common.FileStorageType.CHALLENGE;
 import static vn.candicode.common.FileStorageType.SUBMISSION;
@@ -43,15 +41,19 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final ChallengeConfigurationRepository challengeConfigurationRepository;
     private final ChallengeRepository challengeRepository;
     private final CodeExecResultRepository codeExecResultRepository;
+    private final StudentRepository studentRepository;
+    private final CommonRepository commonRepository;
 
     private final StorageService storageService;
     private final CodeRunnerService codeRunnerService;
 
-    public SubmissionServiceImpl(SubmissionRepository submissionRepository, ChallengeConfigurationRepository challengeConfigurationRepository, ChallengeRepository challengeRepository, CodeExecResultRepository codeExecResultRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
+    public SubmissionServiceImpl(SubmissionRepository submissionRepository, ChallengeConfigurationRepository challengeConfigurationRepository, ChallengeRepository challengeRepository, CodeExecResultRepository codeExecResultRepository, StudentRepository studentRepository, CommonRepository commonRepository, StorageService storageService, CodeRunnerService codeRunnerService) {
         this.submissionRepository = submissionRepository;
         this.challengeConfigurationRepository = challengeConfigurationRepository;
         this.challengeRepository = challengeRepository;
         this.codeExecResultRepository = codeExecResultRepository;
+        this.studentRepository = studentRepository;
+        this.commonRepository = commonRepository;
         this.storageService = storageService;
         this.codeRunnerService = codeRunnerService;
     }
@@ -65,9 +67,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     @Transactional
     public SubmissionSummary doScoreSubmission(Long challengeId, NewCodeRunRequest payload, UserPrincipal me) {
+        LocalDateTime now = LocalDateTime.now();
         Long myId = me.getUserId();
         String language = payload.getLanguage().toLowerCase();
-        String submitAt = LocalDateTime.now().format(DatetimeUtils.JSON_DATETIME_FORMAT);
+        String submitAt = now.format(DatetimeUtils.JSON_DATETIME_FORMAT);
 
         ChallengeConfigurationEntity configuration = challengeConfigurationRepository
             .findByChallengeIdAndLanguageName(challengeId, language)
@@ -105,6 +108,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             compileResult = CompileResult.success(language);
         }
 
+        log.info("Completed to compile process with result - {}", compileResult.toString());
+
         if (!compileResult.isCompiled()) {
             SubmissionSummary summary = SubmissionSummary.builder()
                 .compiled("failed")
@@ -121,7 +126,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             codeExecResult.setExecTime(0.0);
             codeExecResult.setPassedTestcases(0);
             codeExecResult.setTotalTestcases(totalTestcases);
-            codeExecResult.setPoint(0);
+            codeExecResult.setPoint(0L);
 
             codeExecResultRepository.save(codeExecResult);
 
@@ -161,7 +166,10 @@ public class SubmissionServiceImpl implements SubmissionService {
         codeExecResult.setExecTime(avgExecutionTime);
         codeExecResult.setPassedTestcases(passedTestcases);
         codeExecResult.setTotalTestcases(totalTestcases);
-        codeExecResult.setPoint(passedTestcases / totalTestcases * challenge.getMaxPoint());
+        codeExecResult.setExpiresAt(now.plusMinutes(60));
+
+        Long gainedPoint = passedTestcases / totalTestcases * challenge.getMaxPoint();
+        codeExecResult.setPoint(gainedPoint);
 
         codeExecResultRepository.save(codeExecResult);
 
@@ -195,6 +203,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         SubmissionEntity submission = new SubmissionEntity();
 
+        Long gainedPoint = payload.getPassed() / payload.getTotal() * challenge.getMaxPoint();
+
         submission.setCompiled(payload.getCompiled().equalsIgnoreCase("success"));
         submission.setDoneWithin(payload.getDoneWithin());
         submission.setExecTime(payload.getExecutionTime());
@@ -207,6 +217,21 @@ public class SubmissionServiceImpl implements SubmissionService {
         submission.setDoneWithin(payload.getDoneWithin());
         submission.setAuthorName(me.getFullName());
         submission.setSubmitAt(payload.getSubmitAt());
+        submission.setLanguage(configuration.getLanguage());
+
+        if (me.getEntityRef() instanceof StudentEntity) {
+            StudentEntity student = (StudentEntity) me.getEntityRef();
+            SubmissionEntity previousSubmission = submissionRepository.findByChallengeIdAndUserId(challengeId, me.getUserId())
+                .orElse(null);
+
+            if (previousSubmission == null) {
+                student.setGainedPoint(student.getGainedPoint() + gainedPoint);
+                studentRepository.save(student);
+            } else if (previousSubmission.getPoint() < submission.getPoint()) {
+                student.setGainedPoint(student.getGainedPoint() + (submission.getPoint() - previousSubmission.getPoint()));
+                studentRepository.save(student);
+            }
+        }
 
         submissionRepository.save(submission);
     }
@@ -216,7 +241,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             (submissionRequest.getDoneWithin() == null || submissionResult.getDoneWithin().equals(submissionRequest.getDoneWithin())) &&
             submissionResult.getExecTime().equals(submissionRequest.getExecutionTime()) &&
             submissionResult.getPassedTestcases().equals(submissionRequest.getPassed()) &&
-            submissionResult.getTotalTestcases().equals(submissionRequest.getTotal());
+            submissionResult.getTotalTestcases().equals(submissionRequest.getTotal()) &&
+            submissionResult.getExpiresAt().isAfter(LocalDateTime.now());
     }
 
     /**
@@ -244,8 +270,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginatedResponse<SubmissionHistory> getSubmissionsByChallenge(Pageable pageable, Long challengeId) {
-        Page<SubmissionEntity> items = submissionRepository.findAllByChallengeId(challengeId, pageable);
+    public PaginatedResponse<SubmissionHistory> getSubmissionsByChallengeAndUser(Pageable pageable, Long challengeId, UserPrincipal user) {
+        Page<SubmissionEntity> items = submissionRepository.findAllByChallengeIdAndUserId(challengeId, user.getUserId(), pageable);
 
         List<SubmissionHistory> summaries = items.map(SubmissionBeanUtils::summarize).getContent();
 
@@ -276,5 +302,20 @@ public class SubmissionServiceImpl implements SubmissionService {
             .totalPages(items.getTotalPages())
             .items(summaries)
             .build();
+    }
+
+    @Override
+    public List<SubmissionHistory> getRecentSubmissionByUserId(Long userId) {
+        List<SubmissionEntity> submissions = commonRepository.getRecentSubmissionsByUserId(userId);
+
+        return submissions.stream().map(SubmissionBeanUtils::summarize).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getSubmittedCode(Long submissionId, UserPrincipal me) {
+        SubmissionEntity submission = submissionRepository.findBySubmissionIdAndAuthorUserId(submissionId, me.getUserId())
+            .orElseThrow(() -> new ResourceNotFoundException(SubmissionEntity.class, "id", submissionId));
+
+        return submission.getSubmittedCode();
     }
 }

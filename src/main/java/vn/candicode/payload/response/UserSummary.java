@@ -17,4 +17,5 @@ public class UserSummary implements Serializable {
     private String avatar;
     private String plan;
     private List<String> roles = new ArrayList<>();
+    private String type;
 }

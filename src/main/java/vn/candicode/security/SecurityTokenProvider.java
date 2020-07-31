@@ -96,13 +96,37 @@ public class SecurityTokenProvider {
      * @param request
      * @return Token extracted from Authorization header or null if not found or has invalid prefix
      */
-    public String getToken(HttpServletRequest request) {
+    public String[] getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
 
+        String[] ret = new String[2];
+
         if (StringUtils.hasText(authorization) && authorization.startsWith(TOKEN_PREFIX)) {
-            return authorization.substring(TOKEN_PREFIX.length());
+            ret[0] = excludeAdditionalCode(authorization.substring(TOKEN_PREFIX.length()));
+            ret[1] = getAdditionalCode(authorization.substring(TOKEN_PREFIX.length()));
+
+            return ret;
         }
 
         return null;
+    }
+
+    private String excludeAdditionalCode(String token) {
+        String jwtHeader = token.substring(0, token.indexOf("."));
+
+        String jwtPayload = token.substring(token.indexOf(".") + 1, token.lastIndexOf("."));
+
+        String additionalCode = jwtPayload.substring(10, 70);
+
+        String jwtPayloadWithoutAdditionalCode = jwtPayload.replace(additionalCode, "");
+
+        return jwtHeader + "." + jwtPayloadWithoutAdditionalCode + "." + token.substring(token.lastIndexOf(".") + 1);
+//        return token;
+    }
+
+    public String getAdditionalCode(String token) {
+        String jwtPayload = token.substring(token.indexOf(".") + 1, token.lastIndexOf("."));
+
+        return jwtPayload.substring(10, 70);
     }
 }

@@ -11,6 +11,7 @@ import vn.candicode.payload.response.ChallengeDetails;
 import vn.candicode.payload.response.ChallengeSummary;
 import vn.candicode.payload.response.DirectoryTree;
 import vn.candicode.payload.response.PaginatedResponse;
+import vn.candicode.payload.response.sub.Leader;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.ChallengeService;
@@ -23,6 +24,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.INSUFFICIENT_STORAGE;
 
 @RestController
+@CrossOrigin(origins = {"client-origin"})
 public class ChallengeController extends Controller {
     private final ChallengeService challengeService;
 
@@ -41,6 +43,13 @@ public class ChallengeController extends Controller {
         DirectoryTree tree = challengeService.storeChallengeSource(payload.getSource(), author);
 
         return ResponseEntity.ok(ResponseFactory.build(tree));
+    }
+
+    @GetMapping(path = "challenges/{id}/leaderboard")
+    public ResponseEntity<?> getChallengeLeaderboard(@PathVariable("id") Long challengeId) {
+        List<Leader> leaders = challengeService.getChallengeLeaders(challengeId);
+
+        return ResponseEntity.ok(ResponseFactory.build(leaders));
     }
 
     @PostMapping(path = "challenges", produces = {"application/json"})

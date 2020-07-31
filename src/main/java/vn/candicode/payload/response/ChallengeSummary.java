@@ -15,7 +15,7 @@ public class ChallengeSummary implements Serializable {
     private Long challengeId;
     private String title;
     private String level;
-    private Integer point;
+    private Long point;
     private String author;
     private String banner;
     private String createdAt;

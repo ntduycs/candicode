@@ -1,19 +1,19 @@
 package vn.candicode.repository;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import vn.candicode.controller.Controller;
-import vn.candicode.entity.ChallengeEntity;
-import vn.candicode.entity.ContestEntity;
-import vn.candicode.entity.StudentEntity;
-import vn.candicode.entity.TutorialEntity;
+import vn.candicode.entity.*;
 import vn.candicode.payload.request.ChallengePaginatedRequest;
 import vn.candicode.payload.request.ContestPaginatedRequest;
 import vn.candicode.payload.request.TutorialPaginatedRequest;
 import vn.candicode.payload.request.UserPaginatedRequest;
+import vn.candicode.payload.response.sub.Leader;
 import vn.candicode.util.DatetimeUtils;
 
 import javax.persistence.*;
@@ -115,7 +115,9 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     @Override
     public Page<ChallengeEntity> findAllByAuthorId(Long authorId, ChallengePaginatedRequest criteria) {
-        String selectClause = " SELECT c FROM ChallengeEntity c ";
+        String selectClause = StringUtils.hasText(criteria.getCategory()) ?
+            " SELECT c FROM ChallengeEntity c, ChallengeCategoryEntity cc " :
+            " SELECT c FROM ChallengeEntity c ";
 
         StringBuilder whereClause = new StringBuilder(" WHERE c.author.userId = :authorId ");
 
@@ -133,9 +135,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, languagesSize = languages.size(); i < languagesSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.languages LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.languages) LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.languages LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.languages) LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -157,9 +159,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -167,12 +169,43 @@ public class CommonRepositoryImpl implements CommonRepository {
             }
         }
 
+
+        List<String> categories = new ArrayList<>();
+        int numCategories = 0;
+        if (StringUtils.hasText(criteria.getCategory())) {
+            categories = Arrays.stream(criteria.getCategory().split(","))
+                .map(category -> category.trim().toLowerCase())
+                .filter(StringUtils::hasText)
+                .collect(Collectors.toList());
+
+            numCategories = categories.size();
+
+            if (numCategories > 0) {
+                whereClause.append(" AND ( ");
+                StringBuilder orClause = new StringBuilder();
+                for (int i = 0; i < numCategories; i++) {
+                    if (orClause.length() == 0) {
+                        orClause.append(" LOWER(cc.category.name) LIKE CONCAT('%', LOWER(:category")
+                            .append(i)
+                            .append("), '%') ");
+                    } else {
+                        orClause.append(" OR LOWER(cc.category.name) LIKE CONCAT('%', LOWER(:category")
+                            .append(i)
+                            .append("), '%') ");
+                    }
+                }
+                whereClause.append(orClause);
+                whereClause.append(" ) ");
+                whereClause.append(" AND c.challengeId = cc.challenge.challengeId ");
+            }
+        }
+
         if (StringUtils.hasText(criteria.getLevel())) {
-            whereClause.append(" AND c.level = LOWER(:level) ");
+            whereClause.append(" AND LOWER(c.level) = LOWER(:level) ");
         }
 
         if (StringUtils.hasText(criteria.getTitle())) {
-            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', LOWER(:title), '%') ");
         }
 
         if (criteria.getStart() != null && criteria.getEnd() != null) {
@@ -183,7 +216,9 @@ public class CommonRepositoryImpl implements CommonRepository {
             whereClause.append(" AND TRUNC(c.createdAt) <= TRUNC(:end) ");
         }
 
-        whereClause.append(" AND c.contestChallenge = :contestChallenge ");
+        if (criteria.getContestChallenge() != null) {
+            whereClause.append(" AND c.contestChallenge = :contestChallenge ");
+        }
 
         TypedQuery<ChallengeEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), ChallengeEntity.class);
 
@@ -197,6 +232,10 @@ public class CommonRepositoryImpl implements CommonRepository {
 
         for (int i = 0; i < numTags; i++) {
             query.setParameter("tag" + i, tags.get(i));
+        }
+
+        for (int i = 0; i < numCategories; i++) {
+            query.setParameter("category" + i, categories.get(i));
         }
 
         query.setParameter("authorId", authorId);
@@ -215,7 +254,9 @@ public class CommonRepositoryImpl implements CommonRepository {
             query.setParameter("end", endDate, TemporalType.DATE);
         }
 
-        query.setParameter("contestChallenge", criteria.getContestChallenge());
+        if (criteria.getContestChallenge() != null) {
+            query.setParameter("contestChallenge", criteria.getContestChallenge());
+        }
 
         query.setMaxResults(criteria.getSize());
         query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
@@ -246,7 +287,9 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     @Override
     public Page<ChallengeEntity> findAll(ChallengePaginatedRequest criteria) {
-        String selectClause = " SELECT c FROM ChallengeEntity c ";
+        String selectClause = StringUtils.hasText(criteria.getCategory()) ?
+            " SELECT c FROM ChallengeEntity c, ChallengeCategoryEntity cc " :
+            " SELECT c FROM ChallengeEntity c ";
 
         StringBuilder whereClause = new StringBuilder(" WHERE TRUE = TRUE ");
 
@@ -268,9 +311,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, languagesSize = languages.size(); i < languagesSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.languages LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.languages) LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.languages LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.languages) LIKE CONCAT('%', LOWER(:lang").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -283,18 +326,19 @@ public class CommonRepositoryImpl implements CommonRepository {
         if (StringUtils.hasText(criteria.getTag())) {
             tags = Arrays.stream(criteria.getTag().split(","))
                 .map(lang -> lang.trim().toLowerCase())
+                .filter(StringUtils::hasText)
                 .collect(Collectors.toList());
 
             numTags = tags.size();
 
-            if (tags.size() > 0) {
+            if (numTags > 0) {
                 whereClause.append(" AND ( ");
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -302,12 +346,42 @@ public class CommonRepositoryImpl implements CommonRepository {
             }
         }
 
+        List<String> categories = new ArrayList<>();
+        int numCategories = 0;
+        if (StringUtils.hasText(criteria.getCategory())) {
+            categories = Arrays.stream(criteria.getCategory().split(","))
+                .map(category -> category.trim().toLowerCase())
+                .filter(StringUtils::hasText)
+                .collect(Collectors.toList());
+
+            numCategories = categories.size();
+
+            if (numCategories > 0) {
+                whereClause.append(" AND ( ");
+                StringBuilder orClause = new StringBuilder();
+                for (int i = 0; i < numCategories; i++) {
+                    if (orClause.length() == 0) {
+                        orClause.append(" LOWER(cc.category.name) LIKE CONCAT('%', LOWER(:category")
+                            .append(i)
+                            .append("), '%') ");
+                    } else {
+                        orClause.append(" OR LOWER(cc.category.name) LIKE CONCAT('%', LOWER(:category")
+                            .append(i)
+                            .append("), '%') ");
+                    }
+                }
+                whereClause.append(orClause);
+                whereClause.append(" ) ");
+                whereClause.append(" AND c.challengeId = cc.challenge.challengeId ");
+            }
+        }
+
         if (StringUtils.hasText(criteria.getLevel())) {
-            whereClause.append(" AND c.level = LOWER(:level) ");
+            whereClause.append(" AND LOWER(c.level) = LOWER(:level) ");
         }
 
         if (StringUtils.hasText(criteria.getTitle())) {
-            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', LOWER(:title), '%') ");
         }
 
         if (criteria.getStart() != null && criteria.getEnd() != null) {
@@ -318,7 +392,7 @@ public class CommonRepositoryImpl implements CommonRepository {
             whereClause.append(" AND TRUNC(c.createdAt) <= TRUNC(:end) ");
         }
 
-        whereClause.append(" AND c.contestChallenge = :contestChallenge AND c.available = TRUE AND c.deleted = FALSE ");
+        whereClause.append(" AND c.contestChallenge = FALSE AND c.available = TRUE AND c.deleted = FALSE ");
 
         TypedQuery<ChallengeEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), ChallengeEntity.class);
 
@@ -338,6 +412,10 @@ public class CommonRepositoryImpl implements CommonRepository {
             query.setParameter("tag" + i, tags.get(i));
         }
 
+        for (int i = 0; i < numCategories; i++) {
+            query.setParameter("category" + i, categories.get(i));
+        }
+
         if (StringUtils.hasText(criteria.getLevel())) {
             query.setParameter("level", criteria.getLevel());
         }
@@ -351,8 +429,6 @@ public class CommonRepositoryImpl implements CommonRepository {
             Date endDate = DatetimeUtils.asDate(LocalDate.now().minusDays(criteria.getEnd()));
             query.setParameter("end", endDate, TemporalType.DATE);
         }
-
-        query.setParameter("contestChallenge", criteria.getContestChallenge());
 
         query.setMaxResults(criteria.getSize());
         query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
@@ -401,9 +477,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -412,7 +488,7 @@ public class CommonRepositoryImpl implements CommonRepository {
         }
 
         if (StringUtils.hasText(criteria.getTitle())) {
-            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', LOWER(:title), '%') ");
         }
 
         if (criteria.getStart() != null && criteria.getEnd() != null) {
@@ -496,9 +572,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -593,9 +669,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -604,7 +680,7 @@ public class CommonRepositoryImpl implements CommonRepository {
         }
 
         if (StringUtils.hasText(criteria.getTitle())) {
-            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', LOWER(:title), '%') ");
         }
 
         if (criteria.getStart() != null && criteria.getEnd() != null) {
@@ -701,9 +777,9 @@ public class CommonRepositoryImpl implements CommonRepository {
                 StringBuilder orClause = new StringBuilder();
                 for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
                     if (orClause.length() == 0) {
-                        orClause.append(" c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     } else {
-                        orClause.append(" OR c.tags LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
+                        orClause.append(" OR LOWER(c.tags) LIKE CONCAT('%', LOWER(:tag").append(i).append("), '%') ");
                     }
                 }
                 whereClause.append(orClause);
@@ -712,7 +788,7 @@ public class CommonRepositoryImpl implements CommonRepository {
         }
 
         if (StringUtils.hasText(criteria.getTitle())) {
-            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', :title, '%') ");
+            whereClause.append(" AND LOWER(c.title) LIKE CONCAT('%', LOWER(:title), '%') ");
         }
 
         if (criteria.getStart() != null && criteria.getEnd() != null) {
@@ -779,15 +855,16 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     @Override
-    public Page<StudentEntity> findAll(UserPaginatedRequest criteria) {
-        String selectClause = " SELECT c FROM StudentEntity c ";
+    public Page<UserEntity> findAll(UserPaginatedRequest criteria) {
+        String selectClause = " SELECT c FROM UserEntity c ";
 
         StringBuilder whereClause = new StringBuilder();
 
         whereClause.append(" WHERE TRUE = TRUE ");
 
-        if (StringUtils.hasText(criteria.getPlan())) {
-            whereClause.append(" AND LOWER(c.studentPlan.name) = :plan ");
+        if (StringUtils.hasText(criteria.getType())
+            && Lists.newArrayList("admin", "student").contains(criteria.getType().toLowerCase())) {
+            whereClause.append(" AND TYPE(c) = LOWER(:type) ");
         }
 
         if (StringUtils.hasText(criteria.getFirstName())) {
@@ -798,10 +875,11 @@ public class CommonRepositoryImpl implements CommonRepository {
             whereClause.append(" AND LOWER(c.lastName) = LOWER(:lastName) ");
         }
 
-        TypedQuery<StudentEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), StudentEntity.class);
+        TypedQuery<UserEntity> query = entityManager.createQuery(selectClause + whereClause.toString(), UserEntity.class);
 
-        if (StringUtils.hasText(criteria.getPlan())) {
-            query.setParameter("plan", criteria.getPlan());
+        if (StringUtils.hasText(criteria.getType())
+            && Lists.newArrayList("admin", "student").contains(criteria.getType().toLowerCase())) {
+            query.setParameter("type", criteria.getType());
         }
 
         if (StringUtils.hasText(criteria.getFirstName())) {
@@ -815,9 +893,9 @@ public class CommonRepositoryImpl implements CommonRepository {
         query.setMaxResults(criteria.getSize());
         query.setFirstResult((criteria.getPage() - 1) * criteria.getSize());
 
-        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.userId) FROM StudentEntity c", Long.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(c.userId) FROM UserEntity c", Long.class);
 
-        List<StudentEntity> result = query.getResultList();
+        List<UserEntity> result = query.getResultList();
 
         result.sort((thisStudent, thatStudent) -> {
             try {
@@ -851,5 +929,116 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     private boolean isInteger(String s) {
         return POSITIVE_INTEGER_PATTERN.matcher(s).matches();
+    }
+
+    @Override
+    public boolean isFinish(Long contestId) {
+        TypedQuery<ContestRoundEntity> query = entityManager.createQuery(
+            "SELECT r FROM ContestRoundEntity r WHERE r.contest.contestId = :id ORDER BY r.startsAt"
+            , ContestRoundEntity.class).setMaxResults(1);
+
+        try {
+            ContestRoundEntity lastRound = query.getSingleResult();
+
+            return lastRound.getStartsAt().plusMinutes(lastRound.getDuration()).isBefore(LocalDateTime.now());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<Leader> getLeaders(Long contestId) {
+        TypedQuery<RoundScore> query = entityManager.createQuery("" +
+            "SELECT new vn.candicode.repository.CommonRepositoryImpl.RoundScore(s.author, SUM(s.point), r.contestRoundId, SUM(s.doneWithin)) " +
+            "FROM SubmissionEntity s, ContestRoundEntity r " +
+            "WHERE r.contest.contestId = :id " +
+            "GROUP BY r.contestRoundId, s.author.userId, s.point, s.doneWithin " +
+            "ORDER BY r.contestRoundId DESC ", RoundScore.class);
+
+        query.setParameter("id", contestId);
+
+        List<RoundScore> results = query.getResultList();
+
+        Long maxScoreOfContest = entityManager.createQuery("" +
+            "SELECT SUM(c.maxPoint) " +
+            "FROM ContestRoundEntity r, ChallengeEntity c, ContestChallengeEntity cc " +
+            "WHERE r.contest.contestId = :id AND " +
+            "       cc.challenge.challengeId = c.challengeId AND " +
+            "       cc.contestRound.contestRoundId = r.contestRoundId " +
+            "GROUP BY c.maxPoint", Long.class).getSingleResult();
+
+        Map<UserEntity, Pair<Long /*totalScore*/, Double /*totalTimeInNano*/> /*totalScore*/> totalScoreByUserId = new HashMap<>();
+
+        for (RoundScore roundScore : results) {
+            if (totalScoreByUserId.containsKey(roundScore.getUser())) {
+                totalScoreByUserId.computeIfPresent(roundScore.getUser(), (userID, pair) -> Pair.of(pair.getFirst() + roundScore.getScore(), pair.getSecond() + roundScore.getTime()));
+            } else {
+                totalScoreByUserId.put(roundScore.getUser(), Pair.of(roundScore.getScore(), roundScore.getTime()));
+            }
+        }
+
+        Map<UserEntity, Pair<Long, Double>> sortedTotalScoreByUserId = new LinkedHashMap<>(10);
+
+        totalScoreByUserId.entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByValue((o1, o2) -> {
+                if (!o1.getFirst().equals(o2.getFirst())) {
+                    return o1.getFirst().compareTo(o2.getFirst());
+                } else {
+                    return o1.getSecond().compareTo(o2.getSecond());
+                }
+            }))
+            .limit(10)
+            .forEachOrdered(rc -> sortedTotalScoreByUserId.put(rc.getKey(), rc.getValue()));
+
+        List<Leader> leaders = sortedTotalScoreByUserId.entrySet().stream()
+            .map(rc -> new Leader(rc.getValue().getFirst(), maxScoreOfContest, rc.getKey().getUserId(), rc.getKey().getFullName(),
+                rc.getKey().getFirstName(), rc.getKey().getLastName(), rc.getKey().getAvatar(), rc.getValue().getSecond(), null))
+            .collect(Collectors.toList());
+
+        return leaders;
+    }
+
+    @Getter
+    public static class RoundScore {
+        private final UserEntity user;
+        private final Long score;
+        private final Long roundId;
+        private final Double time;
+
+        public RoundScore(UserEntity user, Long score, Long roundId, Double time) {
+            this.user = user;
+            this.score = score;
+            this.roundId = roundId;
+            this.time = time;
+        }
+    }
+
+    @Override
+    public List<SubmissionEntity> getRecentSubmissionsByUserId(Long userId) {
+        TypedQuery<SubmissionEntity> query = entityManager.createQuery(
+            "SELECT s FROM SubmissionEntity s WHERE s.author.userId = :id ORDER BY s.createdAt DESC", SubmissionEntity.class);
+
+        query.setParameter("id", userId);
+        query.setMaxResults(10);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ContestEntity> getRegisteredIncomingContests(Long userId) {
+        TypedQuery<ContestEntity> incomingContests = entityManager.createQuery(
+            "SELECT c " +
+                "FROM ContestEntity c, ContestRegistrationEntity cr " +
+                "WHERE cr.contest.contestId = c.contestId " +
+                "AND cr.student.userId = :id " +
+                "AND EXISTS (SELECT r FROM ContestRoundEntity r WHERE r.contest.contestId = c.contestId AND r.startsAt > :now) " +
+                "AND EXISTS (SELECT reg FROM ContestRegistrationEntity reg WHERE reg.student.userId = :id AND reg.contest.contestId = c.contestId)"
+            , ContestEntity.class);
+
+        incomingContests.setParameter("id", userId);
+        incomingContests.setParameter("now", LocalDateTime.now());
+
+        return incomingContests.getResultList();
     }
 }

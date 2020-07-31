@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import vn.candicode.security.SecurityEntryPoint;
@@ -23,16 +22,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecurityEntryPoint entryPoint;
     private final SecurityTokenFilter tokenFilter;
     private final UserPrincipalService userPrincipalService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(SecurityEntryPoint entryPoint, SecurityTokenFilter tokenFilter, UserPrincipalService userPrincipalService) {
+    public SecurityConfig(SecurityEntryPoint entryPoint, SecurityTokenFilter tokenFilter, UserPrincipalService userPrincipalService, PasswordEncoder passwordEncoder) {
         this.entryPoint = entryPoint;
         this.tokenFilter = tokenFilter;
         this.userPrincipalService = userPrincipalService;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -44,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userPrincipalService)
-            .passwordEncoder(passwordEncoder());
+            .passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -65,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers(POST, "/challenges", "/challenges/*").hasAnyAuthority("challenge creator", "admin")
             .antMatchers(DELETE, "/challenges/*").hasAnyAuthority("challenge creator", "admin")
-            .antMatchers(GET, "/challenges", "/challenges/*").permitAll()
+            .antMatchers(GET, "/challenges", "/challenges/*", "/challenges/*/leaderboard").permitAll()
 
             .antMatchers(GET, "/challenges/*/comments").permitAll()
 
@@ -108,6 +104,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(POST, "/profiles").authenticated()
 
             .antMatchers(POST, "/plans/confirm").permitAll()
+
+            .antMatchers(GET, "/submission/*").hasAuthority("student")
 
             .anyRequest().authenticated();
 

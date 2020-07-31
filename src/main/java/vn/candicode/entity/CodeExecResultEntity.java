@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,7 +27,10 @@ public class CodeExecResultEntity extends Auditable {
     private Double execTime; // in nanoseconds
 
     @Column(nullable = false)
-    private Integer point;
+    private Long point;
+
+    @Column
+    private LocalDateTime expiresAt;
 
     // The following 2 fields helps us to eliminate JOIN clause when constructing submission history
     @Column(columnDefinition = "integer default 0", name = "passed")

@@ -38,7 +38,7 @@ public class MomoPaymentServiceImpl implements PaymentService {
     private static final String MOMO_SECRET_KEY = "6Fd30surzrCdvFZUobyEID0SvP9ZzJlj";
     private static final String MOMO_REQUEST_TYPE = "captureMoMoWallet";
     private static final String MOMO_RETURN_URL = "https://candicode.d1ta5379515jc6.amplifyapp.com/profile";
-    private static final String MOMO_NOTIFY_URL = "https://22b2ff4f9065.ap.ngrok.io/api/plans/confirm";
+    private static final String MOMO_NOTIFY_URL = "https://candicode.cf/api/plans/confirm";
     private static final String MOMO_PAYMENT_ENDPOINT = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
 
     private final CommonService commonService;
@@ -87,13 +87,17 @@ public class MomoPaymentServiceImpl implements PaymentService {
         HttpEntity<MomoPaymentRequest> request = new HttpEntity<>(paymentRequest);
         ResponseEntity<?> response = httpClient.exchange(MOMO_PAYMENT_ENDPOINT, POST, request, Object.class);
 
-        if (response.getStatusCode() == OK && response.getBody() != null) {
+        try {
             @SuppressWarnings("unchecked")
             LinkedHashMap<String, Object> body = (LinkedHashMap<String, Object>) response.getBody();
 
-            if (body.get("errorCode").equals(0)) {
+            if (response.getStatusCode() == OK && body.get("errorCode").equals(0)) {
                 return new MomoPaymentInitResponse((String) body.get("payUrl"));
             }
+
+            log.error("Error when making the call to Momo payment gateway. Status - {}. Message -{}", response.getStatusCodeValue(), body.getOrDefault("message", "No message available"));
+        } catch (NullPointerException e) {
+            log.error("No response was received from payment service Momo");
         }
 
         return null;
@@ -102,6 +106,8 @@ public class MomoPaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public void processPaymentConfirmedTransaction(MomoPaymentConfirmation payload) {
+        log.info("Received order confirmation from Momo");
+
         PaymentEntity payment = new PaymentEntity();
 
         payment.setPaymentId(payload.getOrderId());
@@ -113,7 +119,9 @@ public class MomoPaymentServiceImpl implements PaymentService {
 
         String[] transactionPayload = payload.getExtraData().split(",");
         Long ownerId = Long.valueOf(transactionPayload[0]);
-        String planName = transactionPayload[1];
+        String planName = transactionPayload[1].toLowerCase();
+
+        log.info("Processing upgrade plan request for user - {} to {}", ownerId, planName);
 
         StudentEntity owner = studentRepository.findById(ownerId)
             .orElseThrow(() -> new BadRequestException("Cannot determine owner of this transaction"));
@@ -122,22 +130,23 @@ public class MomoPaymentServiceImpl implements PaymentService {
 
         owner.setStudentPlan(commonService.getPlans().get(planName));
 
-        if (planName.equals("standard")) {
-            List<RoleEntity> currentRoles = owner.getRoles().stream()
-                .map(UserRoleEntity::getRole)
-                .collect(Collectors.toList());
+        List<RoleEntity> currentRoles = owner.getRoles().stream()
+            .map(UserRoleEntity::getRole)
+            .collect(Collectors.toList());
 
+        log.info("User currently has roles - {}", currentRoles.toString());
+
+        if (planName.equals("standard")) {
             if (!currentRoles.contains(commonService.getStudentRoles().get(CHALLENGE_CREATOR))) {
                 owner.addRole(commonService.getStudentRoles().get(CHALLENGE_CREATOR));
             }
             if (!currentRoles.contains(commonService.getStudentRoles().get(TUTORIAL_CREATOR))) {
                 owner.addRole(commonService.getStudentRoles().get(TUTORIAL_CREATOR));
             }
+        } else if (planName.equals("premium")) {
             if (!currentRoles.contains(commonService.getStudentRoles().get(CONTEST_CREATOR))) {
                 owner.addRole(commonService.getStudentRoles().get(CONTEST_CREATOR));
             }
-        } else if (planName.equals("premium")) {
-
         }
 
         studentRepository.save(owner);
@@ -155,7 +164,7 @@ public class MomoPaymentServiceImpl implements PaymentService {
             .append("&orderInfo=").append(paymentInfo)
             .append("&returnUrl=").append(MOMO_RETURN_URL)
             .append("&notifyUrl=").append(MOMO_NOTIFY_URL)
-            .append("&extraData=").append(userId + "," + planName);
+            .append("&extraData=").append(userId).append(",").append(planName);
 
         return info.toString();
     }

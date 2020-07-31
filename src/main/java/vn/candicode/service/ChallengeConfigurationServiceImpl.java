@@ -83,9 +83,25 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         List<TestcaseEntity> testcases = challenge.getTestcases();
         int totalTestcases = testcases.size();
 
-        String rootRelativePath = payload.getRunPath().startsWith(File.separator) ?
-            payload.getRunPath().substring(1, payload.getRunPath().lastIndexOf(File.separator)) :
-            payload.getRunPath().substring(0, payload.getRunPath().lastIndexOf(File.separator));
+//        String rootRelativePath = payload.getRunPath().startsWith(File.separator) ?
+//            payload.getRunPath().substring(1, payload.getRunPath().lastIndexOf(File.separator)) :
+//            payload.getRunPath().substring(0, payload.getRunPath().lastIndexOf(File.separator));
+
+        String rootRelativePath;
+
+        if (payload.getRunPath().startsWith(File.separator)) {
+            if (payload.getRunPath().lastIndexOf(File.separator) == 0) {
+                rootRelativePath = "";
+            } else {
+                rootRelativePath = payload.getRunPath().substring(1, payload.getRunPath().lastIndexOf(File.separator));
+            }
+        } else {
+            if (payload.getRunPath().lastIndexOf(File.separator) == -1) {
+                rootRelativePath = "";
+            } else {
+                rootRelativePath = payload.getRunPath().substring(0, payload.getRunPath().lastIndexOf(File.separator));
+            }
+        }
 
         String rootDir = storageService.resolvePath(payload.getChallengeDir(), STAGING, myId) + File.separator + rootRelativePath;
 
@@ -97,6 +113,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             compileResult = codeRunnerService.compile(new File(rootDir), language);
         } else {
             compileResult = CompileResult.success(language);
+            log.info("Completed the compile process with result - {}", compileResult.toString());
         }
 
         if (!compileResult.isCompiled()) {
@@ -112,6 +129,9 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         for (TestcaseEntity testcase : testcases) {
             FileUtils.writeStringToFile(new File(rootDir, "in.txt"), testcase.getInput());
             ExecutionResult executionResult = codeRunnerService.run(new File(rootDir), testcase.getTimeout(), language);
+
+            log.info("Completed to execute process with result - {}", executionResult);
+
             String error = executionResult.getTimeoutError() != null ? executionResult.getTimeoutError() : executionResult.getRuntimeError();
             submissionDetails.add(SubmissionDetails.builder()
                 .testcaseId(testcase.getTestcaseId())
@@ -159,7 +179,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
             FileOperationResult result = FileUtils.copyDirectoryToDirectory(srcDir, challengeDir);
 
             if (!result.equals(SUCCESS)) {
-                log.error("Error when activating challenge with id {}. Message - {}", challengeId, "Cannot copy src to challenge dir");
+                log.error("Error when copy source code to challenge directory. Challenge ID - {}. Message - {}", challengeId, "Cannot copy src to challenge dir");
             }
         }
 
@@ -207,6 +227,7 @@ public class ChallengeConfigurationServiceImpl implements ChallengeConfiguration
         challenge.getLanguages().remove(language.toLowerCase());
 
         if (configuration.getChallenge().getConfigurations().stream().noneMatch(cf -> !cf.getDeleted() || cf.getEnabled())) {
+            log.info("No challenge config found. Making the challenge unavailable");
             challenge.setAvailable(false);
         }
 
