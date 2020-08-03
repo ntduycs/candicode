@@ -8,7 +8,9 @@ import vn.candicode.common.FileStorageType;
 import javax.validation.constraints.NotBlank;
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
@@ -359,9 +361,13 @@ public class FileUtils {
      * @return generate filename
      */
     public static String genFilename(@NotBlank Long authorId, @NotBlank FileStorageType type, @NotBlank String originalFilename) {
-        final String timestamp = LocalDateTime.now().format(DatetimeUtils.FILESYSTEM_DATETIME_FORMAT);
+        final String timestamp = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).format(DatetimeUtils.FILESYSTEM_DATETIME_FORMAT);
 
         return timestamp + "-" + type.code + "-" + authorId + "." + getFileExtension(originalFilename);
+    }
+
+    public static String genFilename(Long authorId, FileStorageType type) {
+        return UUID.randomUUID().toString() + "-" + type.code + "-" + authorId;
     }
 
     /**
@@ -372,7 +378,7 @@ public class FileUtils {
      * @return generate filename
      */
     public static String genDirname(Long authorId, FileStorageType type) {
-        final String timestamp = LocalDateTime.now().format(DatetimeUtils.FILESYSTEM_DATETIME_FORMAT);
+        final String timestamp = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).format(DatetimeUtils.FILESYSTEM_DATETIME_FORMAT);
 
         return timestamp + "-" + type.code + "-" + authorId;
     }

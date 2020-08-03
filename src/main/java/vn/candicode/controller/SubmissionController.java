@@ -10,6 +10,7 @@ import vn.candicode.payload.request.PaginatedRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionHistory;
 import vn.candicode.payload.response.SubmissionSummary;
+import vn.candicode.payload.response.SubmittedCode;
 import vn.candicode.security.CurrentUser;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.service.SubmissionService;
@@ -50,11 +51,9 @@ public class SubmissionController extends Controller {
 
     @GetMapping(path = "submissions/{id}")
     public ResponseEntity<?> getSubmission(@PathVariable("id") Long submissionId, @CurrentUser UserPrincipal me) {
-        String submittedCode = submissionService.getSubmittedCode(submissionId, me);
+        SubmittedCode submittedCode = submissionService.getSubmittedCode(submissionId, me);
 
-        return ResponseEntity.ok(ResponseFactory.build(Map.of(
-            "code", submittedCode
-        )));
+        return ResponseEntity.ok(ResponseFactory.build(submittedCode));
     }
 
     @GetMapping(path = "challenges/{id}/submissions")

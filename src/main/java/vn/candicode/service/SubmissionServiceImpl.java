@@ -14,10 +14,7 @@ import vn.candicode.exception.BadRequestException;
 import vn.candicode.exception.ResourceNotFoundException;
 import vn.candicode.payload.request.NewCodeRunRequest;
 import vn.candicode.payload.request.NewSubmissionRequest;
-import vn.candicode.payload.response.PaginatedResponse;
-import vn.candicode.payload.response.SubmissionDetails;
-import vn.candicode.payload.response.SubmissionHistory;
-import vn.candicode.payload.response.SubmissionSummary;
+import vn.candicode.payload.response.*;
 import vn.candicode.repository.*;
 import vn.candicode.security.UserPrincipal;
 import vn.candicode.util.DatetimeUtils;
@@ -27,6 +24,7 @@ import vn.candicode.util.SubmissionBeanUtils;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +65,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     @Transactional
     public SubmissionSummary doScoreSubmission(Long challengeId, NewCodeRunRequest payload, UserPrincipal me) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         Long myId = me.getUserId();
         String language = payload.getLanguage().toLowerCase();
         String submitAt = now.format(DatetimeUtils.JSON_DATETIME_FORMAT);
@@ -82,13 +80,16 @@ public class SubmissionServiceImpl implements SubmissionService {
         List<TestcaseEntity> testcases = challenge.getTestcases();
         int totalTestcases = testcases.size();
 
+        final String destDirName = FileUtils.genFilename(myId, SUBMISSION);
+
         String srcDir = storageService.resolvePath(configuration.getDirectory(), CHALLENGE, configuration.getAuthorId());
-        String destDir = storageService.resolvePath(configuration.getDirectory(), SUBMISSION, myId);
+        String destDir = storageService.resolvePath(destDirName, SUBMISSION, myId);
+
 
         // We will work in staging folder, so we need to adjust the root dir to reflect it correctly
         final String rootDir = configuration.getDirectory().equals(configuration.getRoot()) ?
             storageService.submissionDirFor(myId) + File.separator + configuration.getRoot() :
-            storageService.submissionDirFor(myId) + File.separator + configuration.getDirectory() + File.separator + configuration.getRoot();
+            storageService.submissionDirFor(myId) + File.separator + destDirName + File.separator + configuration.getRoot();
 
         CompileResult compileResult;
 
@@ -98,7 +99,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         final String codeFile = configuration.getDirectory().equals(configuration.getRoot()) ?
             storageService.submissionDirFor(myId) + File.separator + configuration.getPreImplementedFile() :
-            storageService.submissionDirFor(myId) + File.separator + configuration.getDirectory() + File.separator + configuration.getPreImplementedFile();
+            storageService.submissionDirFor(myId) + File.separator + destDirName + File.separator + configuration.getPreImplementedFile();
 
         FileUtils.writeStringToFile(new File(codeFile), payload.getCode());
 
@@ -120,7 +121,9 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .submitAt(submitAt).build();
 
             CodeExecResultEntity codeExecResult = new CodeExecResultEntity();
-            codeExecResult.setCompositeId(new CodeExecResultId(configuration, me.getEntityRef(), submitAt));
+            codeExecResult.setChallenge(configuration);
+            codeExecResult.setUser(me.getEntityRef());
+            codeExecResult.setSubmitAt(submitAt);
             codeExecResult.setCompiled(false);
             codeExecResult.setDoneWithin(payload.getDoneWithin());
             codeExecResult.setExecTime(0.0);
@@ -160,7 +163,9 @@ public class SubmissionServiceImpl implements SubmissionService {
             .mapToInt(item -> 1).sum();
 
         CodeExecResultEntity codeExecResult = new CodeExecResultEntity();
-        codeExecResult.setCompositeId(new CodeExecResultId(configuration, me.getEntityRef(), submitAt));
+        codeExecResult.setChallenge(configuration);
+        codeExecResult.setUser(me.getEntityRef());
+        codeExecResult.setSubmitAt(submitAt);
         codeExecResult.setCompiled(true);
         codeExecResult.setDoneWithin(payload.getDoneWithin());
         codeExecResult.setExecTime(avgExecutionTime);
@@ -191,7 +196,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         ChallengeConfigurationEntity configuration = challengeConfigurationRepository.findByChallengeIdAndLanguageName(challengeId, payload.getLanguage())
             .orElseThrow(() -> new ResourceNotFoundException(ChallengeConfigurationEntity.class, "challengeId", challengeId, "language", payload.getLanguage()));
 
-        CodeExecResultEntity submissionResult = codeExecResultRepository.findById(new CodeExecResultId(configuration, me.getEntityRef(), payload.getSubmitAt()))
+        CodeExecResultEntity submissionResult = codeExecResultRepository.findByChallengeConfigIdAndUserIdAndSubmitAt(configuration.getChallengeLanguageId(), me.getUserId(), payload.getSubmitAt())
             .orElseThrow(() -> new BadRequestException("Failed to validate your submission"));
 
         if (!validateSubmission(submissionResult, payload)) {
@@ -242,7 +247,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             submissionResult.getExecTime().equals(submissionRequest.getExecutionTime()) &&
             submissionResult.getPassedTestcases().equals(submissionRequest.getPassed()) &&
             submissionResult.getTotalTestcases().equals(submissionRequest.getTotal()) &&
-            submissionResult.getExpiresAt().isAfter(LocalDateTime.now());
+            submissionResult.getExpiresAt().isAfter(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
     }
 
     /**
@@ -312,10 +317,15 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public String getSubmittedCode(Long submissionId, UserPrincipal me) {
+    @Transactional(readOnly = true)
+    public SubmittedCode getSubmittedCode(Long submissionId, UserPrincipal me) {
         SubmissionEntity submission = submissionRepository.findBySubmissionIdAndAuthorUserId(submissionId, me.getUserId())
             .orElseThrow(() -> new ResourceNotFoundException(SubmissionEntity.class, "id", submissionId));
 
-        return submission.getSubmittedCode();
+        SubmittedCode ret = new SubmittedCode();
+        ret.setCode(submission.getSubmittedCode());
+        ret.setLanguage(submission.getLanguage().getName());
+
+        return ret;
     }
 }

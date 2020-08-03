@@ -11,11 +11,11 @@ public class RegexUtils {
 
     private static final String INTEGER = "[+-]?\\d+";
 
-    private static final String INTEGER_LIST = "\\[\\s?(\\d+)?(,\\s?\\d+)*\\s?\\]";
+    private static final String INTEGER_LIST = "\\[\\s?([+-]?\\d+)?(,\\s?[+-]?\\d+)*\\s?\\]";
 
-    private static final String STRING = "[-a-z0-9~!$%^&*_=+}{?\\s\\r]+";
+    private static final String STRING = "[A-Za-z0-9~!$@%#^&*_=+\\(\\)\\.}{?\\s\\r]+";
 
-    private static final String STRING_LIST = "\\[\\s?[-a-z0-9~!$%^&*_=+}{?\\s\\r]*(,\\s?[-a-z0-9~!$%^&*_=+}{?\\s\\r])*\\s?\\]";
+    private static final String STRING_LIST = "\\[([A-Za-z0-9~!$@%#^&*_=+\\(\\)\\.}{?\\s\\r]+)(,([A-Za-z0-9~!$@%#^&*_=+\\(\\)\\.}{?\\s\\r]+))*\\]";
 
     private static final String BOOLEAN = "[0-1]";
 

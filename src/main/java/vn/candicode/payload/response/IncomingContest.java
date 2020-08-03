@@ -12,4 +12,5 @@ public class IncomingContest implements Serializable {
     private String banner;
     private Long contestId;
     private Long incoming; // in minutes
+    private String startsAt;
 }

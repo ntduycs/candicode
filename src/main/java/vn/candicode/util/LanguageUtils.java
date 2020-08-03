@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 public class LanguageUtils {
-    private static final List<String> scriptingLanguage = Lists.newArrayList("python", "js");
+    private static final List<String> scriptingLanguage = Lists.newArrayList("python", "js", "javascript");
 
     public static boolean requireCompile(String language) {
-        return !scriptingLanguage.contains(language.toUpperCase());
+        return !scriptingLanguage.contains(language);
     }
 }

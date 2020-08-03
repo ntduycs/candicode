@@ -1,7 +1,6 @@
 package vn.candicode.repository;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.util.Pair;
@@ -21,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -934,13 +934,15 @@ public class CommonRepositoryImpl implements CommonRepository {
     @Override
     public boolean isFinish(Long contestId) {
         TypedQuery<ContestRoundEntity> query = entityManager.createQuery(
-            "SELECT r FROM ContestRoundEntity r WHERE r.contest.contestId = :id ORDER BY r.startsAt"
+            "SELECT r FROM ContestRoundEntity r WHERE r.contest.contestId = :id ORDER BY r.startsAt DESC"
             , ContestRoundEntity.class).setMaxResults(1);
+
+        query.setParameter("id", contestId);
 
         try {
             ContestRoundEntity lastRound = query.getSingleResult();
 
-            return lastRound.getStartsAt().plusMinutes(lastRound.getDuration()).isBefore(LocalDateTime.now());
+            return lastRound.getStartsAt().plusMinutes(lastRound.getDuration()).isBefore(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
         } catch (Exception e) {
             return false;
         }
@@ -949,7 +951,7 @@ public class CommonRepositoryImpl implements CommonRepository {
     @Override
     public List<Leader> getLeaders(Long contestId) {
         TypedQuery<RoundScore> query = entityManager.createQuery("" +
-            "SELECT new vn.candicode.repository.CommonRepositoryImpl.RoundScore(s.author, SUM(s.point), r.contestRoundId, SUM(s.doneWithin)) " +
+            "SELECT new vn.candicode.repository.RoundScore(s.author, SUM(s.point), r.contestRoundId, SUM(s.doneWithin)) " +
             "FROM SubmissionEntity s, ContestRoundEntity r " +
             "WHERE r.contest.contestId = :id " +
             "GROUP BY r.contestRoundId, s.author.userId, s.point, s.doneWithin " +
@@ -965,7 +967,7 @@ public class CommonRepositoryImpl implements CommonRepository {
             "WHERE r.contest.contestId = :id AND " +
             "       cc.challenge.challengeId = c.challengeId AND " +
             "       cc.contestRound.contestRoundId = r.contestRoundId " +
-            "GROUP BY c.maxPoint", Long.class).getSingleResult();
+            "GROUP BY c.maxPoint", Long.class).setParameter("id", contestId).getSingleResult();
 
         Map<UserEntity, Pair<Long /*totalScore*/, Double /*totalTimeInNano*/> /*totalScore*/> totalScoreByUserId = new HashMap<>();
 
@@ -999,20 +1001,7 @@ public class CommonRepositoryImpl implements CommonRepository {
         return leaders;
     }
 
-    @Getter
-    public static class RoundScore {
-        private final UserEntity user;
-        private final Long score;
-        private final Long roundId;
-        private final Double time;
 
-        public RoundScore(UserEntity user, Long score, Long roundId, Double time) {
-            this.user = user;
-            this.score = score;
-            this.roundId = roundId;
-            this.time = time;
-        }
-    }
 
     @Override
     public List<SubmissionEntity> getRecentSubmissionsByUserId(Long userId) {
@@ -1037,7 +1026,7 @@ public class CommonRepositoryImpl implements CommonRepository {
             , ContestEntity.class);
 
         incomingContests.setParameter("id", userId);
-        incomingContests.setParameter("now", LocalDateTime.now());
+        incomingContests.setParameter("now", LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
 
         return incomingContests.getResultList();
     }

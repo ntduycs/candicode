@@ -11,6 +11,7 @@ import vn.candicode.payload.response.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -93,7 +94,7 @@ public class ContestBeanUtils {
     }
 
     private static String getContestStatus(ContestEntity contest) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
 
         List<ContestRoundEntity> rounds = contest.getRounds();
         Optional<LocalDateTime> startDate = rounds.stream()
@@ -132,7 +133,8 @@ public class ContestBeanUtils {
 
         rounds.sort(Comparator.comparing(ContestRoundEntity::getStartsAt));
 
-        ret.setIncoming(Duration.between(LocalDateTime.now(), rounds.get(0).getStartsAt()).toMinutes());
+        ret.setIncoming(Duration.between(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")), rounds.get(0).getStartsAt()).toMinutes());
+        ret.setStartsAt(rounds.get(0).getStartsAt().format(DatetimeUtils.JSON_DATETIME_FORMAT));
 
         return ret;
     }

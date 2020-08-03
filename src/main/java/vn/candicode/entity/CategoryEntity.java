@@ -4,13 +4,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,6 +32,9 @@ public class CategoryEntity implements Serializable {
 
     @Column(columnDefinition = "bigint default 0")
     private Long numUsed = 0L;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChallengeCategoryEntity> related = new LinkedHashSet<>();
 
     public CategoryEntity() {
     }

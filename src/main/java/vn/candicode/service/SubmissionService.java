@@ -6,6 +6,7 @@ import vn.candicode.payload.request.NewSubmissionRequest;
 import vn.candicode.payload.response.PaginatedResponse;
 import vn.candicode.payload.response.SubmissionHistory;
 import vn.candicode.payload.response.SubmissionSummary;
+import vn.candicode.payload.response.SubmittedCode;
 import vn.candicode.security.UserPrincipal;
 
 import java.util.List;
@@ -34,5 +35,5 @@ public interface SubmissionService {
 
     List<SubmissionHistory> getRecentSubmissionByUserId(Long userId);
 
-    String getSubmittedCode(Long submissionId, UserPrincipal me);
+    SubmittedCode getSubmittedCode(Long submissionId, UserPrincipal me);
 }

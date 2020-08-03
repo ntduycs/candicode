@@ -131,6 +131,7 @@ public class ChallengeEntity extends Auditable {
     public void addCategory(CategoryEntity category) {
         ChallengeCategoryEntity challengeCategory = new ChallengeCategoryEntity(this, category);
         categories.add(challengeCategory);
+        category.setNumUsed(category.getNumUsed() + 1);
     }
 
     public void removeCategory(CategoryEntity category) {
@@ -140,6 +141,7 @@ public class ChallengeEntity extends Auditable {
                 iterator.remove();
                 challengeCategory.setChallenge(null);
                 challengeCategory.setCategory(null);
+                category.setNumUsed(category.getNumUsed() - 1);
                 break;
             }
         }

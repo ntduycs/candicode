@@ -1,7 +1,7 @@
 package vn.candicode.service;
 
-import com.google.common.collect.Lists;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.candicode.entity.CategoryEntity;
@@ -15,8 +15,8 @@ import vn.candicode.payload.response.Categories;
 import vn.candicode.repository.CategoryRepository;
 import vn.candicode.security.UserPrincipal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,6 +27,9 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final Map<String, CategoryEntity> existingCategories;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public CategoryServiceImpl(CategoryRepository categoryRepository, CommonService commonService) {
         this.categoryRepository = categoryRepository;
         this.existingCategories = commonService.getCategories();
@@ -35,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void createCategories(NewCategoryListRequest payload, UserPrincipal me) {
-        for (String category: payload.getCategories()) {
+        for (String category : payload.getCategories()) {
             if (!existingCategories.containsKey(category)) {
                 CategoryEntity newCategory = categoryRepository.save(new CategoryEntity(category));
                 existingCategories.put(category, newCategory);
@@ -95,7 +98,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Categories getCategories() {
-        return new Categories(existingCategories.values());
+        TypedQuery<CategoryEntity> query = entityManager.createQuery("" + "SELECT c FROM CategoryEntity c", CategoryEntity.class);
+
+        List<CategoryEntity> categories = query.getResultList();
+
+        for (CategoryEntity category : categories) {
+            category.setNumUsed((long) category.getRelated().size());
+        }
+
+        return new Categories(categories);
     }
 }

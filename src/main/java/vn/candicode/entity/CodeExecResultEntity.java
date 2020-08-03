@@ -3,10 +3,7 @@ package vn.candicode.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,8 +11,21 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "code_exec_results")
 public class CodeExecResultEntity extends Auditable {
-    @EmbeddedId
-    private CodeExecResultId compositeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(nullable = false, updatable = false)
+    private Long codeExecResultId;
+
+    @ManyToOne
+    @JoinColumn(name = "challenge_config_id", nullable = false, foreignKey = @ForeignKey(name = "challenge_config_fk"))
+    private ChallengeConfigurationEntity challenge;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "user_fk"))
+    private UserEntity user;
+
+    @Column(nullable = false, updatable = false)
+    private String submitAt;
 
     @Column
     private Boolean compiled = false;
